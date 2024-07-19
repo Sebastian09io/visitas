@@ -1,0 +1,42 @@
+{% include "base.html" %}
+<link rel="stylesheet" href="/static/css/login.css">
+
+{% block body %}
+
+{% if messages %}
+<div class="container mt-3 ">
+    {% for message in messages %}
+        <div class="alert {{ message.tags }}">
+            {{ message }}
+        </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+
+<form method="post" class="mt-3">
+    {% csrf_token %}
+    <img class="sennova" src="/static/bootstrap/img/sennova.jpeg">
+    <h1 class="titulo">Inicie sesión con su cuenta</h1>
+    <div class="form-group">
+        <img class="correo" src="/static/bootstrap/img/correo.png">
+        {{ form.username.label_tag }}
+        {{ form.username }}
+    </div>
+    <div class="form-group">
+        <img class="contraseña" src="/static/bootstrap/img/contraseña.png">
+        {{ form.password.label_tag }}
+        {{ form.password }}
+    </div>
+    <div class="contenedor-contraseña">
+        <a href="{% url 'gestiones:password_reset' %}">¿Olvidó su contraseña?</a>
+    </div>
+    <div class="contenedor-btn">
+        <button type="submit" class="btn btn-primary">Ingresar</button>
+    </div>
+    <div class="contenedor-registro">
+        <p>¿No tiene cuenta?</p>
+        <a href="{% url 'gestiones:registro' %}">Regístrese</a>
+    </div>
+</form>
+{% endblock %}

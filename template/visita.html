@@ -1,0 +1,177 @@
+{% include "administracion/base_admin.html" %}
+
+<link rel="stylesheet" href="/static/css/visita.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+{% block content %}
+<div class="contenedor">
+    <h1 class="titulo">Registro de visita</h1>
+    <form method="post" enctype="multipart/form-data" id="mainForm">
+        {% csrf_token %}
+        <div class="row">
+            <div class="col-md-6 espacio2">
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="nombres">Nombres</label>
+                        <input type="text" class="form-control" value="{{ user.nombres }}" readonly>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="apellidos">Apellidos</label>
+                        <input type="text" class="form-control" value="{{ user.apellidos }}" readonly>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="correo">Correo</label>
+                        <input type="text" class="form-control" value="{{ user.correo }}" readonly>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label>Autoriza grabación:</label>
+                        <div class="d-flex align-items-center">
+                            <img id="grabacion-on" class="btn-estado mr-2" src="/static/bootstrap/img/on.png" style="display: {% if user.id_visita.grabacion %} block {% else %} none {% endif %};">
+                            <img id="grabacion-off" class="btn-estado" src="/static/bootstrap/img/off.png" style="display: {% if user.id_visita.grabacion %} none {% else %} block {% endif %};">
+                            <input type="hidden" name="grabacion" id="grabacion-input" value="{{ user.id_visita.grabacion }}">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="id_tipo_documento">Tipo Documento</label>
+                        <input type="text" class="form-control" value="{{ user.id_tipo_documento }}" readonly>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="identificacion">Identificación</label>
+                        <input type="text" class="form-control" value="{{ user.identificacion }}" readonly>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="telefono">Teléfono</label>
+                        <input type="text" class="form-control" value="{{ user.telefono }}" readonly>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="{{ form.id_genero.id_for_label }}">Género</label>
+                        {{ form.id_genero }}
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="col-md-6 espacio">
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="{{ form.procedencia.id_for_label }}">Procedencia</label>
+                        {{ form.procedencia }}
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="{{ form.discapacidad.id_for_label }}">Discapacidad</label>
+                        {{ form.discapacidad }}
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="{{ form.id_area.id_for_label }}">Estrategia</label>
+                        {{ form.id_area }}
+                    </div>
+                    <div class="form-group col-md-6" id="linea-field" style="display: none;">
+                        <label for="{{ form.id_linea.id_for_label }}">Línea</label>
+                        {{ form.id_linea }}
+                    </div>
+                    <div class="form-group col-md-6" id="ambiente-field" style="display: none;">
+                        <label for="{{ form.id_ambiente.id_for_label }}">Ambiente</label>
+                        {{ form.id_ambiente }}
+                    </div>
+                    <div class="form-group col-md-6" id="espacio-field" >
+                        <label>Espacio</label>
+                        <input type="text" value="Seleccione primero la estrategia" class="form-control" readonly>
+                    </div>
+                    <div class="form-group col-md-6" id="no-permitido-field" style="display: none;">
+                        <label>Espacio</label>
+                        <input type="text" value="No aplica" class="form-control" readonly>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="fecha_inicio">Fecha de inicio</label>
+                        {{ form.fecha_inicio }}
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="fecha_finalizacion">Fecha de finalización</label>
+                        {{ form.fecha_finalizacion }}
+                    </div>
+                </div>
+
+
+
+
+            </div>
+        </div>
+        
+
+    </form>
+
+    <div class="vertical-line"></div>
+
+</div>
+
+
+
+
+<script>
+    // Script para manejar la grabación
+    document.getElementById('grabacion-on').onclick = function() {
+        this.style.display = 'none';
+        document.getElementById('grabacion-off').style.display = 'block';
+        document.getElementById('grabacion-input').value = 'False';
+    };
+
+    document.getElementById('grabacion-off').onclick = function() {
+        this.style.display = 'none';
+        document.getElementById('grabacion-on').style.display = 'block';
+        document.getElementById('grabacion-input').value = 'True';
+    };
+
+    document.addEventListener("DOMContentLoaded", function() {
+        var areaField = document.getElementById('id_id_area'); // Asegúrate de que este id coincida
+        var lineaField = document.getElementById('linea-field');
+        var ambienteField = document.getElementById('ambiente-field');
+        var espacioField = document.getElementById('espacio-field');
+        var nopermiteField = document.getElementById('no-permitido-field');
+    
+        function updateFields() {
+            var selectedValue = areaField.options[areaField.selectedIndex].text; // Obtener el texto del valor seleccionado
+    
+            if (selectedValue === "Tecnoparque") {
+                lineaField.style.display = "block";
+                ambienteField.style.display = "none";
+                espacioField.style.display = "none";
+                nopermiteField.style.display = "none";
+            } else if (selectedValue === "Tecnoacademia") {
+                lineaField.style.display = "none";
+                ambienteField.style.display = "block";
+                espacioField.style.display = "none";
+                nopermiteField.style.display = "none";
+            } else if (selectedValue === "Sennova") {
+                lineaField.style.display = "none";
+                ambienteField.style.display = "none";
+                espacioField.style.display = "none";
+                nopermiteField.style.display = "block";
+            } else {
+                lineaField.style.display = "none";
+                ambienteField.style.display = "none";
+                espacioField.style.display = "block";
+                nopermiteField.style.display = "none";
+            }
+        }
+    
+        // Inicializar campos al cargar la página
+        updateFields();
+    
+        // Actualizar campos cuando cambie el área
+        areaField.addEventListener("change", updateFields);
+    });
+    
+    
+</script>
+
+{% endblock %}

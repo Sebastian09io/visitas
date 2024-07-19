@@ -1,0 +1,178 @@
+{%include "administracion/base_admin.html" %}
+
+<link rel="stylesheet" href="/static/css/gestion_implemento_espacio_funcionario.css">
+
+{% block body %}
+
+<div class="contenedor">
+    
+    <h1 class="titulo">Gestión Espacios</h1>
+    
+    <div class="mt-4">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+    
+                        <div class="container my-4">
+                            <div class="row mb-3">
+                                    <div class="col-md-3">
+                                        <button type="button" class="btn btn-primary w-100" id="mostrarFormulario">Registrar Espacio</button>
+                                    </div>
+                                <div class="col-md-9">
+                                    <form id="search-form" method="get" action="{% url 'reservas:buscar_espacio' %}" class="d-flex">
+                                        <!-- Barra seleccionable -->
+                                        <div class="input-group mr-2">
+                                            <select name="estado" class="custom-select" onchange="submitForm()">
+                                                <option value="todos" {% if estado == 'todos' %}selected{% endif %}>Todos</option>
+                                                <option value="habilitados" {% if estado == 'habilitados' %}selected{% endif %}>Espacios Habilitados</option>
+                                                <option value="inhabilitados" {% if estado == 'inhabilitados' %}selected{% endif %}>Espacios Inhabilitados</option>
+                                            </select>
+                                        </div>
+                                        <!-- Barra de búsqueda -->
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" placeholder="Buscar..." name="buscar">
+                                            <div class="input-group-append">
+                                                <button type="submit" class="btn btn-success">Buscar</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Modal -->
+                        <div id="ventanaEmergente">
+                            <div id="formularioEmergente">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Registrar Espacio</h5>
+                                            <button type="button" class="btn-cerrar" aria-label="Close">
+                                                <img src="/static/bootstrap/img/cerrar.png" alt="Cerrar">
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form method="POST" action="{% url 'reservas:registrar_espacio' %}">
+                                                {% csrf_token %}
+                                                <div class="form-group">
+                                                    <input type="text" id="nombre" name="nombre" class="form-control" required placeholder="Nombre del espacio">
+                                                </div>
+                                                <button type="submit" class="btn btn-primary">Registrar</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+    
+                    </div>
+                    <div class="card-body">
+
+                        {% if query %}
+                        <h4>Resultados para "{{ query }}"</h4>
+                        {% endif %}
+
+                    {% if resultados and resultados|length > 0 %}
+                    <div class="table-responsive">
+                        <table id="funcionarios-table" class="table table-striped table-bordered">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Espacios</th>
+                                    <th scope="col">Estado</th>
+                                    <th scope="col">Eliminar</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for c in resultados %}
+                                <tr class="draggable-row" data-id="{{ c.id }}">
+                                    <th scope="row">{{ forloop.counter }}</th>
+                                    <td>{{ c.nombre }}</td>
+                                    <td>
+                                        <form method="post" action="{% url 'reservas:gestion_espacio' %}">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="espacio_id" value="{{ c.id }}">
+                                        {% if c.estado %}
+                                        <button type="submit" class="btn-accion" title="Habilitado">
+                                            <img class="btn-estado" src="/static/bootstrap/img/on.png">
+                                        </button>
+                                        {% else %}
+                                        <button type="submit" class="btn-accion" title="Inhabilitado">
+                                            <img class="btn-estado" src="/static/bootstrap/img/off.png">
+                                        </button>
+                                        {% endif %}
+                                        </form>
+                                    </td>
+                                    
+                                    <td>
+                                        <form action="{% url 'reservas:eliminar_espacio'  c.id %}" method="POST">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn-accion">
+                                                <img class="btn-estado" src="/static/bootstrap/img/cerrar.png">
+                                            </button>
+                                        </form>
+                                    </td>
+                                    
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                        {% if resultados.has_other_pages %}
+    <nav class="paginador">
+        <ul class="pagination">
+            {% if resultados.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?buscar={{ query }}&estado={{ estado }}&page={{ resultados.previous_page_number }}">Anterior</a>
+            </li>
+            {% endif %}
+            {% for num in resultados.paginator.page_range %}
+            <li class="page-item {% if resultados.number == num %}active{% endif %}">
+                <a class="page-link" href="?buscar={{ query }}&estado={{ estado }}&page={{ num }}">{{ num }}</a>
+            </li>
+            {% endfor %}
+            {% if resultados.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?buscar={{ query }}&estado={{ estado }}&page={{ resultados.next_page_number }}">Siguiente</a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+    
+                    {% else %}
+                    <p>No se encontraron resultados para "{{ query }}".</p>
+                    {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    
+    
+    
+    </div>
+    
+<script>
+function submitForm() {
+    document.getElementById("search-form").submit();
+}
+
+var botonMostrar = document.getElementById("mostrarFormulario");
+var ventanaEmergente = document.getElementById("ventanaEmergente");
+
+botonMostrar.addEventListener("click", () => {
+  ventanaEmergente.style.display = "flex"; // Mostrar la ventana emergente
+});
+
+
+
+const btnCerrar = document.querySelector("#formularioEmergente .btn-cerrar");
+
+btnCerrar.addEventListener("click", function() {
+    ventanaEmergente.style.display = "none";
+});
+</script>
+{% endblock %}

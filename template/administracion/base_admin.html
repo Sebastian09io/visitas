@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Reservas {% endblock %}</title>
+    {% load static %}
+    <script src="https://kit.fontawesome.com/ae360af17e.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        .navbar-custom {
+            background-color: #272727; /* Color negro */
+            padding-left: 1.5%;
+        }
+        .navbar-custom > a {
+            font-size: 170%;
+        }
+
+        body {
+            font-family: sans-serif;
+            margin: 0;
+            padding: 0;
+            background-image: url("/static/bootstrap/img/fondo_oscuro.jpg");
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center bottom;
+            height: 100vh;
+        }
+
+        h3 {
+            font-size: 1.2375rem;
+            color: #FFF;
+        }
+
+        a {
+            cursor: pointer;
+            text-decoration: none;
+            font-family: sans-serif;
+        }
+
+        li {
+            list-style: none;
+        }
+
+        .wrapper {
+            align-items: stretch;
+            display: flex;
+            width: 100%;
+            height: 100vh; /* Ajuste para ocupar toda la altura de la ventana */
+        }
+
+        #sidebar {
+            max-width: 330px;
+            min-width: 330px;
+            height: 100%; /* Ajuste para ocupar toda la altura de la ventana */
+            transition: all 0.35s ease-in-out;
+            box-shadow: 10px 0 35px 0 rgba(67, 67, 67, 0.5);
+            z-index: 1111;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        #sidebar.collapsed {
+            margin-left: -330px;
+        }
+
+        .main {
+            background:rgba(255, 0, 0, 0.287);
+            width: 100%;
+            height:100%;
+            transition: all 0.35s ease-in-out;
+            overflow-y:scroll;
+            
+
+        }
+
+        .sidebar-logo {
+            padding: 1.15rem 1.5rem;
+        }
+
+        .sidebar-logo a {
+            color: #e9ecef;
+            font-size: 1.30rem;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .sidebar-nav {
+            padding: 0;
+        }
+
+        .sidebar-header {
+            color: #e9ecef;
+            font-size: .90rem;
+            padding: 1.5rem 1.5rem .375rem;
+        }
+
+        a.sidebar-link {
+            padding: .625rem 1.625rem;
+            color: #e9ecef;
+            position: relative;
+            display: block;
+            font-size: 1rem;
+            text-decoration: none;
+        }
+
+        .sidebar-link[data-bs-toggle="collapse"]::after {
+            border: solid;
+            border-width: 0 .075rem .075rem 0;
+            content: "";
+            display: inline-block;
+            padding: 2px;
+            position: absolute;
+            right: 1.5rem;
+            top: 1.4rem;
+            transform: rotate(-135deg);
+            transition: all .2s ease-out;
+        }
+
+        .sidebar-link[data-bs-toggle="collapse"].collapsed::after {
+            transform: rotate(45deg);
+            transition: all .2s ease-out;
+        }
+
+
+
+        .menu {
+            width: 24px;
+            height: 24px;
+        }
+
+        .menu_cont:focus {
+            outline: none;
+            box-shadow: none;
+            border: none;
+        }
+
+        footer {
+            color: white;
+            width: 100%;
+            padding: 10px;
+            background-color: transparent;
+        }
+
+        .footer-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .footer-buttons button {
+            background-color: transparent;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 105%;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="wrapper">
+        <aside id="sidebar">
+            <div>
+                <div class="sidebar-logo">
+                    <a href="#">Administración</a>
+                </div>
+                <ul class="sidebar-nav">
+                    <li class="sidebar-header">Usuario</li>
+                    <li class="sidebar-item">
+                        <a href="{% url 'reservas:gestion_perfil' %}" class="sidebar-link">
+                            <i class="fa-regular fa-user pe-2"></i>
+                            Perfil
+                        </a>
+                    </li>
+                    <li class="sidebar-header">Reservas</li>
+                    <li class="sidebar-item">
+                        <a href="#" class="sidebar-link collapsed" data-bs-toggle="collapse" data-bs-target="#pages" aria-expanded="false" aria-controls="pages">
+                            <i class="fa-solid fa-sliders pe-2"></i>
+                            Gestión de servicios
+                        </a>
+                        <ul id="pages" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
+                            <li class="sidebar-item">
+                                <a href="{% url 'reservas:administracion_reservas' %}" class="sidebar-link"> Reservas</a>
+                            </li>
+                            <li class="sidebar-item">
+                                <a href="{% url 'reservas:gestion_funcionario' %}" class="sidebar-link"> Funcionarios</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="sidebar-item">
+                        <a href="#" class="sidebar-link collapsed" data-bs-toggle="collapse" data-bs-target="#auth" aria-expanded="false" aria-controls="auth">
+                            <i class="fa-solid fa-share-nodes pe-2"></i>
+                            Gestión de Infraestructura
+                        </a>
+                        <ul id="auth" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
+                            <li class="sidebar-item">
+                                <a href="{% url 'reservas:gestion_implemento' %}" class="sidebar-link"> Implementos</a>
+                            </li>
+                            <li class="sidebar-item">
+                                <a href="{% url 'reservas:gestion_espacio' %}" class="sidebar-link"> Espacios</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="sidebar-header">Visitas</li>
+                    <li class="sidebar-item">
+                        <a href="{% url 'visitas:home_visita' %}" class="sidebar-link">
+                            <i class="fa-regular fa-address-card"></i>
+                            Visita externa
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <footer >
+                <div class="footer-buttons">
+                    <button class="terminos" type="button">Términos y condiciones</button>
+                    <button type="button" class="terminos" onclick="cerrar_sesion();">Cerrar sesión</button>
+                </div>
+            </footer>
+        </aside>
+        <div class="main">
+            <nav class="navbar navbar-expand px-3">
+                <button class="menu_cont btn" type="button" data-bs-theme="dark">
+                    <img class="menu" src="/static/bootstrap/img/menu.png" alt="">
+                </button>
+            </nav>
+                {% block content %}
+
+                {% endblock %}
+
+        </div>
+    </div>
+    <script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
+    <script>
+        const toggler = document.querySelector(".menu_cont");
+        toggler.addEventListener("click", function () {
+            document.querySelector("#sidebar").classList.toggle("collapsed");
+        });
+        $(document).on('show.bs.collapse', '.collapse', function () {
+            $('.collapse.show').collapse('hide');
+        });
+        function cerrar_sesion() {
+            if (confirm("¿Está seguro de que desea cerrar su sesión?")) {
+                // Redirigir a la vista que cierra la sesión
+                location.href = "{% url 'reservas:cerrar_sesion' %}";
+            }
+        }
+    </script>
+</body>
+</html>

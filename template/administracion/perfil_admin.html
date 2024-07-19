@@ -1,0 +1,281 @@
+{% include "administracion/base_admin.html" %}
+
+<link rel="stylesheet" href="/static/css/gestion_perfil.css">
+
+{% block body %}
+<div class="contenedor">
+    <h1 class="titulo">Perfil del Administrador</h1>
+    
+    {% if messages %}
+    <div class="container mt-3" id="messages-container">
+        {% for message in messages %}
+            <div class="alert {{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    
+
+    <div class="row">
+        <div class="col-md-4 form_usuario " >
+
+            <div class="vertical-line"></div>
+
+            <form id="profile-pic-form" method="post" enctype="multipart/form-data" action="{% url 'reservas:actualizar_imagen_perfil' %}">
+                {% csrf_token %}
+
+                {% if user.imagen_perfil %}
+                <button type="button" class="eliminar_foto" onclick="eliminarFotoPerfil();"><img src="/static/bootstrap/img/cerrar.png" alt="Eliminar foto"></button>
+                {% endif %}
+
+                <div class="profile-pic" onclick="document.getElementById('profile-pic-input').click();">
+                    {% if user.imagen_perfil %}
+                        <img src="{{ user.imagen_perfil.url }}" id="profile-pic-img">
+                    {% else %}
+                        <img src="/static/bootstrap/img/usuario.png" id="profile-pic-img">
+                        
+                    {% endif %}
+                    <div class="edit-overlay">Editar</div>
+                    <input type="file" id="profile-pic-input" class="editar_foto" name="imagen_perfil" onchange="updateProfilePic(this);">
+                </div>
+                <h2 class="nombre_usuario">{{ nombre_completo }}</h2>
+            </form>
+            <div class="buttons ">
+                
+                <button type="button" class="btn btnt btn-danger" onclick="inhabilitar_cuenta();">Eliminar cuenta</button>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-row">
+                    <div class="form-group col-md-6 ubicacion">
+                        <label for="{{ form.id_tipo_documento.id_for_label }}">Tipo Documento</label>
+                        {{ form.id_tipo_documento }}
+                    </div>
+                    <div class="form-group col-md-6 ubicacion">
+                        <label for="{{ form.identificacion.id_for_label }}">{{ form.identificacion.label }}</label>
+                        {{ form.identificacion }}
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6 ubicacion">
+                        <label for="{{ form.nombres.id_for_label }}">{{ form.nombres.label }}</label>
+                        {{ form.nombres }}
+                    </div>
+                    <div class="form-group col-md-6 ubicacion">
+                        <label for="{{ form.apellidos.id_for_label }}">{{ form.apellidos.label }}</label>
+                        {{ form.apellidos }}
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6 ubicacion">
+                        <label for="{{ form.telefono.id_for_label }}">{{ form.telefono.label }}</label>
+                        {{ form.telefono }}
+                    </div>
+                    <div class="form-group col-md-6 ubicacion">
+                        <label for="{{ form.correo.id_for_label }}">{{ form.correo.label }}</label>
+                        {{ form.correo }}
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6 ubicacion">
+                        <label for="{{ form.id_cargo.id_for_label }}">Cargo</label>
+                        {{ form.id_cargo }}
+                    </div>
+                    <div class="form-group col-md-6 ubicacion">
+                        <label for="{{ form.id_dependencia.id_for_label }}">Dependencia</label>
+                        {{ form.id_dependencia }}
+                    </div>
+                </div>
+                <div class="form-row prueba">
+                    <div class="form-group col-md-6 ubicacion">
+                        <button type="button" class="btn btnt btn-primary" id="mostrarFormulario">Cambiar Contraseña</button>
+                    </div>
+
+                    <div class="form-group col-md-6 ubicacion2">
+                        <button type="submit" class="btn btnt btn-primary">Guardar</button>
+                    </div>
+                </div>
+
+
+                
+
+            </form>
+            
+        </div>
+        
+    </div>
+
+<!-- Contenido del modal -->
+
+
+</div>
+
+<div id="ventanaEmergente">
+    <div id="formularioEmergente">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Cambiar Contraseña</h5>
+                <button type="button" class="btn-cerrar" aria-label="Close">
+                    <img src="/static/bootstrap/img/cerrar.png" alt="Cerrar">
+                </button>
+            </div>
+            <div class="modal-body" id="modalBodyContent">
+                <!-- El contenido se cargará aquí dinámicamente -->
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+
+    
+        // Función para ocultar cada mensaje después de 10 segundos
+        setTimeout(function() {
+            var messages = document.querySelectorAll('#messages-container .alert');
+            messages.forEach(function(message) {
+                message.style.display = 'none';
+            });
+        }, 3000); //segundos del mensaje
+    
+    function updateProfilePic(input) {
+        const file = input.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                document.getElementById('profile-pic-img').src = e.target.result;
+            }
+            reader.readAsDataURL(file);
+    
+            // Crear un objeto FormData para enviar el archivo
+            const formData = new FormData();
+            formData.append('imagen_perfil', file);
+            formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+    
+            // Enviar el formulario mediante AJAX
+            fetch("{% url 'reservas:actualizar_imagen_perfil' %}", {
+                method: 'POST',
+                body: formData,
+            })
+            .then(response => {
+                if (response.ok) {
+                    // Recargar la página
+                    location.reload();
+                } else {
+                    // Manejar el error si la respuesta no es ok
+                    console.error('Error al actualizar la imagen de perfil.');
+                }
+            })
+            .catch(error => {
+                // Manejar errores de la petición fetch
+                console.error('Error en la petición:', error);
+            });
+        }
+    }
+    
+
+function inhabilitar_cuenta() {
+    if (confirm("¿Está seguro de que desea eliminar la cuenta?")) {
+        // Redirigir a la vista que maneja la eliminación de la cuenta
+        location.href = "{% url 'reservas:inhabilitar_cuenta' %}";
+    }
+}
+
+
+
+function eliminarFotoPerfil() {
+    if (confirm("¿Estás seguro de que deseas eliminar tu foto de perfil?")) {
+        fetch("{% url 'reservas:eliminar_imagen_perfil' %}", {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+                'Content-Type': 'application/json'
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload(); // Recargar la página
+            } else {
+                alert('Error al eliminar la imagen de perfil.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error al eliminar la imagen de perfil.');
+        });
+    }
+}
+
+////modal
+document.addEventListener('DOMContentLoaded', function() {
+    var botonMostrar = document.getElementById("mostrarFormulario");
+    var ventanaEmergente = document.getElementById("ventanaEmergente");
+    var modalBodyContent = document.getElementById("modalBodyContent");
+
+    botonMostrar.addEventListener("click", () => {
+        // Mostrar la ventana emergente
+        ventanaEmergente.style.display = "flex";
+        
+        // Cargar el contenido del formulario dentro del modal
+        fetch('{% url "password_change" %}')
+            .then(response => response.text())
+            .then(html => {
+                modalBodyContent.innerHTML = html;
+                addFormSubmitListener(); // Agregar el listener al formulario cargado
+            })
+            .catch(error => {
+                console.error('Error al cargar el formulario:', error);
+            });
+    });
+
+    const btnCerrar = document.querySelector("#formularioEmergente .btn-cerrar");
+
+    btnCerrar.addEventListener("click", function() {
+        ventanaEmergente.style.display = "none";
+    });
+
+    function addFormSubmitListener() {
+        var form = modalBodyContent.querySelector('form');
+        form.addEventListener('submit', function(event) {
+            event.preventDefault(); // Evitar el envío del formulario tradicional
+
+            var formData = new FormData(form);
+
+            fetch(form.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => {
+                if (response.headers.get('content-type').includes('application/json')) {
+                    return response.json();
+                } else {
+                    return response.text();
+                }
+            })
+            .then(data => {
+                if (typeof data === 'object' && data.html) {
+                    modalBodyContent.innerHTML = data.html;
+                    addFormSubmitListener(); // Volver a agregar el listener al formulario cargado
+                } else if (typeof data === 'object' && data.message) {
+                    alert(data.message); // Mostrar mensaje de éxito
+                    ventanaEmergente.style.display = "none";
+                } else {
+                    modalBodyContent.innerHTML = data;
+                    addFormSubmitListener(); // Volver a agregar el listener al formulario cargado
+                }
+            })
+            .catch(error => {
+                console.error('Error al enviar el formulario:', error);
+            });
+        });
+    }
+});
+</script>
+
+{% endblock %}

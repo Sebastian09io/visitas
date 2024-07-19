@@ -1,0 +1,88 @@
+body {
+    margin: 0;
+    padding: 0;
+    background-image: url('{% static "bootstrap/img/calendario.png" %}');
+    background-size: cover;
+    background-repeat: no-repeat;
+    font-family: sans-serif;
+    height: 100vh;
+}
+
+#main-container{
+    border-radius: 25px;
+    border: solid 1px #4A4A4A;
+    background-color: white;
+    padding-bottom: 5%;
+}
+
+#year {
+    font-size: 40px;
+    font-weight: bold;
+    color: #333;
+    padding-left: 60px;
+    padding-bottom: 2%;
+}
+
+#calendar-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+#titulo-calendar {
+    text-align: center;
+    padding-top: 1%;
+    padding-bottom: 2%;
+}
+
+.month {
+    padding-right: 20px;
+    padding-left: 20px;
+    padding-bottom: 10px;
+}
+
+.month-header {
+    margin-bottom: 10px;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-size: 20px;
+    color: #E74C3C;
+}
+
+.month-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.month-table th,
+.month-table td {
+    text-align: center;
+    color: #555;
+    font-size: 11px;
+}
+
+.month-table th {
+    color: #999;
+    padding-right: 11px;
+    padding-bottom: 10px;
+}
+
+.month-table td {
+    padding-right: 15px;
+    padding-bottom: 1px;
+}
+
+.month-table .today {
+    background-color: #AED6F1;
+    font-weight: bold;
+    color: white;
+    border-radius: 100%;
+}
+
+.month-table td.weekday {
+    color: #424242; /* Color más oscuro para los días de la semana */
+    font-weight: 600;
+}
+
+.month-table td.weekend {
+    color: #999;
+}

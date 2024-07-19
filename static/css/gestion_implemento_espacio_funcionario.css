@@ -1,0 +1,125 @@
+.contenedor{
+    border-radius: 6px;
+    width: 69%;
+    height: 70%;
+    backdrop-filter: blur(3px);
+    background: white;
+    position: absolute;
+    top: 18%;
+    left: 20%;
+    padding: 2% 5%;
+    text-align: center;
+}
+
+.btn-estado{
+    width: 35px;
+    height: 35px;
+}
+.btn-accion{
+    border: none;
+    width: 35px;
+    height: 35px;
+    padding-left: 0%;
+    background:transparent;
+    margin-top:-10%;
+}
+
+.btn-primary{
+    background-color: #0f3efa; /* Azul Bootstrap */
+    border-color: #0f3efa;
+}
+.paginador{
+display: flex;
+justify-content: center;
+}
+.table-dark{
+    --bs-table-bg: #2d2d2d;
+}
+.titulo{
+    padding-bottom: 3%;
+    padding-top:1%;
+}
+.custom-select {
+    width: auto;
+}
+#ventanaEmergente {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Fondo semi-transparente */
+    justify-content: center;
+    align-items: center;
+    z-index: 1050; /* Ajustado para mayor prioridad */
+    transition: opacity 0.3s ease; /* Transición suave */
+}
+
+#formularioEmergente .modal-dialog {
+    max-width: 800px; /* Tamaño máximo del modal */
+    margin: 3rem auto; /* Centrado verticalmente */
+}
+
+#formularioEmergente .modal-content {
+    border-radius: 8px; /* Bordes redondeados */
+    overflow: hidden; /* Para que los bordes redondeados funcionen correctamente */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); /* Sombra para darle profundidad */
+}
+
+#formularioEmergente .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid #dee2e6;
+    background-color: #f8f9fa; /* Fondo claro */
+}
+
+#formularioEmergente .modal-header h5 {
+    margin: 0;
+    font-size: 1.25rem;
+}
+
+#formularioEmergente .btn-cerrar {
+    width: 32px; /* Ajustado para mayor claridad */
+    height: 32px;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease; /* Transición para efecto de hover */
+    margin-left:25px;
+}
+
+#formularioEmergente .btn-cerrar img {
+    width: 100%;
+    height: 100%;
+}
+
+#formularioEmergente .modal-body {
+    padding: 2rem;
+}
+
+#formularioEmergente .form-group {
+    margin-bottom: 1.5rem; /* Espaciado entre campos */
+}
+
+#formularioEmergente .btn-primary {
+    background-color: #0f3efa; /* Azul Bootstrap */
+    border-color: #0f3efa;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    border-radius: 4px;
+}
+
+/* Media query para dispositivos móviles */
+@media (max-width: 576px) {
+    #formularioEmergente .modal-dialog {
+        max-width: calc(100% - 1rem);
+        margin: 0.5rem;
+    }
+}

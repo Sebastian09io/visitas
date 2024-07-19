@@ -1,0 +1,23 @@
+{
+  "name": "reserva_de_auditorio_sennova",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "npm run build:js",
+    "build:js": "mkdir -p static/node/js && cp node_modules/@fullcalendar/core/index.global.min.js static/node/js/ && cp node_modules/@fullcalendar/daygrid/index.global.min.js static/node/js/ && cp node_modules/@fullcalendar/timegrid/index.global.min.js static/node/js/ && cp node_modules/@fullcalendar/interaction/index.global.min.js static/node/js/"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@fullcalendar/core": "^6.1.14",
+    "@fullcalendar/daygrid": "^6.1.14",
+    "@fullcalendar/interaction": "^6.1.14",
+    "@fullcalendar/timegrid": "^6.1.14",
+    "flatpickr": "^4.6.13",
+    "fullcalendar": "^6.1.14",
+    "preact": "^10.5.13"
+  }
+}

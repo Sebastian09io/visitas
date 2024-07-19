@@ -1,0 +1,73 @@
+ADMINISTRADOR
+email: prueba@gmail.com
+contraseña: 12345678#Sa
+
+FUNCIONARIO
+email: prueba2@gmail.com
+contraseña: 12345678#Sa
+
+sgtp
+correo sgtptv3@gmail.com  sgtptv5678
+alvaradosebastian359@gmail.com
+n a k g u o n v k d f a h p l j
+
+aprobacion pendiente para reservas y visitas 
+administracion de barra muestra el rol
+reservas barra sea logo   
+
+pruebas que se deben aplicar
+pruebas unitarias con testcase
+automatizada   con playwright
+github actions
+
+
+Pruebas unitarias con TestCase
+
+Gestion funcionarios
+listar                                   ok**
+actualizar/habilitado-inhabilitado       ok**
+paginacion                               ok**
+buscador                                 ok**
+filtro desplegable                       ok**
+
+
+
+Login
+correo existe o no                       ok**
+contraseña incorrecta                    ok**
+verificar si pasa a la interfaz          ok**
+
+
+Gestion implementos
+listar                                   ok**
+actualizar/habilitado-inhabilitado       ok**
+paginacion                               ok**
+buscador                                 ok**
+filtro desplegable                       ok**
+eliminar elemento                        ok**
+
+
+Gestion espacios
+listar                                   ok**
+actualizar/habilitado-inhabilitado       ok**
+paginacion                               ok**
+buscador                                 ok**
+filtro desplegable                       ok**
+eliminar elemento                        ok**
+
+
+Perfil administrador
+cerrar sesion                           ok**
+inhabilitar cuenta                      ok**
+actualizar imagen perfil                ok**
+eliminar imagen perfil                  ok**
+listar o traer datos a los campos       ok**
+actualizar o editar campos              ok**
+
+Perfil usuario
+cerrar sesion                           ok**
+inhabilitar cuenta                      ok**
+actualizar imagen perfil                ok**
+eliminar imagen perfil                  ok**
+listar o traer datos a los campos       ok**
+actualizar o editar campos              ok**

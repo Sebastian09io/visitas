@@ -1,0 +1,68 @@
+.contenedor{
+    border-radius: 6px;
+    width: 69%;
+    height: 70%;
+    background: white;
+    position: absolute;
+    top: 18%;
+    left: 20%;
+    padding: 2% 5%;
+    text-align: center;
+
+}
+
+.titulo{
+    padding-bottom: 3%;
+    padding-top:3%;
+}
+.btn-estado{
+    width: 35px;
+    height: 35px;
+    cursor: pointer;
+
+}
+
+form{
+    margin-top:5%;
+    
+}
+
+
+.form-group label {
+    text-align: left;
+    display: flex;
+    align-items: center;
+    margin-top: 0.375rem;
+}
+
+.form-group{
+    margin-bottom:4%;
+    margin-right:0%;
+}
+.form-group input,select{
+    max-width:290px;
+    min-width:270px;
+}
+.espacio{
+    left:3%;
+    margin-top:3%;
+}
+.espacio2{
+    left:2%;
+}
+
+.vertical-line {
+    position: absolute;
+    left: 50%; /* Coloca la línea en el centro horizontal del contenedor */
+    top:26%; /* Ajusta este valor para definir desde dónde empieza la línea */
+    height: 52%; /* Ajusta la altura de la línea según tus necesidades */
+    width: 1px; /* Grosor de la línea (más delgada) */
+    background-color: black; /* Color de la línea */
+}
+
+
+
+
+
+
+

@@ -1,0 +1,391 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<style>
+    body {
+        background-image: url('/static/bootstrap/img/registroFondo.png'); /* Ruta a tu imagen de fondo */
+        background-size: cover; /* Ajusta el tamaño de la imagen para cubrir todo el fondo */
+        background-position: center; /* Centra la imagen en el fondo */
+        height: 100vh; /* Ajusta la altura al 100% del viewport */
+        margin: 0; /* Elimina márgenes para un diseño limpio */
+    }
+
+    .card {
+        margin-top: 8%;
+        border-radius: 20px;
+    }
+
+    .card-header{
+        background-color: transparent;
+        border-bottom: none;
+    }
+
+    .form-group {
+        margin-bottom: 5px;
+    }
+
+    .sennova {
+        margin-top: 5%;
+        margin-bottom: 1%;
+        width: 30%;
+    }
+
+    .divider {
+        width: 2px;
+        background-color: #000000; /* Color negro */
+        /*height: 100%;*/
+        align-self: stretch;
+        margin-top: 5%;
+    }
+
+    .form-column {
+        margin-top: 5%;
+        border-right: 1.8px solid #3f3f3f; /* Línea negra a la derecha de la columna */
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        height: 100%; /* Ajusta según sea necesario */
+    }
+
+    .form-group {
+        padding-left: 20px; /* Espacio adicional al lado izquierdo */
+        padding-right: 30px; /* Espacio adicional al lado derecho */
+    }
+
+    .botones {
+        /* Cambiamos el tamaño del botton con pading y reducimos el tamaño del formulario con margin-bottom */
+        padding-left: 15%;
+        padding-right: 15%;
+        margin-bottom: 2%;
+    }
+
+    .btn{
+        border-radius: 9px;
+        font-size: 18px;
+    }
+
+    .regresar {
+        text-decoration: underline;
+        margin-top: 10px;
+        padding: 5px;
+        display: inline-block;
+    }
+
+    /* Recuadro de opciones en formulario */
+
+    .custom-select-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    }
+    .custom-select-container {
+        background: #fff;
+        padding: 12px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        position: absolute;
+        z-index: 1001;
+        width: auto;
+        border: 1px solid black;
+    }
+
+    /* Tamaño de los elementos*/
+
+    .custom-select-item {
+        padding: 6px;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+    .custom-select-item:hover {
+        background: #f0f0f0;
+    }
+
+    .close-button {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        width: 14px;
+        height: 14px;
+        background-color: red;
+        color: white;
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-size: 14px;
+        line-height: 1;
+        text-align: center;
+        z-index: 2000;
+    }
+
+    .close-button:hover {
+        background-color: darkred;
+    }
+
+    .dropdown-container {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+
+    .dropdown-icon-container {
+        position: absolute;
+        left: 0px;  /* Cambia 'right' a 'left' para mover el ícono a la izquierda */
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #fff;
+        border: 1px solid #ccc;
+        border-radius: 9px 0 9px 0;
+        padding: 0 10px;
+        pointer-events: none;
+        box-sizing: border-box;
+    }
+
+    .dropdown-icon {
+        font-size: 14px;
+        color: #000;
+    }
+
+    #id_dependencia_display, #id_cargo_display{
+        padding-left: 40px;  /* Añade padding a la izquierda para que el texto no se superponga con el ícono */
+    }
+
+    /* Campos del formulario */
+
+    .form-control {
+        background-color: #f5f5f5; /* Color de fondo similar al de la imagen */
+        border: 1px solid #ccc; /* Color del borde */
+        border-radius: 5px; /* Borde redondeado */
+        padding: 10px; /* Espaciado interno */
+        color: #333; /* Color del texto */
+        font-size: 1rem; /* Tamaño de fuente */
+    }
+
+    .form-control::placeholder {
+        color: #999; /* Color del placeholder */
+    }
+
+    .form-control:focus {
+        background-color: #e6e6e6; /* Color de fondo al enfocar */
+        border-color: #999; /* Color del borde al enfocar */
+        outline: none; /* Elimina el borde por defecto al enfocar */
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); /* Añade una sombra ligera al enfocar */
+    }
+
+</style>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header text-center">
+                    <img class="sennova" src="/static/bootstrap/img/sennova.jpeg">
+                    <h1>Crea una cuenta</h1>
+                </div>
+                <div class="card-body">
+                    <form method="POST" novalidate>
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-6 form-column">
+                                <div class="form-group">
+                                    <label for="id_tipo_documento_display" class="col-form-label text-md-right">Identificación</label>
+                                    <div class="d-flex align-items-center">
+                                        <div class="dropdown-container">
+                                            <input type="text" id="id_tipo_documento_display" class="form-control" placeholder="Tipo identificacion" onclick="showCustomSelect('id_tipo_documento', tipoDocumentoOptions, this)">
+                                            {{ form.id_tipo_documento }}
+                                        </div>
+                                        <div>
+                                            {{ form.identificacion }}
+                                        </div>
+                                    </div>
+                                    {% for error in form.id_tipo_documento.errors %}
+                                        <div class="invalid-feedback d-block">{{ error }}</div>
+                                    {% endfor %}
+                                    {% for error in form.identificacion.errors %}
+                                        <div class="invalid-feedback d-block">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                                <div class="form-group">
+                                    <label for="id_cargo" class="col-form-label text-md-right">Cargo</label>
+                                    <div class="dropdown-container">
+                                        <div class="dropdown-icon-container">
+                                            <span class="dropdown-icon">▼</span>
+                                        </div>
+                                        <input type="text" id="id_cargo_display" class="form-control" placeholder="Seleccione su cargo"  onclick="showCustomSelect('id_cargo', cargoOptions, this)">
+                                        {{ form.id_cargo }}
+                                    </div>
+                                    {% for error in form.id_cargo.errors %}
+                                        <div class="invalid-feedback d-block">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                                <div class="form-group">
+                                    <label for="id_dependencia" class="col-form-label text-md-right">Dependencia</label>
+                                    <div class="dropdown-container">
+                                        <div class="dropdown-icon-container">
+                                            <span class="dropdown-icon">▼</span>
+                                        </div>
+                                        <input type="text" id="id_dependencia_display" class="form-control" placeholder="Seleccione su dependencia" onclick="showCustomSelect('id_dependencia', dependenciaOptions, this)">
+                                        {{ form.id_dependencia }}
+                                    </div>
+                                    {% for error in form.id_dependencia.errors %}
+                                        <div class="invalid-feedback d-block">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                                <div class="form-group">
+                                    <label for="telefono" class="col-form-label text-md-right">Teléfono</label>
+                                    {{ form.telefono }}
+                                    {% for error in form.telefono.errors %}
+                                        <div class="invalid-feedback d-block">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <div class="custom-select-overlay" id="customSelectOverlay">
+                                <div class="custom-select-container" id="customSelectContainer">
+                                    <button class="close-button" id="closeButton">&times;</button>
+                                    <!-- Los elementos se agregaran automaticamente aca -->
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="nombres" class="col-form-label text-md-right">Nombre</label>
+                                    {{ form.nombres }}
+                                    {% for error in form.nombres.errors %}
+                                        <div class="invalid-feedback d-block">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                                <div class="form-group">
+                                    <label for="apellidos" class="col-form-label text-md-right">Apellidos</label>
+                                    {{ form.apellidos }}
+                                    {% for error in form.apellidos.errors %}
+                                        <div class="invalid-feedback d-block">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                                <div class="form-group">
+                                    <label for="correo" class="col-form-label text-md-right">Correo</label>
+                                    {{ form.correo }}
+                                    {% for error in form.correo.errors %}
+                                        <div class="invalid-feedback d-block">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                                <div class="form-group">
+                                    <label for="password1" class="col-form-label text-md-right">Contraseña</label>
+                                    {{ form.password1 }}
+                                    {% for error in form.password1.errors %}
+                                        <div class="invalid-feedback d-block">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                                <div class="form-group">
+                                    <label for="password2" class="col-form-label text-md-right">Confirmar contraseña</label>
+                                    {{ form.password2 }}
+                                    {% for error in form.password2.errors %}
+                                        <div class="invalid-feedback d-block">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group row mt-3 my-5">
+                            <div class="col-md-6 offset-md-3 text-center botones">
+                                <button type="submit" class="btn btn-primary btn-sm btn-block">
+                                    Continuar
+                                </button>
+                                <a href="{% url 'gestiones:login' %}" class="regresar">
+                                    Regresar
+                                </a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div> 
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+    // Obtiene los datos del modelo
+    const tipoDocumentoOptions = JSON.parse('{{ tipo_documento_opciones|escapejs }}');
+    const cargoOptions = JSON.parse('{{ cargo_opciones|escapejs }}');
+    const dependenciaOptions = JSON.parse('{{ dependencia_opciones|escapejs }}');
+
+    function showCustomSelect(fieldId, options, fieldElement) {
+        const overlay = document.getElementById('customSelectOverlay');
+        const container = document.getElementById('customSelectContainer');
+        container.innerHTML = '<button class="close-button" id="closeButton">&times;</button>'; // Limpia la seleccion al dar X
+
+        const rect = fieldElement.getBoundingClientRect();
+        container.style.top = `${rect.top + window.scrollY}px`;
+        container.style.left = `${rect.left + window.scrollX}px`;
+        container.style.width = `${rect.width}px`;
+
+        options.forEach(option => {
+            const item = document.createElement('div');
+            item.className = 'custom-select-item';
+            item.textContent = option.nombre; /* Lista las opciones del modelo*/
+            item.onclick = () => {
+                document.querySelector(`[name="${fieldId}"]`).value = option.id;
+                fieldElement.value = option.nombre; /* Lista las opciones del modelo*/
+                hideCustomSelect();
+            };
+            container.appendChild(item);
+        });
+
+        overlay.style.display = 'flex';
+
+        document.getElementById('closeButton').addEventListener('click', () => {
+            overlay.style.display = 'none';
+        });
+    }
+
+    document.getElementById('id_tipo_documento_display').addEventListener('click', function() {
+        showCustomSelect('id_tipo_documento', tipoDocumentoOptions, this);
+    });
+
+    document.getElementById('id_cargo_display').addEventListener('click', function() {
+        showCustomSelect('id_cargo', cargoOptions, this);
+    });
+
+    document.getElementById('id_dependencia_display').addEventListener('click', function() {
+        showCustomSelect('id_dependencia', dependenciaOptions, this);
+    });
+
+    function getOptionsForField(fieldId) {
+        switch (fieldId) {
+            case 'id_tipo_documento':
+                return tipoDocumentoOptions;
+            case 'id_cargo':
+                return cargoOptions;
+            case 'id_dependencia':
+                return dependenciaOptions;
+            default:
+                return [];
+        }
+    }
+
+
+    document.getElementById('customSelectOverlay').addEventListener('click', function(e) {
+        if (e.target === this) {
+            this.style.display = 'none';
+        }
+    });
+
+    function hideCustomSelect() {
+        document.getElementById('customSelectOverlay').style.display = 'none';
+    }
+
+</script>
+
+{% endblock %}

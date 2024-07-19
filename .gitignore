@@ -1,0 +1,17 @@
+# Ignorar todos los directorios __pycache__
+**/__pycache__/
+
+# Ignorar archivos .pyc generados por el compilador de Python
+**/*.pyc
+
+# Ignorar el archivo de base de datos SQLite
+db.sqlite3
+
+# Ignorar directorios migrations en todas las aplicaciones de Django
+**/migrations/
+
+# Ignorar el entorno
+.venv
+
+# Ignorar archivos .env
+.env
