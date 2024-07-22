@@ -1,55 +1,61 @@
-{% include "administracion/base_admin.html" %}
+ {% extends "administracion/base_admin.html" %}
 
-<link rel="stylesheet" href="/static/css/visita.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
 {% block content %}
-<div class="contenedor">
-    <h1 class="titulo">Registro de visita</h1>
-    <form method="post" enctype="multipart/form-data" id="mainForm">
+<style>
+    .form_group_v input,select{
+        max-width:290px;
+        min-width:270px;
+    }
+</style>
+
+<div class="contenedor_visita">
+    <h1 class="titulo_visita">Registro de visita</h1>
+    <form class="formulario_visita" method="post" enctype="multipart/form-data" id="mainForm">
         {% csrf_token %}
         <div class="row">
-            <div class="col-md-6 espacio2">
+            <div class="col-md-6 espacio_v2">
                 <div class="form-row">
-                    <div class="form-group col-md-6">
+                    <div class="form-group form_group_v col-md-6">
                         <label for="nombres">Nombres</label>
                         <input type="text" class="form-control" value="{{ user.nombres }}" readonly>
                     </div>
-                    <div class="form-group col-md-6">
+                    <div class="form-group form_group_v col-md-6">
                         <label for="apellidos">Apellidos</label>
                         <input type="text" class="form-control" value="{{ user.apellidos }}" readonly>
                     </div>
                 </div>
                 <div class="form-row">
-                    <div class="form-group col-md-6">
+                    <div class="form-group form_group_v col-md-6">
                         <label for="correo">Correo</label>
                         <input type="text" class="form-control" value="{{ user.correo }}" readonly>
                     </div>
-                    <div class="form-group col-md-6">
+                    <div class="form-group form_group_v col-md-6">
                         <label>Autoriza grabación:</label>
                         <div class="d-flex align-items-center">
-                            <img id="grabacion-on" class="btn-estado mr-2" src="/static/bootstrap/img/on.png" style="display: {% if user.id_visita.grabacion %} block {% else %} none {% endif %};">
-                            <img id="grabacion-off" class="btn-estado" src="/static/bootstrap/img/off.png" style="display: {% if user.id_visita.grabacion %} none {% else %} block {% endif %};">
+                            <img id="grabacion-on" class="btn-estado_v mr-2" src="/static/bootstrap/img/on.png" style="display: {% if user.id_visita.grabacion %} block {% else %} none {% endif %};">
+                            <img id="grabacion-off" class="btn-estado_v" src="/static/bootstrap/img/off.png" style="display: {% if user.id_visita.grabacion %} none {% else %} block {% endif %};">
                             <input type="hidden" name="grabacion" id="grabacion-input" value="{{ user.id_visita.grabacion }}">
                         </div>
                     </div>
                 </div>
                 <div class="form-row">
-                    <div class="form-group col-md-6">
+                    <div class="form-group form_group_v col-md-6">
                         <label for="id_tipo_documento">Tipo Documento</label>
                         <input type="text" class="form-control" value="{{ user.id_tipo_documento }}" readonly>
                     </div>
-                    <div class="form-group col-md-6">
+                    <div class="form-group form_group_v col-md-6">
                         <label for="identificacion">Identificación</label>
                         <input type="text" class="form-control" value="{{ user.identificacion }}" readonly>
                     </div>
                 </div>
                 <div class="form-row">
-                    <div class="form-group col-md-6">
+                    <div class="form-group form_group_v col-md-6">
                         <label for="telefono">Teléfono</label>
                         <input type="text" class="form-control" value="{{ user.telefono }}" readonly>
                     </div>
-                    <div class="form-group col-md-6">
+                    <div class="form-group  form_group_v col-md-6">
                         <label for="{{ form.id_genero.id_for_label }}">Género</label>
                         {{ form.id_genero }}
                     </div>
@@ -57,45 +63,45 @@
             </div>
 
 
-            <div class="col-md-6 espacio">
+            <div class="col-md-6 espacio_v">
                 <div class="form-row">
-                    <div class="form-group col-md-6">
+                    <div class="form-group form_group_v col-md-6">
                         <label for="{{ form.procedencia.id_for_label }}">Procedencia</label>
                         {{ form.procedencia }}
                     </div>
-                    <div class="form-group col-md-6">
+                    <div class="form-group form_group_v col-md-6">
                         <label for="{{ form.discapacidad.id_for_label }}">Discapacidad</label>
                         {{ form.discapacidad }}
                     </div>
                 </div>
                 <div class="form-row">
-                    <div class="form-group col-md-6">
+                    <div class="form-group form_group_v col-md-6">
                         <label for="{{ form.id_area.id_for_label }}">Estrategia</label>
                         {{ form.id_area }}
                     </div>
-                    <div class="form-group col-md-6" id="linea-field" style="display: none;">
+                    <div class="form-group form_group_v col-md-6" id="linea-field" style="display: none;">
                         <label for="{{ form.id_linea.id_for_label }}">Línea</label>
                         {{ form.id_linea }}
                     </div>
-                    <div class="form-group col-md-6" id="ambiente-field" style="display: none;">
+                    <div class="form-group form_group_v col-md-6" id="ambiente-field" style="display: none;">
                         <label for="{{ form.id_ambiente.id_for_label }}">Ambiente</label>
                         {{ form.id_ambiente }}
                     </div>
-                    <div class="form-group col-md-6" id="espacio-field" >
+                    <div class="form-group form_group_v col-md-6" id="espacio-field" >
                         <label>Espacio</label>
                         <input type="text" value="Seleccione primero la estrategia" class="form-control" readonly>
                     </div>
-                    <div class="form-group col-md-6" id="no-permitido-field" style="display: none;">
+                    <div class="form-group form_group_v col-md-6" id="no-permitido-field" style="display: none;">
                         <label>Espacio</label>
                         <input type="text" value="No aplica" class="form-control" readonly>
                     </div>
                 </div>
                 <div class="form-row">
-                    <div class="form-group col-md-6">
+                    <div class="form-group form_group_v col-md-6">
                         <label for="fecha_inicio">Fecha de inicio</label>
                         {{ form.fecha_inicio }}
                     </div>
-                    <div class="form-group col-md-6">
+                    <div class="form-group form_group_v col-md-6">
                         <label for="fecha_finalizacion">Fecha de finalización</label>
                         {{ form.fecha_finalizacion }}
                     </div>
@@ -110,10 +116,142 @@
 
     </form>
 
-    <div class="vertical-line"></div>
+    <div class="vertical-line_v"></div>
+    <div class="horizontal_line_"></div>
 
+<!-- registro asistentes -->
+
+    <div class="contenedor_visita2">
+        <h1 class="titulo_visita">Registro de asistentes</h1>
+        <form class="formulario_visita2" method="post" enctype="multipart/form-data" id="mainForm">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-md-6 espacio_v2">
+                    <div class="form-row">
+                        <div class="form-group form_group_v col-md-6">
+                            <label for="nombres">Nombres</label>
+                            <input type="text" class="form-control" value="{{ user.nombres }}" >
+                        </div>
+                        <div class="form-group form_group_v col-md-6">
+                            <label for="apellidos">Apellidos</label>
+                            <input type="text" class="form-control" value="{{ user.apellidos }}" >
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group form_group_v col-md-6">
+                            <label for="correo">Correo</label>
+                            <input type="text" class="form-control" value="{{ user.correo }}" >
+                        </div>
+                        <div class="form-group form_group_v col-md-6">
+                            <label for="telefono">Teléfono</label>
+                            <input type="text" class="form-control" value="{{ user.telefono }}" >
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group form_group_v col-md-6">
+                            <label for="id_tipo_documento">Tipo Documento</label>
+                            <input type="text" class="form-control" value="{{ user.id_tipo_documento }}" >
+                        </div>
+                        <div class="form-group form_group_v col-md-6">
+                            <label for="identificacion">Identificación</label>
+                            <input type="text" class="form-control" value="{{ user.identificacion }}" >
+                        </div>
+                    </div>
+    
+                </div>
+    
+    
+                <div class="col-md-6 espacio_v3">
+                    <div class="form-row">
+                        <div class="form-group form_group_v col-md-6">
+                            <label for="{{ form.id_genero.id_for_label }}">Género</label>
+                            {{ form.id_genero }}
+                        </div>
+                        <div class="form-group  form_group_v col-md-6">
+                            <label for="{{ form.procedencia.id_for_label }}">Procedencia</label>
+                            {{ form.procedencia }}
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group form_group_v col-md-6">
+                            <label for="{{ form.discapacidad.id_for_label }}">Discapacidad</label>
+                            {{ form.discapacidad }}
+                        </div>
+
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group form_group_v claseleft col-md-6">
+                            <label class="letrat">c</label>
+                            <button type="button" class="btn btnt btn-primary" >Asistentes en excel</button>
+                        </div>
+                        <div class="form-group form_group_v2  col-md-6">
+                            <label class="letrat">c</label>
+                            <button type="submit" class="btn btnt2 btn-primary" >Agregar</button>
+                        </div>
+                    </div>
+    
+    
+                </div>
+            </div>
+            
+    
+        </form>
+    
+        <div class="vertical-line_v2"></div>
+    
+    </div>
+
+    <div class="horizontal_line_2"></div>
+
+    <!-- listado asistentes -->
+    <div class="contenedor_visita3">
+        <h1 class="titulo_visita">Listado de asistentes</h1>
+
+        <div class="mt-4">
+            <div class="row">
+                <div class="col-md-12">
+
+                        <div class="card-body">
+
+                        
+                        <div class="table-responsive">
+                            <table id="funcionarios-table" class="table table-striped table-bordered">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">Nombres</th>
+                                        <th scope="col">Apellidos</th>
+                                        <th scope="col">Telefono</th>
+                                        <th scope="col">Identificacion</th>
+                                        <th scope="col">Correo</th>
+                                        <th scope="col">Procedencia</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for c in resultados %}
+                                    <tr class="draggable-row" data-id="{{ c.id }}">
+                                        <th scope="row">{{ forloop.counter }}</th>
+                                        <td>{{ c.nombres }}</td>
+                                        <td>{{ c.apellidos }}</td>
+                                        <td>{{ c.telefono }}</td>
+                                        <td>{{ c.identificacion }}</td>
+                                        <td>{{ c.correo }}</td>
+                                        <td>{{ c.id_dependencia }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+        
+
+                        </div>
+                </div>
+            </div>
+        </div>
+
+<button type="submit">guardar visita</button>
+    </div>
 </div>
-
 
 
 
