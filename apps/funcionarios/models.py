@@ -60,6 +60,21 @@ class Visita(Base):
     procedencia = models.CharField(max_length=80)
     grabacion  = models.BooleanField(default=True)
 
+
+class Asistente(Base):
+    nombre = models.CharField(max_length=50)
+    correo = models.EmailField(unique=True)
+
+    def __str__(self):
+        return self.nombre
+
+class VisitaAsistente(models.Model):
+    visita = models.ForeignKey(Visita, on_delete=models.CASCADE)
+    asistente = models.ForeignKey(Asistente, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('visita', 'asistente')
+
 # Modelo personalizado
 class PersonaManager(BaseUserManager):
     def create_user(self, correo, password=None, **extra_fields):

@@ -39,3 +39,36 @@ def home_visita(request):
         'id_area_value': id_area_value,  # Añadir el valor al contexto
     }
     return render(request, 'visita.html', context)
+
+import json
+from django.http import HttpResponse
+from apps.funcionarios.models import Visita, Persona, Asistente, VisitaAsistente
+
+def guardar_visita(request):
+    if request.method == 'POST':
+        form = VisitForm(request.POST)
+        if form.is_valid():
+            # Guardar la visita
+            visita = form.save()
+
+            # Procesar los asistentes
+            asistentes_data = request.POST.get('asistentes')
+            if asistentes_data:
+                asistentes = json.loads(asistentes_data)
+                for asistente_data in asistentes:
+                    asistente, created = Asistente.objects.get_or_create(
+                        nombre=asistente_data['nombres'],
+                        correo=asistente_data['correo'],
+                        defaults={
+                            'telefono': asistente_data['telefono'],
+                            'id_tipo_documento': asistente_data['idTipoDocumento'],
+                            'identificacion': asistente_data['identificacion']
+                        }
+                    )
+                    VisitaAsistente.objects.create(visita=visita, asistente=asistente)
+
+            return redirect('nombre_de_la_vista_a_donde_redirigir')  # Cambia esto al nombre de la vista a la que deseas redirigir
+    else:
+        form = VisitForm()
+
+    return render(request, 'nombre_del_template.html', {'form': form})

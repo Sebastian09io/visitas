@@ -119,139 +119,100 @@
     <div class="vertical-line_v"></div>
     <div class="horizontal_line_"></div>
 
+
 <!-- registro asistentes -->
-
-    <div class="contenedor_visita2">
-        <h1 class="titulo_visita">Registro de asistentes</h1>
-        <form class="formulario_visita2" method="post" enctype="multipart/form-data" id="mainForm">
-            {% csrf_token %}
-            <div class="row">
-                <div class="col-md-6 espacio_v2">
-                    <div class="form-row">
-                        <div class="form-group form_group_v col-md-6">
-                            <label for="nombres">Nombres</label>
-                            <input type="text" class="form-control" value="{{ user.nombres }}" >
-                        </div>
-                        <div class="form-group form_group_v col-md-6">
-                            <label for="apellidos">Apellidos</label>
-                            <input type="text" class="form-control" value="{{ user.apellidos }}" >
-                        </div>
+<div class="contenedor_visita2">
+    <h1 class="titulo_visita">Registro de asistentes</h1>
+    <form class="formulario_visita2" id="asistentesForm">
+        {% csrf_token %}
+        <div class="row">
+            <!-- Campos del asistente -->
+            <div class="col-md-6 espacio_v2">
+                <div class="form-row">
+                    <div class="form-group form_group_v col-md-6">
+                        <label for="nombres_asistente">Nombres</label>
+                        <input type="text" id="nombres_asistente" class="form-control">
                     </div>
-                    <div class="form-row">
-                        <div class="form-group form_group_v col-md-6">
-                            <label for="correo">Correo</label>
-                            <input type="text" class="form-control" value="{{ user.correo }}" >
-                        </div>
-                        <div class="form-group form_group_v col-md-6">
-                            <label for="telefono">Teléfono</label>
-                            <input type="text" class="form-control" value="{{ user.telefono }}" >
-                        </div>
+                    <div class="form-group form_group_v col-md-6">
+                        <label for="apellidos_asistente">Apellidos</label>
+                        <input type="text" id="apellidos_asistente" class="form-control">
                     </div>
-                    <div class="form-row">
-                        <div class="form-group form_group_v col-md-6">
-                            <label for="id_tipo_documento">Tipo Documento</label>
-                            <input type="text" class="form-control" value="{{ user.id_tipo_documento }}" >
-                        </div>
-                        <div class="form-group form_group_v col-md-6">
-                            <label for="identificacion">Identificación</label>
-                            <input type="text" class="form-control" value="{{ user.identificacion }}" >
-                        </div>
-                    </div>
-    
                 </div>
-    
-    
-                <div class="col-md-6 espacio_v3">
-                    <div class="form-row">
-                        <div class="form-group form_group_v col-md-6">
-                            <label for="{{ form.id_genero.id_for_label }}">Género</label>
-                            {{ form.id_genero }}
-                        </div>
-                        <div class="form-group  form_group_v col-md-6">
-                            <label for="{{ form.procedencia.id_for_label }}">Procedencia</label>
-                            {{ form.procedencia }}
-                        </div>
+                <div class="form-row">
+                    <div class="form-group form_group_v col-md-6">
+                        <label for="correo_asistente">Correo</label>
+                        <input type="text" id="correo_asistente" class="form-control">
                     </div>
-                    <div class="form-row">
-                        <div class="form-group form_group_v col-md-6">
-                            <label for="{{ form.discapacidad.id_for_label }}">Discapacidad</label>
-                            {{ form.discapacidad }}
-                        </div>
-
+                    <div class="form-group form_group_v col-md-6">
+                        <label for="telefono_asistente">Teléfono</label>
+                        <input type="text" id="telefono_asistente" class="form-control">
                     </div>
-                    <div class="form-row">
-                        <div class="form-group form_group_v claseleft col-md-6">
-                            <label class="letrat">c</label>
-                            <button type="button" class="btn btnt btn-primary" >Asistentes en excel</button>
-                        </div>
-                        <div class="form-group form_group_v2  col-md-6">
-                            <label class="letrat">c</label>
-                            <button type="submit" class="btn btnt2 btn-primary" >Agregar</button>
-                        </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group form_group_v col-md-6">
+                        <label for="id_tipo_documento_asistente">Tipo Documento</label>
+                        <input type="text" id="id_tipo_documento_asistente" class="form-control">
                     </div>
-    
-    
+                    <div class="form-group form_group_v col-md-6">
+                        <label for="identificacion_asistente">Identificación</label>
+                        <input type="text" id="identificacion_asistente" class="form-control">
+                    </div>
                 </div>
             </div>
-            
-    
-        </form>
-    
-        <div class="vertical-line_v2"></div>
-    
-    </div>
 
-    <div class="horizontal_line_2"></div>
-
-    <!-- listado asistentes -->
-    <div class="contenedor_visita3">
-        <h1 class="titulo_visita">Listado de asistentes</h1>
-
-        <div class="mt-4">
-            <div class="row">
-                <div class="col-md-12">
-
-                        <div class="card-body">
-
-                        
-                        <div class="table-responsive">
-                            <table id="funcionarios-table" class="table table-striped table-bordered">
-                                <thead class="table-dark">
-                                    <tr>
-                                        <th scope="col">#</th>
-                                        <th scope="col">Nombres</th>
-                                        <th scope="col">Apellidos</th>
-                                        <th scope="col">Telefono</th>
-                                        <th scope="col">Identificacion</th>
-                                        <th scope="col">Correo</th>
-                                        <th scope="col">Procedencia</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for c in resultados %}
-                                    <tr class="draggable-row" data-id="{{ c.id }}">
-                                        <th scope="row">{{ forloop.counter }}</th>
-                                        <td>{{ c.nombres }}</td>
-                                        <td>{{ c.apellidos }}</td>
-                                        <td>{{ c.telefono }}</td>
-                                        <td>{{ c.identificacion }}</td>
-                                        <td>{{ c.correo }}</td>
-                                        <td>{{ c.id_dependencia }}</td>
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
-        
-
-                        </div>
+            <div class="col-md-6 espacio_v3">
+                <div class="form-row">
+                    <div class="form-group form_group_v2 col-md-6">
+                        <label class="letrat">c</label>
+                        <button type="button" class="btn btnt2 btn-primary" id="agregarAsistente">Agregar</button>
+                    </div>
                 </div>
             </div>
         </div>
+    </form>
 
-<button type="submit">guardar visita</button>
-    </div>
+    <div class="vertical-line_v2"></div>
 </div>
+
+<!-- listado asistentes -->
+<div class="contenedor_visita3">
+    <h1 class="titulo_visita">Listado de asistentes</h1>
+
+    <div class="mt-4">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table id="funcionarios-table" class="table table-striped table-bordered">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Nombres</th>
+                                    <th scope="col">Apellidos</th>
+                                    <th scope="col">Teléfono</th>
+                                    <th scope="col">Género</th>
+                                    <th scope="col">Tipo Identificación</th>
+                                    <th scope="col">Identificación</th>
+                                    <th scope="col">Correo</th>
+                                    <th scope="col">Procedencia</th>
+                                    <th scope="col">Discapacidad</th>
+                                </tr>
+                            </thead>
+                            <tbody id="asistentesTableBody">
+                                <!-- Aquí se agregarán las filas con JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Botón para guardar la visita -->
+    <button type="submit" form="mainForm">Guardar visita</button>
+</div>
+</div>
+
 
 
 
@@ -309,6 +270,65 @@
         areaField.addEventListener("change", updateFields);
     });
     
+    ////asistentes
+    document.addEventListener("DOMContentLoaded", function() {
+        let asistentes = [];
+    
+        document.getElementById('agregarAsistente').addEventListener('click', function() {
+            // Obtener valores del formulario de asistente
+            const nombres = document.getElementById('nombres_asistente').value;
+            const apellidos = document.getElementById('apellidos_asistente').value;
+            const correo = document.getElementById('correo_asistente').value;
+            const telefono = document.getElementById('telefono_asistente').value;
+            const idTipoDocumento = document.getElementById('id_tipo_documento_asistente').value;
+            const identificacion = document.getElementById('identificacion_asistente').value;
+    
+            // Validar los campos
+            if (!nombres || !apellidos || !correo || !telefono || !idTipoDocumento || !identificacion) {
+                alert('Por favor complete todos los campos');
+                return;
+            }
+    
+            // Crear una nueva fila en la tabla
+            const tableBody = document.getElementById('asistentesTableBody');
+            const rowCount = tableBody.rows.length + 1;
+            const row = tableBody.insertRow();
+            row.innerHTML = `
+                <th scope="row">${rowCount}</th>
+                <td>${nombres}</td>
+                <td>${apellidos}</td>
+                <td>${telefono}</td>
+                <td>${idTipoDocumento}</td>
+                <td>${identificacion}</td>
+                <td>${correo}</td>
+                <td>Procedencia aquí</td>
+                <td>Discapacidad aquí</td>
+            `;
+    
+            // Agregar el asistente al array
+            asistentes.push({
+                nombres, apellidos, correo, telefono, idTipoDocumento, identificacion
+            });
+    
+            // Limpiar campos
+            document.getElementById('nombres_asistente').value = '';
+            document.getElementById('apellidos_asistente').value = '';
+            document.getElementById('correo_asistente').value = '';
+            document.getElementById('telefono_asistente').value = '';
+            document.getElementById('id_tipo_documento_asistente').value = '';
+            document.getElementById('identificacion_asistente').value = '';
+        });
+    
+        // Enviar el formulario con los datos de los asistentes
+        document.getElementById('mainForm').addEventListener('submit', function(e) {
+            // Añadir los asistentes como un campo oculto en el formulario
+            const asistentesInput = document.createElement('input');
+            asistentesInput.type = 'hidden';
+            asistentesInput.name = 'asistentes';
+            asistentesInput.value = JSON.stringify(asistentes);
+            this.appendChild(asistentesInput);
+        });
+    });
     
 </script>
 
