@@ -12,6 +12,17 @@
 
 <div class="contenedor_visita">
     <h1 class="titulo_visita">Registro de visita</h1>
+
+    {% if messages %}
+    <div class="container mt-3" id="messages-container">
+        {% for message in messages %}
+            <div class="alert {{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
     <form class="formulario_visita" method="post" enctype="multipart/form-data" id="mainForm">
         {% csrf_token %}
         <div class="row">
@@ -131,31 +142,31 @@
                 <div class="form-row">
                     <div class="form-group form_group_v col-md-6">
                         <label for="nombres_asistente">Nombres</label>
-                        <input type="text" id="nombres_asistente" class="form-control">
+                        {{form.nombre_asistente}}
                     </div>
                     <div class="form-group form_group_v col-md-6">
                         <label for="apellidos_asistente">Apellidos</label>
-                        <input type="text" id="apellidos_asistente" class="form-control">
+                        {{form.apellidos_asistente}}
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group form_group_v col-md-6">
                         <label for="correo_asistente">Correo</label>
-                        <input type="text" id="correo_asistente" class="form-control">
+                        {{form.correo_asistente}}
                     </div>
                     <div class="form-group form_group_v col-md-6">
                         <label for="telefono_asistente">Teléfono</label>
-                        <input type="text" id="telefono_asistente" class="form-control">
+                        {{form.telefono_asistente}}
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group form_group_v col-md-6">
                         <label for="id_tipo_documento_asistente">Tipo Documento</label>
-                        <input type="text" id="id_tipo_documento_asistente" class="form-control">
+                        {{form.id_tipo_documento_asistente }}
                     </div>
                     <div class="form-group form_group_v col-md-6">
                         <label for="identificacion_asistente">Identificación</label>
-                        <input type="text" id="identificacion_asistente" class="form-control">
+                        {{form.identificacion_asistente}}
                     </div>
                 </div>
             </div>
@@ -166,9 +177,13 @@
                         <label class="letrat">c</label>
                         <button type="button" class="btn btnt2 btn-primary" id="agregarAsistente">Agregar</button>
                     </div>
+
                 </div>
+
             </div>
+
         </div>
+
     </form>
 
     <div class="vertical-line_v2"></div>
@@ -190,12 +205,10 @@
                                     <th scope="col">Nombres</th>
                                     <th scope="col">Apellidos</th>
                                     <th scope="col">Teléfono</th>
-                                    <th scope="col">Género</th>
                                     <th scope="col">Tipo Identificación</th>
                                     <th scope="col">Identificación</th>
                                     <th scope="col">Correo</th>
-                                    <th scope="col">Procedencia</th>
-                                    <th scope="col">Discapacidad</th>
+
                                 </tr>
                             </thead>
                             <tbody id="asistentesTableBody">
@@ -208,8 +221,9 @@
         </div>
     </div>
 
-    <!-- Botón para guardar la visita -->
-    <button type="submit" form="mainForm">Guardar visita</button>
+<!-- Botón para guardar la visita -->
+<button type="submit" form="mainForm" class="btn btn-primary">Guardar visita</button>
+
 </div>
 </div>
 
@@ -240,26 +254,29 @@
         function updateFields() {
             var selectedValue = areaField.options[areaField.selectedIndex].text; // Obtener el texto del valor seleccionado
     
+            // Ocultar todos los campos y eliminar el atributo required
+            lineaField.style.display = "none";
+            ambienteField.style.display = "none";
+            espacioField.style.display = "none";
+            nopermiteField.style.display = "none";
+    
+            lineaField.querySelector('select').removeAttribute('required');
+            ambienteField.querySelector('select').removeAttribute('required');
+            espacioField.querySelector('input').removeAttribute('required');
+            nopermiteField.querySelector('input').removeAttribute('required');
+    
             if (selectedValue === "Tecnoparque") {
                 lineaField.style.display = "block";
-                ambienteField.style.display = "none";
-                espacioField.style.display = "none";
-                nopermiteField.style.display = "none";
+                lineaField.querySelector('select').setAttribute('required', 'required');
             } else if (selectedValue === "Tecnoacademia") {
-                lineaField.style.display = "none";
                 ambienteField.style.display = "block";
-                espacioField.style.display = "none";
-                nopermiteField.style.display = "none";
+                ambienteField.querySelector('select').setAttribute('required', 'required');
             } else if (selectedValue === "Sennova") {
-                lineaField.style.display = "none";
-                ambienteField.style.display = "none";
-                espacioField.style.display = "none";
                 nopermiteField.style.display = "block";
+                nopermiteField.querySelector('input').setAttribute('required', 'required');
             } else {
-                lineaField.style.display = "none";
-                ambienteField.style.display = "none";
                 espacioField.style.display = "block";
-                nopermiteField.style.display = "none";
+                espacioField.querySelector('input').setAttribute('required', 'required');
             }
         }
     
@@ -270,18 +287,19 @@
         areaField.addEventListener("change", updateFields);
     });
     
-    ////asistentes
+    
+    ///asistentes
     document.addEventListener("DOMContentLoaded", function() {
         let asistentes = [];
     
         document.getElementById('agregarAsistente').addEventListener('click', function() {
             // Obtener valores del formulario de asistente
-            const nombres = document.getElementById('nombres_asistente').value;
-            const apellidos = document.getElementById('apellidos_asistente').value;
-            const correo = document.getElementById('correo_asistente').value;
-            const telefono = document.getElementById('telefono_asistente').value;
-            const idTipoDocumento = document.getElementById('id_tipo_documento_asistente').value;
-            const identificacion = document.getElementById('identificacion_asistente').value;
+            const nombres = document.querySelector('input[name="nombre_asistente"]').value;
+            const apellidos = document.querySelector('input[name="apellidos_asistente"]').value;
+            const correo = document.querySelector('input[name="correo_asistente"]').value;
+            const telefono = document.querySelector('input[name="telefono_asistente"]').value;
+            const idTipoDocumento = document.querySelector('select[name="id_tipo_documento_asistente"]').value;
+            const identificacion = document.querySelector('input[name="identificacion_asistente"]').value;
     
             // Validar los campos
             if (!nombres || !apellidos || !correo || !telefono || !idTipoDocumento || !identificacion) {
@@ -301,22 +319,20 @@
                 <td>${idTipoDocumento}</td>
                 <td>${identificacion}</td>
                 <td>${correo}</td>
-                <td>Procedencia aquí</td>
-                <td>Discapacidad aquí</td>
+
             `;
     
             // Agregar el asistente al array
             asistentes.push({
                 nombres, apellidos, correo, telefono, idTipoDocumento, identificacion
             });
-    
             // Limpiar campos
-            document.getElementById('nombres_asistente').value = '';
-            document.getElementById('apellidos_asistente').value = '';
-            document.getElementById('correo_asistente').value = '';
-            document.getElementById('telefono_asistente').value = '';
-            document.getElementById('id_tipo_documento_asistente').value = '';
-            document.getElementById('identificacion_asistente').value = '';
+            document.querySelector('input[name="nombre_asistente"]').value = '';
+            document.querySelector('input[name="apellidos_asistente"]').value = '';
+            document.querySelector('input[name="correo_asistente"]').value = '';
+            document.querySelector('input[name="telefono_asistente"]').value = '';
+            document.querySelector('select[name="id_tipo_documento_asistente"]').value = '';
+            document.querySelector('input[name="identificacion_asistente"]').value = '';
         });
     
         // Enviar el formulario con los datos de los asistentes

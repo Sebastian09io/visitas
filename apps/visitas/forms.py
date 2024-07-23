@@ -1,26 +1,31 @@
 from django import forms
-from apps.funcionarios.models import Persona, Area, Ambiente, Linea, Genero, Visita
+from apps.funcionarios.models import Persona, Area, Ambiente, Linea, Genero, Visita, TipoDocumento, Asistente
 
 class BootstrapFormMixin:
     def _init_bootstrap(self):
         for field_name, field in self.fields.items():
             widget = field.widget
             if isinstance(widget, (forms.widgets.TextInput, forms.widgets.Select,
-                                forms.widgets.EmailInput, forms.widgets.PasswordInput,
-                                forms.widgets.FileInput, forms.widgets.DateInput,
-                                forms.widgets.DateTimeInput)):
+                                   forms.widgets.EmailInput, forms.widgets.PasswordInput,
+                                   forms.widgets.FileInput, forms.widgets.DateInput,
+                                   forms.widgets.DateTimeInput)):
                 widget.attrs.update({'class': 'form-control'})
-
 
 class VisitForm(forms.ModelForm, BootstrapFormMixin):
     discapacidad = forms.CharField(max_length=50, label="Discapacidad")
     procedencia = forms.CharField(max_length=80, label="Procedencia")
     fecha_inicio = forms.DateTimeField(label="Fecha de inicio", widget=forms.DateTimeInput(attrs={'class': 'form-control', 'type': 'datetime-local'}))
     fecha_finalizacion = forms.DateTimeField(label="Fecha de finalización", widget=forms.DateTimeInput(attrs={'class': 'form-control', 'type': 'datetime-local'}))
+    id_tipo_documento_asistente = forms.ModelChoiceField(queryset=TipoDocumento.objects.all(), label="Tipo de Documento del Asistente", empty_label="Seleccione el tipo de documento")
+    nombre_asistente = forms.CharField(max_length=50, label="Nombre del Asistente")
+    apellidos_asistente = forms.CharField(max_length=50, label="Apellidos del Asistente")
+    telefono_asistente = forms.CharField(max_length=10, label="Teléfono del Asistente")
+    correo_asistente = forms.EmailField(label="Correo del Asistente")
+    identificacion_asistente = forms.CharField(max_length=10, label="Identificación del Asistente")
 
     class Meta:
         model = Persona
-        fields = ['id_genero', 'id_visita', 'id_area', 'id_linea', 'id_ambiente', 'fecha_inicio', 'fecha_finalizacion', 'discapacidad', 'procedencia']
+        fields = ['id_genero', 'id_visita', 'id_area', 'id_linea', 'id_ambiente', 'fecha_inicio', 'fecha_finalizacion', 'discapacidad', 'procedencia', 'id_tipo_documento_asistente', 'nombre_asistente', 'apellidos_asistente', 'telefono_asistente', 'correo_asistente', 'identificacion_asistente']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -61,6 +66,22 @@ class VisitForm(forms.ModelForm, BootstrapFormMixin):
         if commit:
             visita.save()
             persona.id_visita = visita
+            persona.save()
+
+        # Actualizar o crear el Asistente con los campos adicionales
+        asistente, created = Asistente.objects.update_or_create(
+            identificacion_asistente=self.cleaned_data['identificacion_asistente'],
+            defaults={
+                'nombre_asistente': self.cleaned_data['nombre_asistente'],
+                'apellidos_asistente': self.cleaned_data['apellidos_asistente'],
+                'telefono_asistente': self.cleaned_data['telefono_asistente'],
+                'correo_asistente': self.cleaned_data['correo_asistente'],
+                'id_tipo_documento_asistente': self.cleaned_data['id_tipo_documento_asistente']
+            }
+        )
+
+        persona.id_tipo_documento_asistente = asistente
+        if commit:
             persona.save()
 
         return persona

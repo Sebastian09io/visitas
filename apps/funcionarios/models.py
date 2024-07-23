@@ -62,11 +62,16 @@ class Visita(Base):
 
 
 class Asistente(Base):
-    nombre = models.CharField(max_length=50)
-    correo = models.EmailField(unique=True)
-
+    nombre_asistente = models.CharField(max_length=50)
+    apellidos_asistente = models.CharField(max_length=50)
+    telefono_asistente = models.CharField(max_length=10)
+    correo_asistente = models.EmailField(unique=True)
+    id_tipo_documento_asistente = models.ForeignKey(TipoDocumento, on_delete=models.CASCADE, null=True)
+    identificacion_asistente = models.CharField(max_length=10, unique=True)
+    
     def __str__(self):
-        return self.nombre
+        return self.nombre_asistente
+
 
 class VisitaAsistente(models.Model):
     visita = models.ForeignKey(Visita, on_delete=models.CASCADE)
@@ -121,7 +126,7 @@ class Persona(AbstractBaseUser, Base):
     objects = PersonaManager()
 
     USERNAME_FIELD = 'correo' # Campo utilizado para identificar a los usuarios al iniciar sesión
-    REQUIRED_FIELDS = ['nombres', 'apellidos', 'id_tipo_documento', 'identificacion', 'telefono', 'id_cargo', 'id_dependencia',]
+    REQUIRED_FIELDS = ['nombres', 'apellidos', 'identificacion', 'telefono']
 
     def __str__(self):
             return self.correo

@@ -1,10 +1,10 @@
 ADMINISTRADOR
 email: prueba@gmail.com
-contraseña: 12345678#Sa
+contraseña: 12345678_Sa
 
 FUNCIONARIO
 email: prueba2@gmail.com
-contraseña: 12345678#Sa
+contraseña: 12345678_Sa
 
 sgtp
 correo sgtptv3@gmail.com  sgtptv5678
