@@ -39,43 +39,47 @@ class Area(Base):
         return self.nombre
     
 class Linea(Base):
-    nombre = models.CharField(max_length=50)
+    nombre = models.CharField(max_length=50,null=True,blank=True)
     def __str__(self):
         return self.nombre
     
 class Ambiente(Base):
-    nombre = models.CharField(max_length=50)
+    nombre = models.CharField(max_length=50,null=True,blank=True)
     def __str__(self):
         return self.nombre
     
 class Genero(Base):
-    nombre = models.CharField(max_length=50)
+    nombre = models.CharField(max_length=50,null=True,blank=True)
     def __str__(self):
         return self.nombre
     
 class Visita(Base):
+    
     fecha_inicio = models.DateTimeField()
     fecha_finalizacion = models.DateTimeField()
     discapacidad = models.CharField(max_length=50)
     procedencia = models.CharField(max_length=80)
-    grabacion  = models.BooleanField(default=True)
+    grabacion  = models.BooleanField(default=False)
 
 
 class Asistente(Base):
-    nombre_asistente = models.CharField(max_length=50)
-    apellidos_asistente = models.CharField(max_length=50)
-    telefono_asistente = models.CharField(max_length=10)
-    correo_asistente = models.EmailField(unique=True)
+    nombre_asistente = models.CharField(max_length=50,null=True,blank=True)
+    apellidos_asistente = models.CharField(max_length=50,null=True,blank=True)
+    telefono_asistente = models.CharField(max_length=10,null=True,blank=True)
+    correo_asistente = models.EmailField(unique=True,null=True,blank=True)
     id_tipo_documento_asistente = models.ForeignKey(TipoDocumento, on_delete=models.CASCADE, null=True)
-    identificacion_asistente = models.CharField(max_length=10, unique=True)
-    
+    identificacion_asistente = models.CharField(max_length=10, unique=True,null=True,blank=True)
+    discapacidad_asistente = models.CharField(max_length=50,null=True,blank=True)
+    procedencia_asistente = models.CharField(max_length=80,null=True,blank=True)
+    id_genero_asistente = models.ForeignKey(Genero, on_delete=models.CASCADE,null=True,blank=True)
+
     def __str__(self):
         return self.nombre_asistente
 
 
 class VisitaAsistente(models.Model):
-    visita = models.ForeignKey(Visita, on_delete=models.CASCADE)
-    asistente = models.ForeignKey(Asistente, on_delete=models.CASCADE)
+    visita = models.ForeignKey(Visita, on_delete=models.CASCADE,null=True)
+    asistente = models.ForeignKey(Asistente, on_delete=models.CASCADE,null=True)
 
     class Meta:
         unique_together = ('visita', 'asistente')
@@ -112,11 +116,11 @@ class Persona(AbstractBaseUser, Base):
     id_cargo = models.ForeignKey(Cargo, on_delete=models.CASCADE, null=True)
     id_dependencia = models.ForeignKey(Dependencia, on_delete=models.CASCADE, null=True)
     id_implemento = models.ForeignKey(Implemento, on_delete=models.CASCADE, null=True)
-    id_visita = models.ForeignKey(Visita, on_delete=models.CASCADE, null=True)
+    id_visita = models.ForeignKey(Visita, on_delete=models.CASCADE,null=True,blank=True)
     id_genero = models.ForeignKey(Genero, on_delete=models.CASCADE, null=True)
     id_area = models.ForeignKey(Area, on_delete=models.CASCADE, null=True)
     id_linea = models.ForeignKey(Linea, on_delete=models.CASCADE, null=True)
-    id_ambiente = models.ForeignKey(Ambiente, on_delete=models.CASCADE, null=True)
+    id_ambiente = models.ForeignKey(Ambiente, on_delete=models.CASCADE,null=True,blank=True)
     id_espacio = models.ForeignKey(Espacio, on_delete=models.CASCADE, null=True)
     imagen_perfil = models.ImageField(upload_to='profile_pics/', null=True, blank=True)
     is_active = models.BooleanField("Habilitado", default=True)
