@@ -258,6 +258,8 @@
             <div class="modal-body" id="modalBodyContent">
                 <button type="button"  class="btn  btn-primary">Descargar excel</button>
                 <button type="button"  class="btn  btn-primary">Importar excel</button>
+                <input type="file" id="archivoExcel" accept=".xlsx, .xls">
+
             </div>
         </div>
     </div>
@@ -266,7 +268,7 @@
 
 
 
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.2/xlsx.full.min.js"></script>
 <script>
         // Función para ocultar cada mensaje después de 3 segundos
         setTimeout(function() {
@@ -354,9 +356,92 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     
-    ///asistentes
+    ///asistentes 
     document.addEventListener("DOMContentLoaded", function() {
         let asistentes = [];
+    
+        //Leer el archivo Excel
+        function leerArchivoExcel(file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, { type: 'array' });
+                const firstSheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[firstSheetName];
+                const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+                
+                // Eliminar la primera fila (cabecera)
+                jsonData.shift();
+        
+                // Procesar cada fila
+                jsonData.forEach((row, index) => {
+                    const nombres = row[0];
+                    const apellidos = row[1];
+                    const correo = row[2];
+                    const telefono = row[3];
+                    const tipoDocumentoTexto = row[4];
+                    const identificacion = row[5];
+                    const genero_atexto = row[6];
+                    const procedencia_a = row[7];
+                    const discapacidad_a = row[8];
+
+
+                    const tipoDocumentoMap = {
+                        "CC": 1,
+                        "PS": 2,
+                        "CE": 3
+                        // Agrega más tipos de documentos según sea necesario
+                    };
+                    
+                    const generoMap = {
+                        "M": 1,
+                        "F": 2,
+                        "NB": 3
+                        // Agrega más géneros según sea necesario
+                    };
+                    
+        
+                    // Obtener IDs a partir de los textos usando los diccionarios
+                    const idTipoDocumento = tipoDocumentoMap[tipoDocumentoTexto];
+                    const genero_a = generoMap[genero_atexto];
+        
+                    // Validar los campos
+                    if (!nombres || !apellidos || !correo || !telefono || !idTipoDocumento || !identificacion || !procedencia_a || !discapacidad_a || !genero_a) {
+                        console.log('Fila incompleta o mapeo inválido:', row);
+                        return;
+                    }
+        
+                    const tableBody = document.getElementById('asistentesTableBody');
+                    const rowCount = tableBody.rows.length + 1;
+                    const rowElement = tableBody.insertRow();
+                    rowElement.innerHTML = `
+                        <th scope="row">${rowCount}</th>
+                        <td>${nombres}</td>
+                        <td>${apellidos}</td>
+                        <td>${telefono}</td>
+                        <td>${tipoDocumentoTexto}</td>
+                        <td>${identificacion}</td>
+                        <td>${correo}</td>
+                        <td>${genero_atexto}</td>
+                        <td>${procedencia_a}</td>
+                        <td>${discapacidad_a}</td>
+                    `;
+        
+                    asistentes.push({
+                        nombres, apellidos, correo, telefono, idTipoDocumento, tipoDocumentoTexto, identificacion, genero_atexto, genero_a, procedencia_a, discapacidad_a
+                    });
+                });
+            };
+            reader.readAsArrayBuffer(file);
+        }
+        
+    
+        document.getElementById('archivoExcel').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                leerArchivoExcel(file);
+            }
+        });
     
         document.getElementById('agregarAsistente').addEventListener('click', function() {
             // Obtener valores del formulario de asistente
@@ -368,17 +453,16 @@ document.addEventListener('DOMContentLoaded', function() {
             const idTipoDocumento = idTipoDocumentoSelect.value;
             const tipoDocumentoTexto = idTipoDocumentoSelect.options[idTipoDocumentoSelect.selectedIndex].text;
             const identificacion = document.querySelector('input[name="identificacion_asistente"]').value;
-
+    
             const procedencia_a = document.querySelector('input[name="procedencia_asistente"]').value;
             const discapacidad_a = document.querySelector('input[name="discapacidad_asistente"]').value;
-
+    
             const genero_aSelect = document.querySelector('select[name="id_genero_asistente"]');
             const genero_a = genero_aSelect.value;
             const genero_atexto = genero_aSelect.options[genero_aSelect.selectedIndex].text;
-
     
             // Validar los campos
-            if (!nombres || !apellidos || !correo || !telefono || !idTipoDocumento || !identificacion || !procedencia_a|| ! discapacidad_a|| ! genero_a) {
+            if (!nombres || !apellidos || !correo || !telefono || !idTipoDocumento || !identificacion || !procedencia_a|| !discapacidad_a|| !genero_a) {
                 alert('Por favor complete todos los campos');
                 return;
             }
@@ -395,7 +479,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 <td>${tipoDocumentoTexto}</td>
                 <td>${identificacion}</td>
                 <td>${correo}</td>
-
                 <td>${genero_atexto}</td>
                 <td>${procedencia_a}</td>
                 <td>${discapacidad_a}</td>
@@ -413,7 +496,6 @@ document.addEventListener('DOMContentLoaded', function() {
             document.querySelector('input[name="telefono_asistente"]').value = '';
             document.querySelector('select[name="id_tipo_documento_asistente"]').value = '';
             document.querySelector('input[name="identificacion_asistente"]').value = '';
-
             document.querySelector('input[name="procedencia_asistente"]').value = '';
             document.querySelector('select[name="id_genero_asistente"]').value = '';
             document.querySelector('input[name="discapacidad_asistente"]').value = '';
@@ -429,6 +511,7 @@ document.addEventListener('DOMContentLoaded', function() {
             this.appendChild(asistentesInput);
         });
     });
+    
 
     ////modal
 document.addEventListener('DOMContentLoaded', function() {
