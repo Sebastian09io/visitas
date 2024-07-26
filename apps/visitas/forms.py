@@ -41,6 +41,13 @@ class PersonaForm(forms.ModelForm, BootstrapFormMixin):
         self.fields['id_ambiente'].empty_label = "Seleccione el ambiente"
         self.fields['id_linea'].queryset = Linea.objects.all()
         self.fields['id_linea'].empty_label = "Seleccione la linea"
+        self.fields['procedencia_asistente'].widget.attrs.update({'placeholder': 'Ingrese la procedencia'})
+        self.fields['discapacidad_asistente'].widget.attrs.update({'placeholder': 'Ingrese la discapacidad'})
+        self.fields['nombre_asistente'].widget.attrs.update({'placeholder': 'Ingrese el nombre'})
+        self.fields['apellidos_asistente'].widget.attrs.update({'placeholder': 'Ingrese el apellido'})
+        self.fields['correo_asistente'].widget.attrs.update({'placeholder': 'Ingrese el correo'})
+        self.fields['telefono_asistente'].widget.attrs.update({'placeholder': 'Ingrese el numero telefonico'})
+        self.fields['identificacion_asistente'].widget.attrs.update({'placeholder': 'Ingrese la identificacion'})
         self._init_bootstrap()
 
 

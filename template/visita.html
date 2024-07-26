@@ -3,12 +3,6 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
 {% block content %}
-<style>
-    .form_group_v input,select{
-        max-width:290px;
-        min-width:270px;
-    }
-</style>
 
 <div class="contenedor_visita">
     <h1 class="titulo_visita">Registro de visita</h1>
@@ -132,11 +126,11 @@
             </div>
         </div>
         
+        <div class="horizontal_line_"></div>
 
     </form>
 
     <div class="vertical-line_v"></div>
-    <div class="horizontal_line_"></div>
 
 
 <!-- registro asistentes -->
@@ -189,21 +183,27 @@
                     </div>
                 </div>
                 <div class="form-row">
-                    <div class="form-group form_group_v2 col-md-6">
-                        <label class="letrat" for="agregarAsistente">c</label>
-                        <button type="button" class="btn btnt2 btn-primary" id="agregarAsistente">Agregar</button>
-                    </div>
                     <div class="form-group  form_group_v col-md-6">
                         <label for="{{ form.id_genero_asistente.id_for_label }}">Género</label>
                         {{ persona_form.id_genero_asistente }}
                     </div>
+                    <div class="form-group form_group_v2 col-md-6">
+                        <label class="letrat" for="mostrarFormulario">c</label>
+                        <button type="button" class="btn btnt btn-primary" id="mostrarFormulario">Asistentes en Excel</button>
+                    </div>
+                    <div class="form-group form_group_v2 col-md-6">
+                        <label class="letrat" for="agregarAsistente">c</label>
+                        <button type="button" class="btn btnt2 btn-primary" id="agregarAsistente">Agregar</button>
+                    </div>
                 </div>
             </div>
         </div>
+        <div class="vertical-line_v2"></div>
+        <div class="horizontal_line_2"></div>
+
     </form>
     
 
-    <div class="vertical-line_v2"></div>
 </div>
 
 <!-- listado asistentes -->
@@ -242,8 +242,25 @@
     </div>
 
 <!-- Botón para guardar la visita -->
-<button type="submit" form="mainForm" class="btn btn-primary">Guardar visita</button>
+<button type="submit" form="mainForm" class="btn btnt3 btn-primary">Guardar visita</button>
 
+</div>
+
+<div id="ventanaEmergente">
+    <div id="formularioEmergente">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Cargar por excel</h5>
+                <button type="button" class="btn-cerrar" aria-label="Close">
+                    <img src="/static/bootstrap/img/cerrar.png" alt="Cerrar">
+                </button>
+            </div>
+            <div class="modal-body" id="modalBodyContent">
+                <button type="button"  class="btn  btn-primary">Descargar excel</button>
+                <button type="button"  class="btn  btn-primary">Importar excel</button>
+            </div>
+        </div>
+    </div>
 </div>
 </div>
 
@@ -412,8 +429,26 @@ document.addEventListener('DOMContentLoaded', function() {
             this.appendChild(asistentesInput);
         });
     });
-    
-    
+
+    ////modal
+document.addEventListener('DOMContentLoaded', function() {
+    var botonMostrar = document.getElementById("mostrarFormulario");
+    var ventanaEmergente = document.getElementById("ventanaEmergente");
+    var modalBodyContent = document.getElementById("modalBodyContent");
+
+    botonMostrar.addEventListener("click", () => {
+        // Mostrar la ventana emergente
+        ventanaEmergente.style.display = "flex";
+        
+
+    });
+
+    const btnCerrar = document.querySelector("#formularioEmergente .btn-cerrar");
+
+    btnCerrar.addEventListener("click", function() {
+        ventanaEmergente.style.display = "none";
+    });
+});
 </script>
 
 {% endblock %}

@@ -1,7 +1,7 @@
-.contenedor_visita{
+.contenedor_visita {
     border-radius: 6px;
     width: 69%;
-    height: 200%;
+    height: auto;
     background: white;
     position: relative;
     top: 5%;
@@ -9,6 +9,7 @@
     padding: 2% 5%;
     text-align: center;
 }
+
 .contenedor_visita2{
     width:100%;
     height: 20%;
@@ -41,7 +42,9 @@
 }
 
 .formulario_visita{
-    margin-top:5%;
+    margin-top:0%;
+
+    
     
 }
 .formulario_visita2{
@@ -56,10 +59,80 @@
     margin-top: 0.375rem;
 }
 
-.form_group_v{
-    margin-bottom:4%;
-    margin-right:0%;
+.form_group_v {
+    margin-bottom: 4%;
+    position: relative;
+    display: flex;
+    flex-direction: column;
 }
+
+.form_group_v > input {
+    max-width: 290px;
+    min-width: 80px;
+    width: 100%;
+    box-sizing: border-box;
+    position: relative;
+}
+.form_group_v > select {
+    max-width: 290px;
+    min-width: 80px;
+    width: 100%;
+    box-sizing: border-box;
+    position: relative;
+}
+
+.contenedor_visita {
+    border-radius: 6px;
+    width: 69%;
+    background: white;
+    position: relative;
+    top: 5%;
+    left: 15%;
+    padding: 2% 5%;
+    text-align: center;
+}
+
+.formulario_visita {
+    margin-top: 5%;
+}
+
+@media (max-width: 1200px) {
+    .contenedor_visita {
+        width: 80%;
+        left: 10%;
+    }
+}
+
+@media (max-width: 992px) {
+    .contenedor_visita {
+        width: 90%;
+        left: 5%;
+    }
+}
+
+@media (max-width: 768px) {
+    .contenedor_visita {
+        width: 100%;
+        left: 0;
+        padding: 5%;
+    }
+
+    .form_group_v {
+        margin-bottom: 2%;
+    }
+}
+
+@media (max-width: 576px) {
+    .contenedor_visita {
+        padding: 5%;
+    }
+
+    .form_group_v {
+        margin-bottom: 1%;
+    }
+}
+
+
 
 
 .espacio_v{
@@ -76,37 +149,37 @@
 
 .vertical-line_v {
     position: absolute;
-    left: 50%; /* Coloca la línea en el centro horizontal del contenedor */
-    top:9%; /* Ajusta este valor para definir desde dónde empieza la línea */
-    height: 15%; /* Ajusta la altura de la línea según tus necesidades */
-    width: 1px; /* Grosor de la línea (más delgada) */
-    background-color: black; /* Color de la línea */
+    left: 50%; 
+    top:16%;
+    height: 25%; 
+    width: 1px; 
+    background-color: black; 
 }
 .horizontal_line_ {
-    position: absolute;
-    left: 10%; /* Coloca la línea en el centro horizontal del contenedor */
-    top:25%; /* Ajusta este valor para definir desde dónde empieza la línea */
-    height:1px; /* Ajusta la altura de la línea según tus necesidades */
-    width: 80%; /* Grosor de la línea (más delgada) */
-    background-color: black; /* Color de la línea */
+    position: relative;
+    left: 0%; 
+    margin-top:4%; 
+    height:1px; 
+    width: 100%;
+    background-color: black; 
 }
 
 .horizontal_line_2 {
-    position: absolute;
-    left: 10%; /* Coloca la línea en el centro horizontal del contenedor */
-    top:45%; /* Ajusta este valor para definir desde dónde empieza la línea */
-    height:1px; /* Ajusta la altura de la línea según tus necesidades */
-    width: 80%; /* Grosor de la línea (más delgada) */
-    background-color: black; /* Color de la línea */
+    position: relative;
+    left: 0%; 
+    margin-top:3%; 
+    height:1px; 
+    width: 100%;
+    background-color: black; 
 }
 
 .vertical-line_v2 {
     position: absolute;
-    left: 50%; /* Coloca la línea en el centro horizontal del contenedor */
-    top:34%; /* Ajusta este valor para definir desde dónde empieza la línea */
-    height: 64%; /* Ajusta la altura de la línea según tus necesidades */
-    width: 1px; /* Grosor de la línea (más delgada) */
-    background-color: black; /* Color de la línea */
+    left: 50%; 
+    top:34%;
+    height: 59%; 
+    width: 1px; 
+    background-color: black; 
 }
 a{
     cursor: pointer;
@@ -121,14 +194,7 @@ a{
 .letrat{
     color: transparent;
 }
-button.btnt {
-    font-size: 16px;
-    border-radius: 4px;
-    margin: 5px;
-    width: 200px; /* Ancho deseado para los botones */
-    background-color: #0f3efa; /* Azul Bootstrap */
-    border-color: #0f3efa;
-}
+
 .claseleft{
     text-align: left;
 }
@@ -137,17 +203,42 @@ button.btnt {
 button.btnt2 {
     font-size: 16px;
     border-radius: 4px;
-    margin: 5px;
-    width: 170px; /* Ancho deseado para los botones */
-    background-color: #0f3efa; /* Azul Bootstrap */
+    width: 170px; 
+    background-color: #0f3efa;
     border-color: #0f3efa;
+    margin-left:70%;
 }
+button.btnt3 {
+    font-size: 16px;
+    border-radius: 4px;
+    width: 170px; 
+    background-color: #0f3efa;
+    border-color: #0f3efa;
+    margin-left:85%;
+}
+
+button.btnt {
+    font-size: 16px;
+    border-radius: 4px;
+    width: 190px; 
+    background-color: #16851b;
+    border-color: #16851b;
+}
+button.btnt:focus {
+    background-color: #16851b;
+    border-color: #16851b;
+}
+button.btnt:hover {
+    background-color: #106014;
+    border-color: #106014;
+}
+
 .form_group_v2{
     margin-bottom:4%;
     margin-right:0%;
 }
 .form_group_v2 button{
-margin-right:-27%;
+margin-right:-20%;
 }
 .form_group_v2 label {
     text-align: left;
@@ -162,4 +253,75 @@ margin-right:-27%;
 
 .table-dark{
     --bs-table-bg: #2d2d2d;
+}
+
+
+
+
+#ventanaEmergente {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Fondo semi-transparente */
+    justify-content: center;
+    align-items: center;
+    z-index: 1050; /* Ajustado para mayor prioridad */
+}
+
+#formularioEmergente .modal-content {
+    border-radius: 8px; /* Bordes redondeados */
+    overflow: hidden; /* Para que los bordes redondeados funcionen correctamente */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); /* Sombra para darle profundidad */
+    width:150%;
+
+}
+
+#formularioEmergente .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid #dee2e6;
+    background-color: #f8f9fa; /* Fondo claro */
+}
+
+#formularioEmergente .modal-header h5 {
+    margin: 0;
+    font-size: 1.25rem;
+}
+
+#formularioEmergente .btn-cerrar {
+    width: 24px; /* Ajustado para mayor claridad */
+    height: 24px;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#formularioEmergente .btn-cerrar img {
+    width: 100%;
+    height: 100%;
+}
+
+#formularioEmergente .modal-body {
+    padding: 1.5rem;
+}
+
+#formularioEmergente .form-group {
+    margin-bottom: 1.5rem; /* Espaciado entre campos */
+}
+
+#formularioEmergente .btn-primary {
+    background-color: #0f3efa; /* Azul Bootstrap */
+    border-color: #0f3efa;
+    font-size: 1rem;
+    border-radius: 4px;
+    margin:1%;
 }
