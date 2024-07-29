@@ -1,7 +1,8 @@
 import os
 import json
 from django.http import FileResponse
-from django.shortcuts import render, redirect
+from django.core.paginator import Paginator
+from django.shortcuts import render, redirect,get_object_or_404
 from django.contrib import messages
 from apps.funcionarios.models import Persona, Visita, Asistente, VisitaAsistente, TipoDocumento,Genero
 from .forms import PersonaForm, VisitaFormulario
@@ -86,3 +87,27 @@ def descargar_excel(request):
     response = FileResponse(open(file_path, 'rb'))
     response['Content-Disposition'] = 'attachment; filename="Registro Asistentes.xlsx"'
     return response
+
+
+def administrador_visitas(request):
+    user = request.user
+    try:
+        persona = Persona.objects.get(id=user.id)
+        visita = persona.id_visita
+    except Persona.DoesNotExist:
+        persona = Persona(user=user)
+        visita = Visita()
+        
+    if request.method == 'POST':
+        pass
+
+    personas = Persona.objects.all().order_by('id')  # Ordenar los resultados por 'id'
+    paginator = Paginator(personas, 6)  # Número de usuarios por página
+    page_number = request.GET.get('page')
+    resultados = paginator.get_page(page_number)
+    
+    context = {
+        'user': user,
+        'resultados': resultados,
+        }
+    return render(request, 'administracion/admin_visita.html', context)

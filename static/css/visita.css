@@ -333,8 +333,15 @@ margin-right:-20%;
 }
 
 #formularioEmergente .btn-primary {
-    background-color: #0f3efa; /* Azul Bootstrap */
-    border-color: #0f3efa;
+    background-color: #16851b;
+    border-color: #16851b;
+    font-size: 1rem;
+    border-radius: 4px;
+    margin: 1%;
+}
+#formularioEmergente .btn_select {
+    background-color: #686868;
+    border-color: #686868;
     font-size: 1rem;
     border-radius: 4px;
     margin: 1%;
