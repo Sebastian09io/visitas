@@ -1,5 +1,7 @@
 from django import forms
 from apps.funcionarios.models import Persona, Area, Ambiente, Linea, Genero, Visita, TipoDocumento, Asistente 
+from django.core.exceptions import ValidationError
+import datetime
 
 class BootstrapFormMixin:
     def _init_bootstrap(self):
@@ -9,7 +11,16 @@ class BootstrapFormMixin:
                                    forms.widgets.EmailInput, forms.widgets.PasswordInput,
                                    forms.widgets.FileInput, forms.widgets.DateInput,
                                    forms.widgets.DateTimeInput)):
-                widget.attrs.update({'class': 'form-control'})
+                classes = widget.attrs.get('class', '')
+                widget.attrs.update({'class': f'{classes} form-control'.strip()})
+
+        # Añadir clases adicionales a campos específicos
+        if 'fecha_inicio' in self.fields:
+            self.fields['fecha_inicio'].widget.attrs.update({'class': 'datetime-picker form-control'})
+        if 'fecha_finalizacion' in self.fields:
+            self.fields['fecha_finalizacion'].widget.attrs.update({'class': 'datetime-picker form-control'})
+
+
 
 class PersonaForm(forms.ModelForm, BootstrapFormMixin):
     id_tipo_documento_asistente = forms.ModelChoiceField(queryset=TipoDocumento.objects.all(), label="Tipo de Documento del Asistente", empty_label="Seleccione el tipo de documento",required=False)
@@ -76,18 +87,57 @@ class PersonaForm(forms.ModelForm, BootstrapFormMixin):
 
         return persona
 
+
+
 class VisitaFormulario(forms.ModelForm, BootstrapFormMixin):
     discapacidad = forms.CharField(max_length=50, label="Discapacidad")
     procedencia = forms.CharField(max_length=80, label="Procedencia")
-    fecha_inicio = forms.DateTimeField(label="Fecha de inicio", widget=forms.DateTimeInput(attrs={'class': 'form-control', 'type': 'datetime-local'}))
-    fecha_finalizacion = forms.DateTimeField(label="Fecha de finalización", widget=forms.DateTimeInput(attrs={'class': 'form-control', 'type': 'datetime-local'}))
-    grabacion =forms.BooleanField(required=False, initial=False) 
+    fecha_inicio = forms.DateTimeField(label="Fecha de inicio", widget=forms.DateTimeInput(attrs={'type': 'datetime-local'}))
+    fecha_finalizacion = forms.DateTimeField(label="Fecha de finalización", widget=forms.DateTimeInput(attrs={'type': 'datetime-local'}))
+    grabacion = forms.BooleanField(required=False, initial=False)
+
     class Meta:
         model = Visita
-        fields = [ 'fecha_inicio', 'fecha_finalizacion', 'discapacidad', 'procedencia',]
-    
+        fields = ['fecha_inicio', 'fecha_finalizacion', 'discapacidad', 'procedencia']
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['procedencia'].widget.attrs.update({'placeholder': 'Ingrese su procedencia'})
         self.fields['discapacidad'].widget.attrs.update({'placeholder': 'Ingrese su discapacidad'})
         self._init_bootstrap()
+
+    def clean(self):
+        cleaned_data = super().clean()
+        fecha_inicio = cleaned_data.get("fecha_inicio")
+        fecha_finalizacion = cleaned_data.get("fecha_finalizacion")
+
+        if fecha_inicio and fecha_finalizacion:
+            # Validar que la fecha de inicio y finalización sean el mismo día
+            if fecha_inicio.date() != fecha_finalizacion.date():
+                raise forms.ValidationError("La fecha de inicio y finalización deben ser el mismo día.")
+            
+            # Validar que no sea fin de semana
+            if fecha_inicio.weekday() >= 5 or fecha_finalizacion.weekday() >= 5:
+                raise forms.ValidationError("No se permiten reservas los sábados y domingos.")
+            
+            # Validar las horas permitidas
+            if fecha_inicio.time() == datetime.time(12, 0):
+                raise forms.ValidationError("No es posible establecer la fecha de inicio a las 12:00.")
+
+            if not ((datetime.time(8, 0) <= fecha_inicio.time() <= datetime.time(12, 0)) or (datetime.time(14, 0) <= fecha_inicio.time() <= datetime.time(17, 0))):
+                raise forms.ValidationError("La hora de inicio debe estar entre las 08:00-12:00 o 14:00-17:00.")
+            
+            if not ((datetime.time(8, 0) <= fecha_finalizacion.time() <= datetime.time(12, 0)) or (datetime.time(14, 0) <= fecha_finalizacion.time() <= datetime.time(17, 0))):
+                raise forms.ValidationError("La hora de finalización debe estar entre las 08:00-12:00 o 14:00-17:00.")
+
+
+
+
+
+
+
+
+
+
+
+

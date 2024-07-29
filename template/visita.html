@@ -1,6 +1,5 @@
  {% extends "administracion/base_admin.html" %}
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
 {% block content %}
 
@@ -191,6 +190,7 @@
                         <label class="letrat" for="mostrarFormulario">c</label>
                         <button type="button" class="btn btnt btn-primary" id="mostrarFormulario">Asistentes en Excel</button>
                     </div>
+                    <div class="form-group form_group_v2 col-md-6"></div>
                     <div class="form-group form_group_v2 col-md-6">
                         <label class="letrat" for="agregarAsistente">c</label>
                         <button type="button" class="btn btnt2 btn-primary" id="agregarAsistente">Agregar</button>
@@ -225,7 +225,7 @@
                                     <th scope="col">Tipo Identificación</th>
                                     <th scope="col">Identificación</th>
                                     <th scope="col">Correo</th>
-                                    <th scope="col">Genero</th>
+                                    <th scope="col">Género</th>
                                     <th scope="col">Procedencia</th>
                                     <th scope="col">Discapacidad</th>
 
@@ -250,25 +250,30 @@
     <div id="formularioEmergente">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Cargar por excel</h5>
+                <h5 class="modal-title">Carga en excel</h5>
                 <button type="button" class="btn-cerrar" aria-label="Close">
                     <img src="/static/bootstrap/img/cerrar.png" alt="Cerrar">
                 </button>
             </div>
             <div class="modal-body" id="modalBodyContent">
-                <button type="button"  class="btn  btn-primary">Descargar excel</button>
-                <button type="button"  class="btn  btn-primary">Importar excel</button>
-                <input type="file" id="archivoExcel" accept=".xlsx, .xls">
-
+                <a href="{% url 'visitas:descargar_excel' %}" class="btn btn-primary">Descargar Excel</a>
+                <input type="file" id="archivoExcel" class="btn btn-primary" accept=".xlsx, .xls">
             </div>
         </div>
     </div>
 </div>
+
 </div>
 
 
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.2/xlsx.full.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+
 <script>
         // Función para ocultar cada mensaje después de 3 segundos
         setTimeout(function() {
@@ -277,6 +282,66 @@
                 message.style.display = 'none';
             });
         }, 3000); //segundos del mensaje
+///fechas
+document.addEventListener("DOMContentLoaded", function() {
+    let config = {
+        enableTime: true,
+        dateFormat: "Y-m-d H:i",
+        time_24hr: true,
+        minTime: "08:00",
+        maxTime: "17:00",
+        locale: "es",
+        disable: [
+            function(date) {
+                // Disable weekends
+                return (date.getDay() === 6 || date.getDay() === 0);
+            }
+        ],
+        minuteIncrement: 30,
+        onChange: function(selectedDates, dateStr, instance) {
+            // No action needed here
+        },
+        onClose: function(selectedDates, dateStr, instance) {
+            let startDatePicker = document.getElementById("id_fecha_inicio")._flatpickr;
+            let endDatePicker = document.getElementById("id_fecha_finalizacion")._flatpickr;
+
+            if (startDatePicker.selectedDates.length) {
+                let startDate = startDatePicker.selectedDates[0];
+                let startHours = startDate.getHours();
+                if (startHours === 12) {
+                    alert("No es posible establecer la fecha de inicio a las 12:00.");
+                    startDatePicker.clear();
+                    startDatePicker.open();
+                }
+            }
+
+            if (startDatePicker.selectedDates.length && endDatePicker.selectedDates.length) {
+                let startDate = startDatePicker.selectedDates[0];
+                let endDate = endDatePicker.selectedDates[0];
+                if (startDate.toDateString() !== endDate.toDateString()) {
+                    alert("La fecha de inicio y finalización deben ser el mismo día");
+                    endDatePicker.clear();
+                    endDatePicker.open();
+                }
+            }
+        },
+        onOpen: function(selectedDates, dateStr, instance) {
+            let date = instance.input._flatpickr.selectedDates[0];
+            if (date) {
+                let hours = date.getHours();
+                if (hours >= 12 && hours < 14) {
+                    instance.set("minTime", "14:00");
+                } else if (hours >= 8 && hours < 12) {
+                    instance.set("minTime", "08:00");
+                    instance.set("maxTime", "12:00");
+                }
+            }
+        }
+    };
+
+    flatpickr("#id_fecha_inicio", config);
+    flatpickr("#id_fecha_finalizacion", config);
+});
 
 
 // Script para manejar la grabación
