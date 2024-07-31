@@ -152,7 +152,6 @@ justify-content: center;
     border-radius: 4px;
 }
 
-/* Media queries para ajustes responsivos */
 @media (max-width: 768px) {
     #formularioEmergente {
         width: 95%; /* Más ancho en pantallas pequeñas */
@@ -188,12 +187,49 @@ justify-content: center;
 }
 
 #formularioEmergente_visita {
-    width: 90%; /* Ancho predeterminado */
-    max-width: 600px; /* Ancho máximo para pantallas grandes */
+    width:89%; /* Ancho máximo para pantallas grandes */
     margin: auto;
+    overflow-y: scroll;
+    height: 90%;
+
+    
 }
 @media (max-width: 768px) {
     #formularioEmergente_visita {
         width: 95%; /* Más ancho en pantallas pequeñas */
     }
 }
+
+
+.modal-content_v {
+    border-radius: 8px; /* Bordes redondeados */
+    overflow: hidden; /* Para que los bordes redondeados funcionen correctamente */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); /* Sombra para darle profundidad */
+    background-color: white;
+    position: relative;
+}
+
+.modal-header_v {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid #dee2e6;
+    background-color: #f8f9fa; /* Fondo claro */
+}
+
+
+.vertical-line_v22 {
+    position: absolute;
+    left: 50%; 
+    top:16%;
+    height: 25%; 
+    width: 1px; 
+    background-color: black; 
+}
+@media (max-width: 767px) {
+    .vertical-line_v22 {
+        display: none;
+    }
+}
+

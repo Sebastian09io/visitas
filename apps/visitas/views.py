@@ -105,9 +105,13 @@ def administrador_visitas(request):
     page_number = request.GET.get('page')
     resultados = paginator.get_page(page_number)
     
+    persona_form = PersonaForm(instance=persona)
+    visita_form = VisitaFormulario(instance=visita)
     context = {
         'user': user,
         'resultados': resultados,
+        'persona_form': persona_form,
+        'visita_form': visita_form,
         }
     return render(request, 'administracion/admin_visita.html', context)
 

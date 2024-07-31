@@ -54,6 +54,7 @@
                                         <th scope="col">Cargo</th>
                                         <th scope="col">Dependencia</th>
                                         <th scope="col">Procedencia</th>
+                                        <th scope="col" class="d-none">correo</th>
                                         <th scope="col">Estado</th>
                                         <th scope="col">Detalle</th>
                                     </tr>
@@ -69,6 +70,9 @@
                                         <td>{{ c.id_cargo }}</td>
                                         <td>{{ c.id_dependencia }}</td>
                                         <td>{{ c.id_visita.procedencia }}</td>
+                                        <td class="d-none">{{ c.correo }}</td>
+
+
                                         <td>
 
                                                 <input type="hidden" name="persona_id" value="{{ c.id }}">
@@ -83,7 +87,7 @@
                                                 {% endif %}
 
                                         </td>
-                                        <td><button type="button" class="btn" id="mostrarFormulario">Ver mas</button></td>
+                                        <td><button type="button" class="btn-ver-mas btn">Ver más</button></td>
                                     </tr>
                                     {% endfor %}
                                 </tbody>
@@ -123,7 +127,7 @@
 <!-- modal -->
 <div id="ventanaEmergente_vista">
     <div id="formularioEmergente_visita">
-        <div class="modal-content">
+        <div class=" modal-content_v">
             <div class="modal-header">
                 <h5 class="modal-title">Información del usuario</h5>
                 <button type="button" class="btn-cerrar" aria-label="Close">
@@ -131,8 +135,121 @@
                 </button>
             </div>
             <div class="modal-body" id="modalBodyContent">
+                <form class="formulario_visita4">
+                    <div class="row">
+                        <div class="col-md-6 espacio_v2">
+                            <div class="form-row">
+                                <div class="form-group form_group_v col-md-6">
+                                    <label for="nombres">Nombres</label>
+                                    <input type="text" id="nombres" class="form-control" readonly>
+                                </div>
+                                <div class="form-group form_group_v col-md-6">
+                                    <label for="apellidos">Apellidos</label>
+                                    <input type="text" id="apellidos" class="form-control" readonly>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group form_group_v col-md-6">
+                                    <label for="correo">Correo</label>
+                                    <input type="text"  id="correo" class="form-control" readonly>
+                                </div>
+                                <div class="form-group form_group_v col-md-6">
+                                    <label for="grabacion">Autoriza grabación:</label>
+                                    <div class="d-flex align-items-center">
+                                        <button id="grabacion-on" type="button" class="btn-accion_v" title="Habilitado" style="display: none;">
+                                            <img class="btn-estado_v" src="/static/bootstrap/img/on.png">
+                                        </button>
+                                        <button id="grabacion-off" type="button" class="btn-accion_v" title="Inhabilitado" style="display: none;">
+                                            <img class="btn-estado_v" src="/static/bootstrap/img/off.png">
+                                        </button>
+                                        {{visita_form.grabacion}}
+                                    </div>
+                                </div>
+                                
+                                
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group form_group_v col-md-6">
+                                    <label for="id_tipo_documento">Tipo Documento</label>
+                                    {{ persona_form.id_tipo_documento }}
+                                </div>
+                                <div class="form-group form_group_v col-md-6">
+                                    <label for="identificacion">Identificación</label>
+                                    <input type="text"  id="identificacion" class="form-control" readonly>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group form_group_v col-md-6">
+                                    <label for="telefono">Teléfono</label>
+                                    <input type="text" id="telefono" class="form-control" readonly>
+                                </div>
+                                <div class="form-group  form_group_v col-md-6">
+                                    <label for="{{ form.id_genero.id_for_label }}">Género</label>
+                                    {{ persona_form.id_genero }}
+                                </div>
+                            </div>
+                        </div>
             
+            
+                        <div class="col-md-6 espacio_v">
+                            <div class="form-row">
+                                <div class="form-group form_group_v col-md-6">
+                                    <label for="{{ form.procedencia.id_for_label }}">Procedencia</label>
+                                    <input type="text" id="procedencia" class="form-control" readonly>
+                                </div>
+                                <div class="form-group form_group_v col-md-6">
+                                    <label for="{{ form.discapacidad.id_for_label }}">Discapacidad</label>
+                                    <input type="text" value="{{ visita_form.discapacidad.value }}" class="form-control" readonly>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group form_group_v col-md-6">
+                                    <label for="{{ form.id_area.id_for_label }}">Estrategia</label>
+                                    {{ persona_form.id_area }}
+                                </div>
+                                <div class="form-group form_group_v col-md-6" id="linea-field" style="display: none;">
+                                    <label for="{{ form.id_linea.id_for_label }}">Línea</label>
+                                    {{ persona_form.id_linea }}
+                                </div>
+                                <div class="form-group form_group_v col-md-6" id="ambiente-field" style="display: none;">
+                                    <label for="{{ form.id_ambiente.id_for_label }}">Ambiente</label>
+                                    {{ persona_form.id_ambiente }}
+                                </div>
+                                <div class="form-group form_group_v col-md-6" id="espacio-field" >
+                                    <label >Espacio</label>
+                                    <input type="text" value="Seleccione primero la estrategia" class="form-control" readonly>
+                                </div>
+                                <div class="form-group form_group_v col-md-6" id="no-permitido-field" style="display: none;">
+                                    <label>Espacio</label>
+                                    <input type="text" value="No aplica" class="form-control" readonly>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group form_group_v col-md-6">
+                                    <label for="fecha_inicio">Fecha de inicio</label>
+                                    <input type="text" value="{{ visita_form.fecha_inicio.value }}" class="form-control" readonly>
+                                </div>
+                                <div class="form-group form_group_v col-md-6">
+                                    <label for="fecha_finalizacion">Fecha de finalización</label>
+                                    <input type="text" value="{{ visita_form.fecha_finalizacion.value }}" class="form-control" readonly>
+                                </div>
+                            </div>
+            
+            
+            
+            
+                        </div>
+                    </div>
+                    
+                    <div class="horizontal_line_"></div>
+            
+                </form>
+                <div class="vertical-line_v22"></div>
 
+                <div class="modal-header ">
+                    <h5 class="modal-title">Información del asistente</h5>
+                </div>
+                            
 
             </div>
         </div>
@@ -147,23 +264,102 @@
         document.getElementById('search-form').submit();
     }
     ////modal
-document.addEventListener('DOMContentLoaded', function() {
-    var botonMostrar = document.getElementById("mostrarFormulario");
-    var ventanaEmergente = document.getElementById("ventanaEmergente_vista");
-    var modalBodyContent = document.getElementById("modalBodyContent");
-
-    botonMostrar.addEventListener("click", () => {
-        // Mostrar la ventana emergente
-        ventanaEmergente.style.display = "flex";
+    document.addEventListener('DOMContentLoaded', function() {
+        const ventanaEmergente = document.getElementById("ventanaEmergente_vista");
         
+        // Seleccionar todos los botones "Ver más"
+        document.querySelectorAll('.btn-ver-mas').forEach(button => {
+            button.addEventListener('click', function() {
+                const row = this.closest('tr');
+                const nombres = row.querySelector('td:nth-child(2)').textContent; // Nombres
+                const apellidos = row.querySelector('td:nth-child(3)').textContent; // Apellidos
+                const telefono = row.querySelector('td:nth-child(4)').textContent; 
+                const identificacion = row.querySelector('td:nth-child(5)').textContent; 
+                const procedencia = row.querySelector('td:nth-child(8)').textContent; 
+                const correo = row.querySelector('td:nth-child(9)').textContent; 
 
+                // Asignar otros campos...
+                document.getElementById('nombres').value = nombres;
+                document.getElementById('apellidos').value = apellidos;
+                document.getElementById('correo').value = correo;
+                document.getElementById('identificacion').value = identificacion;
+                document.getElementById('telefono').value = telefono;
+                document.getElementById('procedencia').value = procedencia;
+                
+                // Mostrar el modal
+                ventanaEmergente.style.display = "flex";
+            });
+        });
+    
+        const btnCerrar = document.querySelector("#formularioEmergente_visita .btn-cerrar");
+    
+        btnCerrar.addEventListener("click", function() {
+            ventanaEmergente.style.display = "none";
+        });
     });
+    
 
-    const btnCerrar = document.querySelector("#formularioEmergente_visita .btn-cerrar");
+///grabacion
+document.addEventListener('DOMContentLoaded', function() {
+    var grabacionOn = document.getElementById('grabacion-on');
+    var grabacionOff = document.getElementById('grabacion-off');
+    var grabacionInput = document.getElementById('id_grabacion');
 
-    btnCerrar.addEventListener("click", function() {
-        ventanaEmergente.style.display = "none";
-    });
+    // Mostrar la imagen correcta al cargar
+    if (grabacionInput.checked) {
+        grabacionOn.style.display = 'block';
+        grabacionOff.style.display = 'none';
+    } else {
+        grabacionOn.style.display = 'none';
+        grabacionOff.style.display = 'block';
+    }
+});
+
+///maneja area dinamicamente
+document.addEventListener("DOMContentLoaded", function() {
+    var areaField = document.getElementById('id_id_area'); // Asegúrate de que este id coincida
+    var lineaField = document.getElementById('linea-field');
+    var ambienteField = document.getElementById('ambiente-field');
+    var espacioField = document.getElementById('espacio-field');
+    var nopermiteField = document.getElementById('no-permitido-field');
+
+
+    function updateFields() {
+        var selectedValue = areaField.options[areaField.selectedIndex].text;
+
+        lineaField.querySelector('select').removeAttribute('required');
+        ambienteField.querySelector('select').removeAttribute('required');
+        espacioField.querySelector('input').removeAttribute('required');
+        nopermiteField.querySelector('input').removeAttribute('required');
+    
+        lineaField.style.display = "none";
+        ambienteField.style.display = "none";
+        espacioField.style.display = "none";
+        nopermiteField.style.display = "none";
+    
+
+    
+        if (selectedValue === "Tecnoparque") {
+            lineaField.style.display = "block";
+            
+        } else if (selectedValue === "Tecnoacademia") {
+            ambienteField.style.display = "block";
+
+        } else if (selectedValue === "Sennova") {
+            nopermiteField.style.display = "block";
+
+        } else {
+            espacioField.style.display = "block";
+        }
+    }
+    
+    
+
+    // Inicializar campos al cargar la página
+    updateFields();
+
+    // Actualizar campos cuando cambie el área
+    areaField.addEventListener("change", updateFields);
 });
 </script>
 
