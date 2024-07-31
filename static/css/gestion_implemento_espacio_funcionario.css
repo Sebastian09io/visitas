@@ -4,12 +4,45 @@
     height: 70%;
     backdrop-filter: blur(3px);
     background: white;
-    position: absolute;
-    top: 18%;
-    left: 20%;
+    position: relative;
+    top: 10%;
+    left: 15%;
     padding: 2% 5%;
     text-align: center;
 }
+
+@media (max-width: 1200px) {
+    .contenedor {
+        width: 80%;
+        left: 10%;
+    }
+}
+
+@media (max-width: 992px) {
+    .contenedor {
+        width: 90%;
+        left: 5%;
+    }
+}
+
+@media (max-width: 768px) {
+    .contenedor {
+        width: 100%;
+        left: 0;
+        padding: 5%;
+    }
+
+
+}
+
+@media (max-width: 576px) {
+    .contenedor {
+        padding: 5%;
+    }
+
+
+}
+
 
 .btn-estado{
     width: 35px;
@@ -41,10 +74,13 @@ justify-content: center;
 }
 .custom-select {
     width: auto;
-}
-#ventanaEmergente {
+} 
+
+/* modales registro  */
+
+#ventanaEmergente { 
     display: none;
-    position: fixed;
+    position: fixed; /* Ajustado a fixed para que cubra toda la pantalla */
     top: 0;
     left: 0;
     width: 100%;
@@ -53,37 +89,39 @@ justify-content: center;
     justify-content: center;
     align-items: center;
     z-index: 1050; /* Ajustado para mayor prioridad */
-    transition: opacity 0.3s ease; /* Transición suave */
 }
 
-#formularioEmergente .modal-dialog {
-    max-width: 800px; /* Tamaño máximo del modal */
-    margin: 3rem auto; /* Centrado verticalmente */
+#formularioEmergente {
+    width: 90%; /* Ancho predeterminado */
+    max-width: 600px; /* Ancho máximo para pantallas grandes */
+    margin: auto;
 }
 
-#formularioEmergente .modal-content {
+.modal-content {
     border-radius: 8px; /* Bordes redondeados */
     overflow: hidden; /* Para que los bordes redondeados funcionen correctamente */
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); /* Sombra para darle profundidad */
+    background-color: white;
+    position: relative;
 }
 
-#formularioEmergente .modal-header {
+.modal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1.5rem 2rem;
+    padding: 1rem 1.5rem;
     border-bottom: 1px solid #dee2e6;
     background-color: #f8f9fa; /* Fondo claro */
 }
 
-#formularioEmergente .modal-header h5 {
+.modal-header h5 {
     margin: 0;
     font-size: 1.25rem;
 }
 
-#formularioEmergente .btn-cerrar {
-    width: 32px; /* Ajustado para mayor claridad */
-    height: 32px;
+.btn-cerrar {
+    width: 24px; /* Ajustado para mayor claridad */
+    height: 24px;
     background: none;
     border: none;
     padding: 0;
@@ -91,23 +129,21 @@ justify-content: center;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: transform 0.2s ease; /* Transición para efecto de hover */
-    margin-left:25px;
 }
 
-#formularioEmergente .btn-cerrar img {
+.btn-cerrar img {
     width: 100%;
     height: 100%;
 }
 
-#formularioEmergente .modal-body {
-    padding: 2rem;
+.modal-body {
+    padding: 1.5rem;
 }
 
-#formularioEmergente .form-group {
+.form-group {
     margin-bottom: 1.5rem; /* Espaciado entre campos */
 }
-
+/* pendiente */
 #formularioEmergente .btn-primary {
     background-color: #0f3efa; /* Azul Bootstrap */
     border-color: #0f3efa;
@@ -116,10 +152,48 @@ justify-content: center;
     border-radius: 4px;
 }
 
-/* Media query para dispositivos móviles */
-@media (max-width: 576px) {
-    #formularioEmergente .modal-dialog {
-        max-width: calc(100% - 1rem);
-        margin: 0.5rem;
+/* Media queries para ajustes responsivos */
+@media (max-width: 768px) {
+    #formularioEmergente {
+        width: 95%; /* Más ancho en pantallas pequeñas */
+    }
+}
+
+@media (max-width: 480px) {
+    .modal-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .modal-header h5 {
+        margin-bottom: 0.5rem;
+    }
+
+}
+
+
+/* modal admin visita*/
+
+#ventanaEmergente_vista { 
+    display: none;
+    position: fixed; /* Ajustado a fixed para que cubra toda la pantalla */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Fondo semi-transparente */
+    justify-content: center;
+    align-items: center;
+    z-index: 1050; /* Ajustado para mayor prioridad */
+}
+
+#formularioEmergente_visita {
+    width: 90%; /* Ancho predeterminado */
+    max-width: 600px; /* Ancho máximo para pantallas grandes */
+    margin: auto;
+}
+@media (max-width: 768px) {
+    #formularioEmergente_visita {
+        width: 95%; /* Más ancho en pantallas pequeñas */
     }
 }

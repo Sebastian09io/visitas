@@ -39,6 +39,13 @@
     cursor: pointer;
 
 }
+.btn-accion_v{
+    border: none;
+    width: 35px;
+    height: 35px;
+    padding-left: 0%;
+    background:transparent;
+}
 
 .formulario_visita{
     margin-top:0%;
@@ -265,7 +272,7 @@ margin-right:-20%;
 
 
 
-#ventanaEmergente {
+#ventanaEmergente { 
     display: none;
     position: fixed; /* Ajustado a fixed para que cubra toda la pantalla */
     top: 0;

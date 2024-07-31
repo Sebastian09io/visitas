@@ -1,8 +1,9 @@
 import os
 import json
 from django.http import FileResponse
+from django.db.models import Q
 from django.core.paginator import Paginator
-from django.shortcuts import render, redirect,get_object_or_404
+from django.shortcuts import render, redirect
 from django.contrib import messages
 from apps.funcionarios.models import Persona, Visita, Asistente, VisitaAsistente, TipoDocumento,Genero
 from .forms import PersonaForm, VisitaFormulario
@@ -71,13 +72,11 @@ def home_visita(request):
     else:
         persona_form = PersonaForm(instance=persona)
         visita_form = VisitaFormulario(instance=visita)
-        id_area_value = persona_form['id_area'].value() if persona_form['id_area'].value() else None
 
     context = {
         'user': user,
         'persona_form': persona_form,
         'visita_form': visita_form,
-        'id_area_value': id_area_value, 
     }
     return render(request, 'visita.html', context)
 
@@ -110,4 +109,41 @@ def administrador_visitas(request):
         'user': user,
         'resultados': resultados,
         }
+    return render(request, 'administracion/admin_visita.html', context)
+
+
+def buscar_visita(request):
+    """
+    Función para la gestión de búsqueda de visitas.
+    """
+    # Recuperar la consulta de búsqueda y el filtro de estado del parámetro GET
+    query = request.GET.get('buscar', '')
+    estado = request.GET.get('estado', 'todos')
+
+    # Inicializar resultados como una lista vacía
+    resultados = Persona.objects.all()
+
+    if query:
+        # Filtrar resultados por coincidencias en varios campos de texto
+        resultados = Persona.objects.filter(
+            Q(identificacion__icontains=query) |
+            Q(nombres__icontains=query) |  
+            Q(apellidos__icontains=query)
+        )
+
+    # Aplicar filtro de estado de la visita
+    if estado == 'habilitados':
+        resultados = resultados.filter(id_visita__estado=True)
+    elif estado == 'inhabilitados':
+        resultados = resultados.filter(id_visita__estado=False)
+
+    # Ordenar los resultados antes de paginar
+    resultados = resultados.order_by('id')
+    # Paginador
+    paginator = Paginator(resultados, 6)  # Número de usuarios por página
+    page_number = request.GET.get('page')
+    resultados = paginator.get_page(page_number)
+
+    context = {'resultados': resultados, 'query': query, 'estado': estado}
+
     return render(request, 'administracion/admin_visita.html', context)

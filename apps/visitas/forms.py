@@ -19,6 +19,9 @@ class BootstrapFormMixin:
             self.fields['fecha_inicio'].widget.attrs.update({'class': 'datetime-picker form-control'})
         if 'fecha_finalizacion' in self.fields:
             self.fields['fecha_finalizacion'].widget.attrs.update({'class': 'datetime-picker form-control'})
+            
+        if 'grabacion' in self.fields:
+            self.fields['grabacion'].widget.attrs.update({'class': 'd-none'})
 
 
 
@@ -98,7 +101,7 @@ class VisitaFormulario(forms.ModelForm, BootstrapFormMixin):
 
     class Meta:
         model = Visita
-        fields = ['fecha_inicio', 'fecha_finalizacion', 'discapacidad', 'procedencia']
+        fields = ['fecha_inicio', 'fecha_finalizacion', 'discapacidad', 'procedencia','grabacion']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

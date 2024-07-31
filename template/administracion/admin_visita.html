@@ -1,8 +1,7 @@
-{% include "administracion/base_admin.html" %}
+{% extends "administracion/base_admin.html" %}
 
-<link rel="stylesheet" href="/static/css/gestion_implemento_espacio_funcionario.css">
 
-{% block body %}
+{% block content %}
 
 <div class="contenedor">
     <h1 class="titulo">Administración de Visitas</h1>
@@ -13,21 +12,21 @@
                 <div class="card">
                     <div class="card-header">
                         <div class="container my-4">
-                            <form class="row" id="search-form" method="get" action="{% url 'reservas:buscar_funcionario' %}">
+                            <form class="row" id="search-form" method="get" action="{% url 'visitas:buscar_visita' %}">
                                 <!-- Barra seleccionable -->
                                 <div class="col-sm-4">
                                     <div class="input-group">
                                         <select name="estado" class="custom-select" onchange="submitForm()">
                                             <option value="todos" {% if estado == 'todos' %}selected{% endif %}>Todos</option>
-                                            <option value="habilitados" {% if estado == 'habilitados' %}selected{% endif %}>Funcionarios Habilitados</option>
-                                            <option value="inhabilitados" {% if estado == 'inhabilitados' %}selected{% endif %}>Funcionarios Inhabilitados</option>
+                                            <option value="habilitados" {% if estado == 'habilitados' %}selected{% endif %}>Visitas aprobadas</option>
+                                            <option value="inhabilitados" {% if estado == 'inhabilitados' %}selected{% endif %}>Visitas por aprobar</option>
                                         </select>
                                     </div>
                                 </div>
                                 <!-- Barra de búsqueda -->
                                 <div class="col-sm-8">
                                     <div class="input-group">
-                                        <input type="text" class="form-control" placeholder="Buscar..." name="buscar">
+                                        <input type="text" class="form-control" placeholder="Buscar..." name="buscar" value="{{ query }}">
                                         <div class="input-group-append">
                                             <button type="submit" class="btn btn-success">Buscar</button>
                                         </div>
@@ -69,12 +68,11 @@
                                         <td>{{ c.identificacion }}</td>
                                         <td>{{ c.id_cargo }}</td>
                                         <td>{{ c.id_dependencia }}</td>
-                                        <th>{{ c.procedencia }}</th>
+                                        <td>{{ c.id_visita.procedencia }}</td>
                                         <td>
-                                            <form method="post" action="{% url 'reservas:gestion_funcionario' %}">
-                                                {% csrf_token %}
+
                                                 <input type="hidden" name="persona_id" value="{{ c.id }}">
-                                                {% if c.estado %}
+                                                {% if c.id_visita.estado %}
                                                 <button type="submit" class="btn-accion" title="Habilitado">
                                                     <img class="btn-estado" src="/static/bootstrap/img/on.png">
                                                 </button>
@@ -83,9 +81,9 @@
                                                     <img class="btn-estado" src="/static/bootstrap/img/off.png">
                                                 </button>
                                                 {% endif %}
-                                            </form>
+
                                         </td>
-                                        <td></td>
+                                        <td><button type="button" class="btn" id="mostrarFormulario">Ver mas</button></td>
                                     </tr>
                                     {% endfor %}
                                 </tbody>
@@ -121,12 +119,52 @@
             </div>
         </div>
     </div>
+
+<!-- modal -->
+<div id="ventanaEmergente_vista">
+    <div id="formularioEmergente_visita">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Información del usuario</h5>
+                <button type="button" class="btn-cerrar" aria-label="Close">
+                    <img src="/static/bootstrap/img/cerrar.png" alt="Cerrar">
+                </button>
+            </div>
+            <div class="modal-body" id="modalBodyContent">
+            
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
 </div>
 
 <script>
     function submitForm() {
         document.getElementById('search-form').submit();
     }
+    ////modal
+document.addEventListener('DOMContentLoaded', function() {
+    var botonMostrar = document.getElementById("mostrarFormulario");
+    var ventanaEmergente = document.getElementById("ventanaEmergente_vista");
+    var modalBodyContent = document.getElementById("modalBodyContent");
+
+    botonMostrar.addEventListener("click", () => {
+        // Mostrar la ventana emergente
+        ventanaEmergente.style.display = "flex";
+        
+
+    });
+
+    const btnCerrar = document.querySelector("#formularioEmergente_visita .btn-cerrar");
+
+    btnCerrar.addEventListener("click", function() {
+        ventanaEmergente.style.display = "none";
+    });
+});
 </script>
 
 {% endblock %}

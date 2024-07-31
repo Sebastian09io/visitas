@@ -28,6 +28,7 @@
                     <div class="form-group form_group_v col-md-6">
                         <label for="apellidos">Apellidos</label>
                         {{ persona_form.apellidos }}
+                        
                     </div>
                 </div>
                 <div class="form-row">
@@ -38,18 +39,16 @@
                     <div class="form-group form_group_v col-md-6">
                         <label for="grabacion">Autoriza grabación:</label>
                         <div class="d-flex align-items-center">
-
-                            {% if persona_form.id_visita.grabacion %}
-                            <img id="grabacion-on" class="btn-estado_v mr-2" src="/static/bootstrap/img/on.png" style="display: block;">
-                            <img id="grabacion-off" class="btn-estado_v" src="/static/bootstrap/img/off.png" style="display: none;">
-                        {% else %}
-                            <img id="grabacion-on" class="btn-estado_v mr-2" src="/static/bootstrap/img/on.png" style="display: none;">
-                            <img id="grabacion-off" class="btn-estado_v" src="/static/bootstrap/img/off.png" style="display: block;">
-                        {% endif %}
-                        <input type="hidden" name="grabacion" id="grabacion-input" value="{{ persona_form.id_visita.grabacion|yesno:"True,False" }}">
-                        
+                            <button id="grabacion-on" type="button" class="btn-accion_v" title="Habilitado" style="display: none;">
+                                <img class="btn-estado_v" src="/static/bootstrap/img/on.png">
+                            </button>
+                            <button id="grabacion-off" type="button" class="btn-accion_v" title="Inhabilitado" style="display: none;">
+                                <img class="btn-estado_v" src="/static/bootstrap/img/off.png">
+                            </button>
+                            {{visita_form.grabacion}}
                         </div>
                     </div>
+                    
                     
                 </div>
                 <div class="form-row">
@@ -299,7 +298,7 @@ document.addEventListener("DOMContentLoaded", function() {
         ],
         minuteIncrement: 30,
         onChange: function(selectedDates, dateStr, instance) {
-            // No action needed here
+            // 
         },
         onClose: function(selectedDates, dateStr, instance) {
             let startDatePicker = document.getElementById("id_fecha_inicio")._flatpickr;
@@ -348,10 +347,10 @@ document.addEventListener("DOMContentLoaded", function() {
 document.addEventListener('DOMContentLoaded', function() {
     var grabacionOn = document.getElementById('grabacion-on');
     var grabacionOff = document.getElementById('grabacion-off');
-    var grabacionInput = document.getElementById('grabacion-input');
+    var grabacionInput = document.getElementById('id_grabacion');
 
     // Mostrar la imagen correcta al cargar
-    if (grabacionInput.value === 'True') {
+    if (grabacionInput.checked) {
         grabacionOn.style.display = 'block';
         grabacionOff.style.display = 'none';
     } else {
@@ -363,14 +362,20 @@ document.addEventListener('DOMContentLoaded', function() {
         this.style.display = 'none';
         grabacionOff.style.display = 'block';
         grabacionInput.value = 'False';
+        grabacionInput.checked = 'False';
+
+        
     };
 
     grabacionOff.onclick = function() {
         this.style.display = 'none';
         grabacionOn.style.display = 'block';
         grabacionInput.value = 'True';
+        grabacionInput.checked = 'True';
+
     };
 });
+
 
 
 ///maneja area dinamicamente
