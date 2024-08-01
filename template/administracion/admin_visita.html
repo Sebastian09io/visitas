@@ -55,6 +55,16 @@
                                         <th scope="col">Dependencia</th>
                                         <th scope="col">Procedencia</th>
                                         <th scope="col" class="d-none">correo</th>
+                                        <th scope="col" class="d-none">discapacidad</th>
+                                        <th scope="col" class="d-none">fecha_inicio</th>
+                                        <th scope="col" class="d-none">fecha_finalizacion</th>
+                                        <th scope="col" class="d-none">grabacion</th>
+                                        <th scope="col" class="d-none">Tipo documento</th>
+                                        <th scope="col" class="d-none">Genero</th>
+                                        <th scope="col">estrategia</th>
+                                        <th scope="col">Linea</th>
+                                        <th scope="col">Ambiente</th>
+                                        <th scope="col">Espacio</th>
                                         <th scope="col">Estado</th>
                                         <th scope="col">Detalle</th>
                                     </tr>
@@ -71,21 +81,42 @@
                                         <td>{{ c.id_dependencia }}</td>
                                         <td>{{ c.id_visita.procedencia }}</td>
                                         <td class="d-none">{{ c.correo }}</td>
+                                        <td class="d-none">{{ c.id_visita.discapacidad }}</td>
+                                        <td class="d-none">{{ c.id_visita.fecha_inicio }}</td>
+                                        <td class="d-none">{{ c.id_visita.fecha_finalizacion }}</td>
+                                        <td class="d-none">
+                                            <input type="hidden" name="persona_id" value="{{ c.id }}">
+                                            {% if c.id_visita.grabacion %}
+                                            <button  class="btn-accion" type="button" title="Habilitado">
+                                                <img class="btn-estado" src="/static/bootstrap/img/on.png">
+                                            </button>
+                                            {% else %}
+                                            <button  class="btn-accion" type="button" title="Inhabilitado">
+                                                <img class="btn-estado" src="/static/bootstrap/img/off.png">
+                                            </button>
+                                            {% endif %}
+                                        </td>
+                                        <td class="d-none">{{ c.id_tipo_documento }}</td>
+                                        <td class="d-none">{{ c.id_genero }}</td>
+                                        <td>{{ c.id_area }}</td>
+                                        <td>{{ c.id_linea }}</td>
+                                        <td>{{ c.id_ambiente }}</td>
+                                        <td>
+                                            <input type="text" value="No aplica" class="form-control" readonly>
+                                        </td>
 
 
                                         <td>
-
-                                                <input type="hidden" name="persona_id" value="{{ c.id }}">
-                                                {% if c.id_visita.estado %}
-                                                <button type="submit" class="btn-accion" title="Habilitado">
-                                                    <img class="btn-estado" src="/static/bootstrap/img/on.png">
-                                                </button>
-                                                {% else %}
-                                                <button type="submit" class="btn-accion" title="Inhabilitado">
-                                                    <img class="btn-estado" src="/static/bootstrap/img/off.png">
-                                                </button>
-                                                {% endif %}
-
+                                            <input type="hidden" name="persona_id" value="{{ c.id }}">
+                                            {% if c.id_visita.estado %}
+                                            <button type="submit" class="btn-accion" title="Habilitado">
+                                                <img class="btn-estado" src="/static/bootstrap/img/on.png">
+                                            </button>
+                                            {% else %}
+                                            <button type="submit" class="btn-accion" title="Inhabilitado">
+                                                <img class="btn-estado" src="/static/bootstrap/img/off.png">
+                                            </button>
+                                            {% endif %}
                                         </td>
                                         <td><button type="button" class="btn-ver-mas btn">Ver más</button></td>
                                     </tr>
@@ -156,13 +187,7 @@
                                 <div class="form-group form_group_v col-md-6">
                                     <label for="grabacion">Autoriza grabación:</label>
                                     <div class="d-flex align-items-center">
-                                        <button id="grabacion-on" type="button" class="btn-accion_v" title="Habilitado" style="display: none;">
-                                            <img class="btn-estado_v" src="/static/bootstrap/img/on.png">
-                                        </button>
-                                        <button id="grabacion-off" type="button" class="btn-accion_v" title="Inhabilitado" style="display: none;">
-                                            <img class="btn-estado_v" src="/static/bootstrap/img/off.png">
-                                        </button>
-                                        {{visita_form.grabacion}}
+                                        <div id="grabacion"></div>
                                     </div>
                                 </div>
                                 
@@ -171,7 +196,7 @@
                             <div class="form-row">
                                 <div class="form-group form_group_v col-md-6">
                                     <label for="id_tipo_documento">Tipo Documento</label>
-                                    {{ persona_form.id_tipo_documento }}
+                                    <input type="text" id="tipodocumento" class="form-control" readonly>
                                 </div>
                                 <div class="form-group form_group_v col-md-6">
                                     <label for="identificacion">Identificación</label>
@@ -185,7 +210,7 @@
                                 </div>
                                 <div class="form-group  form_group_v col-md-6">
                                     <label for="{{ form.id_genero.id_for_label }}">Género</label>
-                                    {{ persona_form.id_genero }}
+                                    <input type="text" id="genero" class="form-control" readonly>
                                 </div>
                             </div>
                         </div>
@@ -199,39 +224,37 @@
                                 </div>
                                 <div class="form-group form_group_v col-md-6">
                                     <label for="{{ form.discapacidad.id_for_label }}">Discapacidad</label>
-                                    <input type="text" value="{{ visita_form.discapacidad.value }}" class="form-control" readonly>
+                                    <input type="text" id="discapacidad" class="form-control" readonly>
                                 </div>
                             </div>
+
                             <div class="form-row">
                                 <div class="form-group form_group_v col-md-6">
                                     <label for="{{ form.id_area.id_for_label }}">Estrategia</label>
-                                    {{ persona_form.id_area }}
+                                    <input type="text" id="area" class="form-control" >
                                 </div>
-                                <div class="form-group form_group_v col-md-6" id="linea-field" style="display: none;">
+                                <div class="form-group form_group_v col-md-6" id="linea-field" >
                                     <label for="{{ form.id_linea.id_for_label }}">Línea</label>
-                                    {{ persona_form.id_linea }}
+                                    <input type="text" id="linea" class="form-control" readonly>
                                 </div>
                                 <div class="form-group form_group_v col-md-6" id="ambiente-field" style="display: none;">
                                     <label for="{{ form.id_ambiente.id_for_label }}">Ambiente</label>
-                                    {{ persona_form.id_ambiente }}
-                                </div>
-                                <div class="form-group form_group_v col-md-6" id="espacio-field" >
-                                    <label >Espacio</label>
-                                    <input type="text" value="Seleccione primero la estrategia" class="form-control" readonly>
+                                    <input type="text" id="ambiente" class="form-control" readonly>
                                 </div>
                                 <div class="form-group form_group_v col-md-6" id="no-permitido-field" style="display: none;">
                                     <label>Espacio</label>
-                                    <input type="text" value="No aplica" class="form-control" readonly>
+                                    <input type="text"  class="form-control" readonly>No aplica</input>
                                 </div>
                             </div>
+                            
                             <div class="form-row">
                                 <div class="form-group form_group_v col-md-6">
                                     <label for="fecha_inicio">Fecha de inicio</label>
-                                    <input type="text" value="{{ visita_form.fecha_inicio.value }}" class="form-control" readonly>
+                                    <input type="text" id="fecha_inicio" class="form-control" readonly>
                                 </div>
                                 <div class="form-group form_group_v col-md-6">
                                     <label for="fecha_finalizacion">Fecha de finalización</label>
-                                    <input type="text" value="{{ visita_form.fecha_finalizacion.value }}" class="form-control" readonly>
+                                    <input type="text" id="fecha_finalizacion" class="form-control" readonly>
                                 </div>
                             </div>
             
@@ -260,6 +283,52 @@
 </div>
 
 <script>
+///maneja area dinamicamente
+    document.addEventListener("DOMContentLoaded", function() {
+        var areaField = document.getElementById('persona.id_area'); // Asegúrate de que este id coincida
+        var lineaField = document.getElementById('linea-field');
+        var ambienteField = document.getElementById('ambiente-field');
+        var nopermiteField = document.getElementById('no-permitido-field');
+
+    
+        function updateFields() {
+            var selectedValue = areaField.value;
+
+            lineaField.querySelector('select').removeAttribute('required');
+            ambienteField.querySelector('select').removeAttribute('required');
+            nopermiteField.querySelector('input').removeAttribute('required');
+        
+            lineaField.style.display = "none";
+            ambienteField.style.display = "none";
+            nopermiteField.style.display = "none";
+        
+
+        
+            if (selectedValue === "Tecnoparque") {
+                lineaField.style.display = "block";
+                
+            } else if (selectedValue === "Tecnoacademia") {
+                ambienteField.style.display = "block";
+
+            } else if (selectedValue === "Sennova") {
+                nopermiteField.style.display = "block";
+
+            }
+        }
+        
+        
+    
+        // Inicializar campos al cargar la página
+        updateFields();
+    
+        // Actualizar campos cuando cambie el área
+        areaField.addEventListener("change", updateFields);
+    });
+
+
+
+
+
     function submitForm() {
         document.getElementById('search-form').submit();
     }
@@ -277,6 +346,15 @@
                 const identificacion = row.querySelector('td:nth-child(5)').textContent; 
                 const procedencia = row.querySelector('td:nth-child(8)').textContent; 
                 const correo = row.querySelector('td:nth-child(9)').textContent; 
+                const discapacidad = row.querySelector('td:nth-child(10)').textContent; 
+                const fecha_inicio = row.querySelector('td:nth-child(11)').textContent; 
+                const fecha_finalizacion = row.querySelector('td:nth-child(12)').textContent; 
+                const grabacion = row.querySelector('td:nth-child(13)').innerHTML; 
+                const tipodocumento = row.querySelector('td:nth-child(14)').textContent; 
+                const genero = row.querySelector('td:nth-child(15)').textContent; 
+                const area = row.querySelector('td:nth-child(16)').textContent; 
+                const linea = row.querySelector('td:nth-child(17)').textContent; 
+                const ambiente = row.querySelector('td:nth-child(18)').textContent; 
 
                 // Asignar otros campos...
                 document.getElementById('nombres').value = nombres;
@@ -285,6 +363,15 @@
                 document.getElementById('identificacion').value = identificacion;
                 document.getElementById('telefono').value = telefono;
                 document.getElementById('procedencia').value = procedencia;
+                document.getElementById('discapacidad').value = discapacidad;
+                document.getElementById('fecha_inicio').value = fecha_inicio;
+                document.getElementById('fecha_finalizacion').value = fecha_finalizacion;
+                document.getElementById('grabacion').innerHTML = grabacion;
+                document.getElementById('tipodocumento').value = tipodocumento;
+                document.getElementById('genero').value = genero;
+                document.getElementById('area').value = area;
+                document.getElementById('linea').value = linea;
+                document.getElementById('ambiente').value = ambiente;
                 
                 // Mostrar el modal
                 ventanaEmergente.style.display = "flex";
@@ -299,68 +386,7 @@
     });
     
 
-///grabacion
-document.addEventListener('DOMContentLoaded', function() {
-    var grabacionOn = document.getElementById('grabacion-on');
-    var grabacionOff = document.getElementById('grabacion-off');
-    var grabacionInput = document.getElementById('id_grabacion');
 
-    // Mostrar la imagen correcta al cargar
-    if (grabacionInput.checked) {
-        grabacionOn.style.display = 'block';
-        grabacionOff.style.display = 'none';
-    } else {
-        grabacionOn.style.display = 'none';
-        grabacionOff.style.display = 'block';
-    }
-});
-
-///maneja area dinamicamente
-document.addEventListener("DOMContentLoaded", function() {
-    var areaField = document.getElementById('id_id_area'); // Asegúrate de que este id coincida
-    var lineaField = document.getElementById('linea-field');
-    var ambienteField = document.getElementById('ambiente-field');
-    var espacioField = document.getElementById('espacio-field');
-    var nopermiteField = document.getElementById('no-permitido-field');
-
-
-    function updateFields() {
-        var selectedValue = areaField.options[areaField.selectedIndex].text;
-
-        lineaField.querySelector('select').removeAttribute('required');
-        ambienteField.querySelector('select').removeAttribute('required');
-        espacioField.querySelector('input').removeAttribute('required');
-        nopermiteField.querySelector('input').removeAttribute('required');
-    
-        lineaField.style.display = "none";
-        ambienteField.style.display = "none";
-        espacioField.style.display = "none";
-        nopermiteField.style.display = "none";
-    
-
-    
-        if (selectedValue === "Tecnoparque") {
-            lineaField.style.display = "block";
-            
-        } else if (selectedValue === "Tecnoacademia") {
-            ambienteField.style.display = "block";
-
-        } else if (selectedValue === "Sennova") {
-            nopermiteField.style.display = "block";
-
-        } else {
-            espacioField.style.display = "block";
-        }
-    }
-    
-    
-
-    // Inicializar campos al cargar la página
-    updateFields();
-
-    // Actualizar campos cuando cambie el área
-    areaField.addEventListener("change", updateFields);
-});
 </script>
 
 {% endblock %}

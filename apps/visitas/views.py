@@ -108,6 +108,7 @@ def administrador_visitas(request):
     persona_form = PersonaForm(instance=persona)
     visita_form = VisitaFormulario(instance=visita)
     context = {
+        'persona':persona,
         'user': user,
         'resultados': resultados,
         'persona_form': persona_form,
