@@ -61,10 +61,10 @@
                                         <th scope="col" class="d-none">grabacion</th>
                                         <th scope="col" class="d-none">Tipo documento</th>
                                         <th scope="col" class="d-none">Genero</th>
-                                        <th scope="col">estrategia</th>
-                                        <th scope="col">Linea</th>
-                                        <th scope="col">Ambiente</th>
-                                        <th scope="col">Espacio</th>
+                                        <th scope="col" class="d-none">estrategia</th>
+                                        <th scope="col" class="d-none">Linea</th>
+                                        <th scope="col" class="d-none">Ambiente</th>
+                                        <th scope="col" class="d-none">Espacio</th>
                                         <th scope="col">Estado</th>
                                         <th scope="col">Detalle</th>
                                     </tr>
@@ -98,10 +98,10 @@
                                         </td>
                                         <td class="d-none">{{ c.id_tipo_documento }}</td>
                                         <td class="d-none">{{ c.id_genero }}</td>
-                                        <td>{{ c.id_area }}</td>
-                                        <td>{{ c.id_linea }}</td>
-                                        <td>{{ c.id_ambiente }}</td>
-                                        <td>
+                                        <td class="d-none">{{ c.id_area }}</td>
+                                        <td class="d-none">{{ c.id_linea }}</td>
+                                        <td class="d-none">{{ c.id_ambiente }}</td>
+                                        <td class="d-none">
                                             <input type="text" value="No aplica" class="form-control" readonly>
                                         </td>
 
@@ -230,20 +230,20 @@
 
                             <div class="form-row">
                                 <div class="form-group form_group_v col-md-6">
-                                    <label for="{{ form.id_area.id_for_label }}">Estrategia</label>
-                                    <input type="text" id="area" class="form-control" >
+                                    <label for="area">Estrategia</label>
+                                    <input type="text" id="area" class="form-control" readonly>
                                 </div>
-                                <div class="form-group form_group_v col-md-6" id="linea-field" >
-                                    <label for="{{ form.id_linea.id_for_label }}">Línea</label>
+                                <div id="lineaField" class="form-group form_group_v col-md-6">
+                                    <label for="linea">Línea</label>
                                     <input type="text" id="linea" class="form-control" readonly>
                                 </div>
-                                <div class="form-group form_group_v col-md-6" id="ambiente-field" style="display: none;">
-                                    <label for="{{ form.id_ambiente.id_for_label }}">Ambiente</label>
+                                <div id="ambienteField" class="form-group form_group_v col-md-6">
+                                    <label for="ambiente">Ambiente</label>
                                     <input type="text" id="ambiente" class="form-control" readonly>
                                 </div>
-                                <div class="form-group form_group_v col-md-6" id="no-permitido-field" style="display: none;">
-                                    <label>Espacio</label>
-                                    <input type="text"  class="form-control" readonly>No aplica</input>
+                                <div id="nopermiteField" class="form-group form_group_v col-md-6">
+                                    <label for="espacio">Espacio</label>
+                                    <input type="text" id="espacio" class="form-control" value="No aplica" readonly>
                                 </div>
                             </div>
                             
@@ -283,65 +283,42 @@
 </div>
 
 <script>
-///maneja area dinamicamente
-    document.addEventListener("DOMContentLoaded", function() {
-        var areaField = document.getElementById('persona.id_area'); // Asegúrate de que este id coincida
-        var lineaField = document.getElementById('linea-field');
-        var ambienteField = document.getElementById('ambiente-field');
-        var nopermiteField = document.getElementById('no-permitido-field');
-
-    
-        function updateFields() {
-            var selectedValue = areaField.value;
-
-            lineaField.querySelector('select').removeAttribute('required');
-            ambienteField.querySelector('select').removeAttribute('required');
-            nopermiteField.querySelector('input').removeAttribute('required');
-        
-            lineaField.style.display = "none";
-            ambienteField.style.display = "none";
-            nopermiteField.style.display = "none";
-        
-
-        
-            if (selectedValue === "Tecnoparque") {
-                lineaField.style.display = "block";
-                
-            } else if (selectedValue === "Tecnoacademia") {
-                ambienteField.style.display = "block";
-
-            } else if (selectedValue === "Sennova") {
-                nopermiteField.style.display = "block";
-
-            }
-        }
-        
-        
-    
-        // Inicializar campos al cargar la página
-        updateFields();
-    
-        // Actualizar campos cuando cambie el área
-        areaField.addEventListener("change", updateFields);
-    });
-
-
-
-
 
     function submitForm() {
         document.getElementById('search-form').submit();
     }
-    ////modal
     document.addEventListener('DOMContentLoaded', function() {
         const ventanaEmergente = document.getElementById("ventanaEmergente_vista");
-        
-        // Seleccionar todos los botones "Ver más"
+        const areaField = document.getElementById('area');
+        const lineaField = document.getElementById('lineaField');
+        const ambienteField = document.getElementById('ambienteField');
+        const nopermiteField = document.getElementById('nopermiteField');
+    
+        function updateFields() {
+            const selectedValue = areaField.value.trim();
+    
+            lineaField.querySelector('input').removeAttribute('required');
+            ambienteField.querySelector('input').removeAttribute('required');
+            nopermiteField.querySelector('input').removeAttribute('required');
+    
+            lineaField.style.display = "none";
+            ambienteField.style.display = "none";
+            nopermiteField.style.display = "none";
+    
+            if (selectedValue === "Tecnoparque") {
+                lineaField.style.display = "block";
+            } else if (selectedValue === "Tecnoacademia") {
+                ambienteField.style.display = "block";
+            } else if (selectedValue === "Sennova") {
+                nopermiteField.style.display = "block";
+            }
+        }
+    
         document.querySelectorAll('.btn-ver-mas').forEach(button => {
             button.addEventListener('click', function() {
                 const row = this.closest('tr');
-                const nombres = row.querySelector('td:nth-child(2)').textContent; // Nombres
-                const apellidos = row.querySelector('td:nth-child(3)').textContent; // Apellidos
+                const nombres = row.querySelector('td:nth-child(2)').textContent;
+                const apellidos = row.querySelector('td:nth-child(3)').textContent;
                 const telefono = row.querySelector('td:nth-child(4)').textContent; 
                 const identificacion = row.querySelector('td:nth-child(5)').textContent; 
                 const procedencia = row.querySelector('td:nth-child(8)').textContent; 
@@ -355,8 +332,7 @@
                 const area = row.querySelector('td:nth-child(16)').textContent; 
                 const linea = row.querySelector('td:nth-child(17)').textContent; 
                 const ambiente = row.querySelector('td:nth-child(18)').textContent; 
-
-                // Asignar otros campos...
+    
                 document.getElementById('nombres').value = nombres;
                 document.getElementById('apellidos').value = apellidos;
                 document.getElementById('correo').value = correo;
@@ -372,8 +348,12 @@
                 document.getElementById('area').value = area;
                 document.getElementById('linea').value = linea;
                 document.getElementById('ambiente').value = ambiente;
-                
-                // Mostrar el modal
+    
+    
+                // Update fields visibility based on area
+                updateFields();
+    
+                // Show the modal
                 ventanaEmergente.style.display = "flex";
             });
         });
@@ -383,8 +363,7 @@
         btnCerrar.addEventListener("click", function() {
             ventanaEmergente.style.display = "none";
         });
-    });
-    
+    });   
 
 
 </script>
