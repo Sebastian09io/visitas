@@ -42,6 +42,6 @@ class DependenciaAdmin(admin.ModelAdmin):
 
 @admin.register(Persona)
 class PersonaAdmin(admin.ModelAdmin):
-    list_display = ('nombres', 'apellidos', 'correo', 'id_tipo_documento', 'identificacion', 'telefono', 'id_cargo', 'id_dependencia','id_implemento','id_genero','id_area','id_linea','id_ambiente','id_espacio', 'is_active', 'is_staff', 'is_superuser', 'is_admin','id_visita')
+    list_display = ('nombres', 'apellidos', 'correo', 'id_tipo_documento', 'identificacion', 'telefono', 'id_cargo', 'id_dependencia','id_implemento','id_genero','id_area','id_linea','id_ambiente','id_espacio', 'is_active', 'is_staff', 'is_superuser', 'is_admin')
     search_fields = ('nombres', 'apellidos', 'correo')
     list_filter = ('is_active', 'is_staff', 'is_superuser', 'is_admin')

@@ -272,6 +272,47 @@
                 <div class="modal-header ">
                     <h5 class="modal-title">Información del asistente</h5>
                 </div>
+
+
+
+
+                <div class="table-responsive">
+                    <table id="funcionarios-table" class="table table-striped table-bordered">
+                        <thead class="table-dark">
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Nombres</th>
+                                <th scope="col">Apellidos</th>
+                                <th scope="col">Correo</th>
+                                <th scope="col">Teléfono</th>
+                                <th scope="col">Tipo Documento</th>
+                                <th scope="col">Identificación</th>
+                                <th scope="col">Procedencia</th>
+                                <th scope="col">Discapacidad</th>
+                                <th scope="col">Género</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for v in visitas_asistentes %}
+                                <tr class="draggable-row" data-id="{{ v.id }}">
+                                    <th scope="row">{{ forloop.counter }}</th>
+                                    <td>{{ v.asistente.nombre_asistente }}</td>
+                                    <td>{{ v.asistente.apellidos_asistente }}</td>
+                                    <td>{{ v.asistente.correo_asistente }}</td>
+                                    <td>{{ v.asistente.telefono_asistente }}</td>
+                                    <td>{{ v.asistente.id_tipo_documento_asistente.nombre }}</td>
+                                    <td>{{ v.asistente.identificacion_asistente }}</td>
+                                    <td>{{ v.asistente.procedencia_asistente }}</td>
+                                    <td>{{ v.asistente.discapacidad_asistente }}</td>
+                                    <td>{{ v.asistente.id_genero_asistente.nombre }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                
+
+            
                             
 
             </div>

@@ -3,7 +3,7 @@ from django.contrib.auth.models import AbstractBaseUser,BaseUserManager
 
 class Base(models.Model):
     creacion = models.DateField(auto_now=True)
-    actualizacion = models.DateField(auto_now_add=True)
+    actualizacion = models.DateField(auto_now_add=True,null=True)
     estado = models.BooleanField(default=True)
 
     class Meta:
@@ -53,13 +53,6 @@ class Genero(Base):
     def __str__(self):
         return self.nombre
     
-class Visita(Base):
-    
-    fecha_inicio = models.DateTimeField()
-    fecha_finalizacion = models.DateTimeField()
-    discapacidad = models.CharField(max_length=50)
-    procedencia = models.CharField(max_length=80)
-    grabacion  = models.BooleanField(default=False)
 
 
 class Asistente(Base):
@@ -77,12 +70,9 @@ class Asistente(Base):
         return self.nombre_asistente
 
 
-class VisitaAsistente(models.Model):
-    visita = models.ForeignKey(Visita, on_delete=models.CASCADE,null=True)
-    asistente = models.ForeignKey(Asistente, on_delete=models.CASCADE,null=True)
 
-    class Meta:
-        unique_together = ('visita', 'asistente')
+
+
 
 # Modelo personalizado
 class PersonaManager(BaseUserManager):
@@ -116,7 +106,6 @@ class Persona(AbstractBaseUser, Base):
     id_cargo = models.ForeignKey(Cargo, on_delete=models.CASCADE, null=True)
     id_dependencia = models.ForeignKey(Dependencia, on_delete=models.CASCADE, null=True)
     id_implemento = models.ForeignKey(Implemento, on_delete=models.CASCADE, null=True)
-    id_visita = models.ForeignKey(Visita, on_delete=models.CASCADE,null=True,blank=True)
     id_genero = models.ForeignKey(Genero, on_delete=models.CASCADE, null=True)
     id_area = models.ForeignKey(Area, on_delete=models.CASCADE, null=True)
     id_linea = models.ForeignKey(Linea, on_delete=models.CASCADE, null=True)
@@ -141,3 +130,16 @@ class Persona(AbstractBaseUser, Base):
     def has_module_perms(self, app_label):
         return True
 
+class Visita(Base):
+    id_persona = models.ForeignKey(Persona, on_delete=models.CASCADE, null=True)
+    fecha_inicio = models.DateTimeField()
+    fecha_finalizacion = models.DateTimeField()
+    discapacidad = models.CharField(max_length=50)
+    procedencia = models.CharField(max_length=80)
+    grabacion  = models.BooleanField(default=False)
+    visita_asistente = models.ManyToManyField(Asistente, through='VisitaAsistente')
+    
+    
+class VisitaAsistente(Base):
+    visita = models.ForeignKey(Visita, on_delete=models.CASCADE,null=True)
+    asistente = models.ForeignKey(Asistente, on_delete=models.CASCADE,null=True)

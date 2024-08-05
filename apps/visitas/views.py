@@ -14,14 +14,12 @@ def home_visita(request):
     # Instanciar objetos
     try:
         persona = Persona.objects.get(id=user.id)
-        visita = persona.id_visita
     except Persona.DoesNotExist:
         persona = Persona(user=user)
-        visita = Visita()
-    
+
     if request.method == 'POST':
         persona_form = PersonaForm(request.POST, instance=persona)
-        visita_form = VisitaFormulario(request.POST, instance=visita)
+        visita_form = VisitaFormulario(request.POST)
         
         if persona_form.is_valid() and visita_form.is_valid():
             persona = persona_form.save(commit=False)
@@ -31,9 +29,11 @@ def home_visita(request):
             grabacion_estado = request.POST.get('grabacion') == 'True'
             visita.grabacion = grabacion_estado
 
-            # Guardar visita
+            # Asignar la persona a la visita
+            visita.id_persona = persona
+            
+            # Guardar visita y persona
             visita.save()
-            persona.id_visita = visita
             persona.save()
             
             # Procesar los asistentes
@@ -41,12 +41,8 @@ def home_visita(request):
             if asistentes_data:
                 asistentes = json.loads(asistentes_data)
                 for asistente_data in asistentes:
-                    # Pasar str a int
-                    id_tipo_documento_str = asistente_data.get('idTipoDocumento')
-                    id_tipo_documento = int(id_tipo_documento_str)
-                    
-                    genero_a_str = asistente_data.get('genero_a')
-                    genero_asistente = int(genero_a_str)
+                    id_tipo_documento = int(asistente_data.get('idTipoDocumento'))
+                    genero_asistente = int(asistente_data.get('genero_a'))
 
                     asistente, created = Asistente.objects.get_or_create(
                         identificacion_asistente=asistente_data['identificacion'],
@@ -59,10 +55,10 @@ def home_visita(request):
                             'discapacidad_asistente': asistente_data['discapacidad_a'],
                             'procedencia_asistente': asistente_data['procedencia_a'],
                             'id_genero_asistente': Genero.objects.get(id=genero_asistente)
-
                         }
                     )
 
+                    # Relacionar el asistente con la visita
                     VisitaAsistente.objects.get_or_create(visita=visita, asistente=asistente)
 
             messages.success(request, 'Visita asignada y asistentes registrados.')
@@ -71,7 +67,7 @@ def home_visita(request):
             messages.error(request, 'Formulario inválido. Por favor revise los datos ingresados.')
     else:
         persona_form = PersonaForm(instance=persona)
-        visita_form = VisitaFormulario(instance=visita)
+        visita_form = VisitaFormulario()
 
     context = {
         'user': user,
@@ -79,6 +75,7 @@ def home_visita(request):
         'visita_form': visita_form,
     }
     return render(request, 'visita.html', context)
+
 
 
 def descargar_excel(request):
@@ -92,10 +89,10 @@ def administrador_visitas(request):
     user = request.user
     try:
         persona = Persona.objects.get(id=user.id)
-        visita = persona.id_visita
+        visitas = Visita.objects.filter(persona=persona)  # Obtener visitas relacionadas con la persona
     except Persona.DoesNotExist:
         persona = Persona(user=user)
-        visita = Visita()
+        visitas = Visita.objects.none()
         
     if request.method == 'POST':
         pass
@@ -106,15 +103,21 @@ def administrador_visitas(request):
     resultados = paginator.get_page(page_number)
     
     persona_form = PersonaForm(instance=persona)
-    visita_form = VisitaFormulario(instance=visita)
+    visita_form = VisitaFormulario(instance=visitas.first() if visitas.exists() else None)
+    
+    visitas_asistentes = VisitaAsistente.objects.filter(visita__in=visitas)
+    
+            
     context = {
-        'persona':persona,
+        'persona': persona,
         'user': user,
         'resultados': resultados,
         'persona_form': persona_form,
         'visita_form': visita_form,
-        }
+        'visitas_asistentes': visitas_asistentes,
+    }
     return render(request, 'administracion/admin_visita.html', context)
+
 
 
 def buscar_visita(request):
