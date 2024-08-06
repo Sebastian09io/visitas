@@ -85,38 +85,37 @@ def descargar_excel(request):
     return response
 
 
+
+
 def administrador_visitas(request):
     user = request.user
     try:
         persona = Persona.objects.get(id=user.id)
-        visitas = Visita.objects.filter(persona=persona)  # Obtener visitas relacionadas con la persona
     except Persona.DoesNotExist:
         persona = Persona(user=user)
-        visitas = Visita.objects.none()
-        
-    if request.method == 'POST':
-        pass
+    
+    # Obtener todas las visitas y la persona asociada
+    visitas = Visita.objects.prefetch_related('visita_asistente').select_related('id_persona').all().order_by('id')
 
-    personas = Persona.objects.all().order_by('id')  # Ordenar los resultados por 'id'
-    paginator = Paginator(personas, 6)  # Número de usuarios por página
+    # Paginación de las visitas
+    paginator = Paginator(visitas, 5)  # Número de visitas por página
     page_number = request.GET.get('page')
     resultados = paginator.get_page(page_number)
-    
+
     persona_form = PersonaForm(instance=persona)
-    visita_form = VisitaFormulario(instance=visitas.first() if visitas.exists() else None)
-    
-    visitas_asistentes = VisitaAsistente.objects.filter(visita__in=visitas)
-    
-            
+    visita_form = VisitaFormulario()
+
     context = {
         'persona': persona,
         'user': user,
         'resultados': resultados,
         'persona_form': persona_form,
         'visita_form': visita_form,
-        'visitas_asistentes': visitas_asistentes,
     }
     return render(request, 'administracion/admin_visita.html', context)
+
+
+
 
 
 
@@ -128,30 +127,39 @@ def buscar_visita(request):
     query = request.GET.get('buscar', '')
     estado = request.GET.get('estado', 'todos')
 
-    # Inicializar resultados como una lista vacía
-    resultados = Persona.objects.all()
+    # Inicializar resultados como una lista de todas las visitas
+    resultados = Visita.objects.all()
 
     if query:
-        # Filtrar resultados por coincidencias en varios campos de texto
-        resultados = Persona.objects.filter(
+        # Filtrar resultados por coincidencias en varios campos de texto de Persona
+        personas = Persona.objects.filter(
             Q(identificacion__icontains=query) |
             Q(nombres__icontains=query) |  
             Q(apellidos__icontains=query)
         )
+        # Filtrar visitas basadas en las personas encontradas
+        resultados = resultados.filter(id_persona__in=personas)
+
+
 
     # Aplicar filtro de estado de la visita
     if estado == 'habilitados':
-        resultados = resultados.filter(id_visita__estado=True)
+        resultados = resultados.filter(estado=True)
     elif estado == 'inhabilitados':
-        resultados = resultados.filter(id_visita__estado=False)
+        resultados = resultados.filter(estado=False)
 
     # Ordenar los resultados antes de paginar
     resultados = resultados.order_by('id')
+
     # Paginador
-    paginator = Paginator(resultados, 6)  # Número de usuarios por página
+    paginator = Paginator(resultados, 5)  # Número de visitas por página
     page_number = request.GET.get('page')
     resultados = paginator.get_page(page_number)
 
-    context = {'resultados': resultados, 'query': query, 'estado': estado}
+    context = {
+        'resultados': resultados,
+        'query': query,
+        'estado': estado,
+    }
 
     return render(request, 'administracion/admin_visita.html', context)

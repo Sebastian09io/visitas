@@ -3,7 +3,7 @@ from .models import TipoDocumento, Cargo, Dependencia, Persona,Genero,Area,Linea
 
 @admin.register(Visita)
 class VisitaAdmin(admin.ModelAdmin):
-    list_display = ('fecha_inicio','fecha_finalizacion','discapacidad','procedencia','grabacion')
+    list_display = ('id_persona','fecha_inicio','fecha_finalizacion','discapacidad','procedencia','grabacion')
 
 @admin.register(VisitaAsistente)
 class VisitaAsistenteAdmin(admin.ModelAdmin):

@@ -77,4 +77,5 @@ modal con toda la informacional final botones aprobar rechazar
 correo de pendiente o confirmacion de visita
 correo de aprobado o no de parte administracion 
 error al usar correo asistente repetido
-cuadro para fecha con js
+filtros
+traer asistentes
