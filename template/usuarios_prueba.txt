@@ -9,8 +9,7 @@ contraseña: 12345678_Sa
 
 
 aprobacion pendiente para reservas y visitas 
-administracion de barra muestra el rol
-reservas barra sea logo   
+administracion de barra muestra el rol ifs para mostrar desplegables
 
 pruebas que se deben aplicar
 pruebas unitarias con testcase
@@ -72,10 +71,6 @@ actualizar o editar campos              ok**
 
 
 
-agregar estrategias a perfil
-modal con toda la informacional final botones aprobar rechazar
-correo de pendiente o confirmacion de visita
+modal con toda la informacion al final botones aprobar rechazar
 correo de aprobado o no de parte administracion 
-error al usar correo asistente repetido
-filtros
 traer asistentes

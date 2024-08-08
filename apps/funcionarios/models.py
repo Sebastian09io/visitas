@@ -5,14 +5,11 @@ class Base(models.Model):
     creacion = models.DateField(auto_now=True)
     actualizacion = models.DateField(auto_now_add=True,null=True)
     estado = models.BooleanField(default=True)
-
     class Meta:
         abstract = True
 
 class TipoDocumento(Base):
-
     nombre = models.CharField(max_length=50)
-
     def __str__(self):
         return self.nombre
 
@@ -59,7 +56,7 @@ class Asistente(Base):
     nombre_asistente = models.CharField(max_length=50,null=True,blank=True)
     apellidos_asistente = models.CharField(max_length=50,null=True,blank=True)
     telefono_asistente = models.CharField(max_length=10,null=True,blank=True)
-    correo_asistente = models.EmailField(unique=True,null=True,blank=True)
+    correo_asistente = models.EmailField(null=True,blank=True)
     id_tipo_documento_asistente = models.ForeignKey(TipoDocumento, on_delete=models.CASCADE, null=True)
     identificacion_asistente = models.CharField(max_length=10, unique=True,null=True,blank=True)
     discapacidad_asistente = models.CharField(max_length=50,null=True,blank=True)
@@ -137,6 +134,7 @@ class Visita(Base):
     discapacidad = models.CharField(max_length=50)
     procedencia = models.CharField(max_length=80)
     grabacion  = models.BooleanField(default=False)
+    estado_revision = models.BooleanField(default=False)
     visita_asistente = models.ManyToManyField(Asistente, through='VisitaAsistente')
     
     

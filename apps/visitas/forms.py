@@ -49,10 +49,13 @@ class PersonaForm(forms.ModelForm, BootstrapFormMixin):
         self.fields['id_tipo_documento'].empty_label = "Seleccione un tipo de documento"
         self.fields['id_genero'].queryset = Genero.objects.all()
         self.fields['id_genero'].empty_label = "Seleccione el género"
+        self.fields['id_area'].initial = None
         self.fields['id_area'].queryset = Area.objects.all()
         self.fields['id_area'].empty_label = "Seleccione una estrategia"
+        self.fields['id_ambiente'].initial = None        
         self.fields['id_ambiente'].queryset = Ambiente.objects.all()
         self.fields['id_ambiente'].empty_label = "Seleccione el ambiente"
+        self.fields['id_linea'].initial = None
         self.fields['id_linea'].queryset = Linea.objects.all()
         self.fields['id_linea'].empty_label = "Seleccione la linea"
         self.fields['procedencia_asistente'].widget.attrs.update({'placeholder': 'Ingrese la procedencia'})

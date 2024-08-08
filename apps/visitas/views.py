@@ -5,6 +5,8 @@ from django.db.models import Q
 from django.core.paginator import Paginator
 from django.shortcuts import render, redirect
 from django.contrib import messages
+from django.core.mail import send_mail
+from django.conf import settings
 from apps.funcionarios.models import Persona, Visita, Asistente, VisitaAsistente, TipoDocumento,Genero
 from .forms import PersonaForm, VisitaFormulario
 
@@ -36,6 +38,12 @@ def home_visita(request):
             visita.save()
             persona.save()
             
+            #envio de correo 
+            user_email = request.user.correo
+            subject = 'Solicitud de Reserva en Revisión'
+            message = 'Tu solicitud de reserva de visita está en revisión.'
+            send_mail(subject, message, settings.EMAIL_HOST_USER, [user_email])
+            
             # Procesar los asistentes
             asistentes_data = request.POST.get('asistentes')
             if asistentes_data:
@@ -61,7 +69,7 @@ def home_visita(request):
                     # Relacionar el asistente con la visita
                     VisitaAsistente.objects.get_or_create(visita=visita, asistente=asistente)
 
-            messages.success(request, 'Visita asignada y asistentes registrados.')
+            messages.success(request, 'Visita y asistentes registrados, Se envió un correo con la informacion del estado de revisión se la visita.')
             return redirect('visitas:home_visita')
         else:
             messages.error(request, 'Formulario inválido. Por favor revise los datos ingresados.')
@@ -144,9 +152,9 @@ def buscar_visita(request):
 
     # Aplicar filtro de estado de la visita
     if estado == 'habilitados':
-        resultados = resultados.filter(estado=True)
+        resultados = resultados.filter(estado_revision=True)
     elif estado == 'inhabilitados':
-        resultados = resultados.filter(estado=False)
+        resultados = resultados.filter(estado_revision=False)
 
     # Ordenar los resultados antes de paginar
     resultados = resultados.order_by('id')

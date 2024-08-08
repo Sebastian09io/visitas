@@ -106,7 +106,7 @@
 
                                         <td>
                                             <input type="hidden" name="persona_id" value="{{ c.id }}">
-                                            {% if c.estado %}
+                                            {% if c.estado_revision %}
                                             <button type="submit" class="btn-accion" title="Habilitado">
                                                 <img class="btn-estado" src="/static/bootstrap/img/on.png">
                                             </button>
@@ -116,7 +116,7 @@
                                             </button>
                                             {% endif %}
                                         </td>
-                                        <td><button type="button" class="btn-ver-mas btn" data-id="{{ c.id }}">Ver más</button></td>
+                                        <td><button type="button" class="btn-ver-mas btn">Ver más</button></td>
                                     </tr>
                                     {% endfor %}
                                 </tbody>
@@ -363,10 +363,16 @@
                 nopermiteField.style.display = "block";
             }
         }
-    
+        
         document.querySelectorAll('.btn-ver-mas').forEach(button => {
             button.addEventListener('click', function() {
                 const row = this.closest('tr');
+                const visitId = row.getAttribute('data-id'); // Captura el ID de la visita
+    
+                // Aquí puedes usar el ID para hacer una solicitud AJAX o cargar datos adicionales si es necesario
+                console.log("ID de la visita:", visitId);
+    
+                // Resto de la lógica para cargar los datos en el modal
                 const nombres = row.querySelector('td:nth-child(2)').textContent;
                 const apellidos = row.querySelector('td:nth-child(3)').textContent;
                 const telefono = row.querySelector('td:nth-child(4)').textContent; 
@@ -399,7 +405,6 @@
                 document.getElementById('linea').value = linea;
                 document.getElementById('ambiente').value = ambiente;
     
-    
                 // Update fields visibility based on area
                 updateFields();
     
@@ -407,15 +412,14 @@
                 ventanaEmergente.style.display = "flex";
             });
         });
-    
+        
         const btnCerrar = document.querySelector("#formularioEmergente_visita .btn-cerrar");
     
         btnCerrar.addEventListener("click", function() {
             ventanaEmergente.style.display = "none";
         });
-    });   
-
-
+    });
+    
 </script>
 
 {% endblock %}
