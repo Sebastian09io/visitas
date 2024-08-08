@@ -1,6 +1,7 @@
 from django import forms
 from apps.funcionarios.models import Persona, Area, Ambiente, Linea, Genero, Visita, TipoDocumento, Asistente 
 from django.core.exceptions import ValidationError
+from django.utils import timezone
 import datetime
 
 class BootstrapFormMixin:
@@ -95,6 +96,8 @@ class PersonaForm(forms.ModelForm, BootstrapFormMixin):
 
 
 
+
+
 class VisitaFormulario(forms.ModelForm, BootstrapFormMixin):
     discapacidad = forms.CharField(max_length=50, label="Discapacidad")
     procedencia = forms.CharField(max_length=80, label="Procedencia")
@@ -104,7 +107,7 @@ class VisitaFormulario(forms.ModelForm, BootstrapFormMixin):
 
     class Meta:
         model = Visita
-        fields = ['fecha_inicio', 'fecha_finalizacion', 'discapacidad', 'procedencia','grabacion']
+        fields = ['fecha_inicio', 'fecha_finalizacion', 'discapacidad', 'procedencia', 'grabacion']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -116,6 +119,13 @@ class VisitaFormulario(forms.ModelForm, BootstrapFormMixin):
         cleaned_data = super().clean()
         fecha_inicio = cleaned_data.get("fecha_inicio")
         fecha_finalizacion = cleaned_data.get("fecha_finalizacion")
+
+        # Validar que no se agende para un día anterior a hoy
+        if fecha_inicio and fecha_inicio < timezone.now():
+            raise forms.ValidationError("No se puede agendar para una fecha anterior a hoy.")
+
+        if fecha_finalizacion and fecha_finalizacion < timezone.now():
+            raise forms.ValidationError("No se puede agendar para una fecha anterior a hoy.")
 
         if fecha_inicio and fecha_finalizacion:
             # Validar que la fecha de inicio y finalización sean el mismo día
@@ -135,6 +145,17 @@ class VisitaFormulario(forms.ModelForm, BootstrapFormMixin):
             
             if not ((datetime.time(8, 0) <= fecha_finalizacion.time() <= datetime.time(12, 0)) or (datetime.time(14, 0) <= fecha_finalizacion.time() <= datetime.time(17, 0))):
                 raise forms.ValidationError("La hora de finalización debe estar entre las 08:00-12:00 o 14:00-17:00.")
+
+            # Validar que no se solape con otras reservas
+            existing_visits = Visita.objects.filter(
+                fecha_inicio__lt=fecha_finalizacion,
+                fecha_finalizacion__gt=fecha_inicio
+            )
+
+            # Verificar si hay visitas existentes en el rango de tiempo
+            if existing_visits.exists():
+                raise forms.ValidationError("Ya hay una visita agendada en este intervalo de tiempo.")
+
 
 
 

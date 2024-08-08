@@ -20,6 +20,7 @@
                                             <option value="todos" {% if estado == 'todos' %}selected{% endif %}>Todos</option>
                                             <option value="habilitados" {% if estado == 'habilitados' %}selected{% endif %}>Visitas aprobadas</option>
                                             <option value="inhabilitados" {% if estado == 'inhabilitados' %}selected{% endif %}>Visitas por aprobar</option>
+                                            <option value="finalizado" {% if estado == 'finalizado' %}selected{% endif %}>Visitas finalizadas</option>
                                         </select>
                                     </div>
                                 </div>
@@ -63,7 +64,6 @@
                                         <th scope="col" class="d-none">estrategia</th>
                                         <th scope="col" class="d-none">Linea</th>
                                         <th scope="col" class="d-none">Ambiente</th>
-                                        <th scope="col" class="d-none">Espacio</th>
                                         <th scope="col">Estado</th>
                                         <th scope="col">Detalle</th>
                                     </tr>
@@ -99,9 +99,6 @@
                                         <td class="d-none">{{ c.id_persona.id_area }}</td>
                                         <td class="d-none">{{ c.id_persona.id_linea }}</td>
                                         <td class="d-none">{{ c.id_persona.id_ambiente }}</td>
-                                        <td class="d-none">
-                                            <input type="text" value="No aplica" class="form-control" readonly>
-                                        </td>
 
 
                                         <td>
@@ -116,6 +113,7 @@
                                             </button>
                                             {% endif %}
                                         </td>
+
                                         <td><button type="button" class="btn-ver-mas btn">Ver más</button></td>
                                     </tr>
                                     {% endfor %}
@@ -214,7 +212,7 @@
                         </div>
             
             
-                        <div class="col-md-6 espacio_v">
+                        <div class="col-md-6 espacio_v4">
                             <div class="form-row">
                                 <div class="form-group form_group_v col-md-6">
                                     <label for="{{ form.procedencia.id_for_label }}">Procedencia</label>
@@ -253,6 +251,19 @@
                                 <div class="form-group form_group_v col-md-6">
                                     <label for="fecha_finalizacion">Fecha de finalización</label>
                                     <input type="text" id="fecha_finalizacion" class="form-control" readonly>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group form_group_v col-md-6">
+                                    <label for="rechazar" class="letrat">F</label>
+                                    <input type="hidden" id="visita_id" value="{{ visita.id }}" >
+                                    <button id="btn-rechazar-visita" class="btn btnt8 btn-danger" type="button">Rechazar visita</button>
+                                </div>
+                                
+                                <div class="form-group form_group_v col-md-6">
+                                    <label for="aprobar" class="letrat">F</label>
+                                    <button id="btn-aprobar-visita" class="btn btnt8 btn-primary" type="button">Aprobar visita</button>
                                 </div>
                             </div>
             
@@ -369,9 +380,10 @@
                 const row = this.closest('tr');
                 const visitId = row.getAttribute('data-id'); // Captura el ID de la visita
     
-                // Aquí puedes usar el ID para hacer una solicitud AJAX o cargar datos adicionales si es necesario
+                
                 console.log("ID de la visita:", visitId);
-    
+                document.getElementById('visita_id').value = visitId;
+
                 // Resto de la lógica para cargar los datos en el modal
                 const nombres = row.querySelector('td:nth-child(2)').textContent;
                 const apellidos = row.querySelector('td:nth-child(3)').textContent;
@@ -388,6 +400,7 @@
                 const area = row.querySelector('td:nth-child(14)').textContent; 
                 const linea = row.querySelector('td:nth-child(15)').textContent; 
                 const ambiente = row.querySelector('td:nth-child(16)').textContent; 
+
     
                 document.getElementById('nombres').value = nombres;
                 document.getElementById('apellidos').value = apellidos;
@@ -404,6 +417,7 @@
                 document.getElementById('area').value = area;
                 document.getElementById('linea').value = linea;
                 document.getElementById('ambiente').value = ambiente;
+
     
                 // Update fields visibility based on area
                 updateFields();
@@ -418,8 +432,95 @@
         btnCerrar.addEventListener("click", function() {
             ventanaEmergente.style.display = "none";
         });
+
+
     });
     
+    //obtiene id y proceso  rechazar
+    document.getElementById('btn-rechazar-visita').addEventListener('click', function() {
+        const visitaId = document.getElementById('visita_id').value;
+    
+        if (visitaId) {
+            // Mensaje de confirmación
+            const confirmacion = confirm('¿Estás seguro de que deseas rechazar esta visita?');
+    
+            if (confirmacion) {
+                fetch(`/rechazar_visita/${visitaId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Visita rechazada correctamente.');
+                        ventanaEmergente_vista.style.display = "none"; // Close modal
+                        location.reload(); // Reload page
+                    } else {
+                        alert('Error al rechazar la visita: ' + (data.error || ''));
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Hubo un problema con la solicitud.');
+                });
+            }
+        }
+    });
+
+    //obtiene id y proceso  aprobar
+    document.getElementById('btn-aprobar-visita').addEventListener('click', function() {
+        const visitaId = document.getElementById('visita_id').value;
+    
+        if (visitaId) {
+            // Mensaje de confirmación
+            const confirmacion = confirm('¿Estás seguro de que deseas aprobar esta visita?');
+    
+            if (confirmacion) {
+                fetch(`/aprobar_visita/${visitaId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Visita aprobada correctamente.');
+                        ventanaEmergente_vista.style.display = "none"; // Close modal
+                        location.reload(); // Reload page
+                    } else {
+                        alert('Error al Aprobar la visita: ' + (data.error || ''));
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Hubo un problema con la solicitud.');
+                });
+            }
+        }
+    });
+    
+
+// Función para obtener el token CSRF (si es necesario)
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Verifica si este es el cookie que buscamos
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
 </script>
 
 {% endblock %}

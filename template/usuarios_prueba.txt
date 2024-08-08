@@ -71,6 +71,5 @@ actualizar o editar campos              ok**
 
 
 
-modal con toda la informacion al final botones aprobar rechazar
-correo de aprobado o no de parte administracion 
 traer asistentes
+if para que no permita agendar un dia si ya esta agendado

@@ -3,9 +3,10 @@ import json
 from django.http import FileResponse
 from django.db.models import Q
 from django.core.paginator import Paginator
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.core.mail import send_mail
+from django.http import JsonResponse
 from django.conf import settings
 from apps.funcionarios.models import Persona, Visita, Asistente, VisitaAsistente, TipoDocumento,Genero
 from .forms import PersonaForm, VisitaFormulario
@@ -109,7 +110,7 @@ def administrador_visitas(request):
     paginator = Paginator(visitas, 5)  # Número de visitas por página
     page_number = request.GET.get('page')
     resultados = paginator.get_page(page_number)
-
+    
     persona_form = PersonaForm(instance=persona)
     visita_form = VisitaFormulario()
 
@@ -155,6 +156,9 @@ def buscar_visita(request):
         resultados = resultados.filter(estado_revision=True)
     elif estado == 'inhabilitados':
         resultados = resultados.filter(estado_revision=False)
+    elif estado == 'finalizado':
+        resultados = resultados.filter(estado_finalizado=True)
+    
 
     # Ordenar los resultados antes de paginar
     resultados = resultados.order_by('id')
@@ -171,3 +175,41 @@ def buscar_visita(request):
     }
 
     return render(request, 'administracion/admin_visita.html', context)
+
+
+def rechazar_visita(request, visita_id):
+    if request.method == 'POST':
+        visita = get_object_or_404(Visita, id=visita_id)
+        visita.estado_rechazado = True
+        try:
+            visita.save()
+            user_email = request.user.correo
+            
+            if user_email: 
+                subject = 'Estado de solicitud de reserva'
+                message = 'Tu solicitud de reserva de visita ha sido rechazada.'
+                send_mail(subject, message, settings.EMAIL_HOST_USER, [user_email])
+            
+            return JsonResponse({'success': True})
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)})
+    return JsonResponse({'success': False, 'error': 'Método no permitido'})
+
+
+def aprobar_visita(request, visita_id):
+    if request.method == 'POST':
+        visita = get_object_or_404(Visita, id=visita_id)
+        visita.estado_revision = True
+        try:
+            visita.save()
+            user_email = request.user.correo
+            
+            if user_email: 
+                subject = 'Estado de solicitud de reserva'
+                message = 'Tu solicitud de reserva de visita ha sido aprobada.'
+                send_mail(subject, message, settings.EMAIL_HOST_USER, [user_email])
+            
+            return JsonResponse({'success': True})
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)})
+    return JsonResponse({'success': False, 'error': 'Método no permitido'})

@@ -135,6 +135,8 @@ class Visita(Base):
     procedencia = models.CharField(max_length=80)
     grabacion  = models.BooleanField(default=False)
     estado_revision = models.BooleanField(default=False)
+    estado_finalizado = models.BooleanField(default=False)
+    estado_rechazado = models.BooleanField(default=False)
     visita_asistente = models.ManyToManyField(Asistente, through='VisitaAsistente')
     
     
