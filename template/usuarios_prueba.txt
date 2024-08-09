@@ -8,7 +8,6 @@ contraseña: 12345678_Sa
 
 
 
-aprobacion pendiente para reservas y visitas 
 administracion de barra muestra el rol ifs para mostrar desplegables
 
 pruebas que se deben aplicar
@@ -69,5 +68,31 @@ listar o traer datos a los campos       ok**
 actualizar o editar campos              ok**
 
 
+////////////////////////////
+VISITAS
+
+registro visita
+envio-guardado de formulario
+envio correo revision
+guardado- procesamiento de asistentes
+listar-agregar aistentes
+descargar descargar_excel
+actualizar fecha finalizacion automatica
+verificacion de fecha ocupada
+
+administracion visita
+listar visita con informacion de persona
+filtro desplegable        
+buscador           
+paginacion                               
+envio correo rechazado
+envio correo aprobado
+listar asistentes-cargar
 
 
+
+
+manual tecnico 
+manual de usuario
+pruebas
+documentacion pruebas en word 

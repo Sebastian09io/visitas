@@ -102,7 +102,25 @@ def actualizar_estado_visitas():
     for visita in visitas:
         visita.estado_finalizado = True
         visita.save()
+        
+        
+def verificar_fecha(request):
+    fecha = request.GET.get('fecha')
+    
+    if fecha:
+        # Convertir la cadena de fecha en un objeto datetime
+        fecha_datetime = timezone.datetime.fromisoformat(fecha)
+        # Comprobar si ya hay una visita agendada en esa fecha
+        existe_visita = Visita.objects.filter(
+            fecha_inicio__lt=fecha_datetime + timezone.timedelta(days=1),
+            fecha_finalizacion__gt=fecha_datetime
+        ).exists()
+        
+        return JsonResponse({'reservada': existe_visita})
+    
+    return JsonResponse({'reservada': False})
 
+#funciones administracion
 
 def administrador_visitas(request):
     user = request.user
@@ -249,18 +267,3 @@ def aprobar_visita(request, visita_id):
             return JsonResponse({'success': False, 'error': str(e)})
     return JsonResponse({'success': False, 'error': 'Método no permitido'})
 
-def verificar_fecha(request):
-    fecha = request.GET.get('fecha')
-    
-    if fecha:
-        # Convertir la cadena de fecha en un objeto datetime
-        fecha_datetime = timezone.datetime.fromisoformat(fecha)
-        # Comprobar si ya hay una visita agendada en esa fecha
-        existe_visita = Visita.objects.filter(
-            fecha_inicio__lt=fecha_datetime + timezone.timedelta(days=1),
-            fecha_finalizacion__gt=fecha_datetime
-        ).exists()
-        
-        return JsonResponse({'reservada': existe_visita})
-    
-    return JsonResponse({'reservada': False})
