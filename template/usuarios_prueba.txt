@@ -71,5 +71,3 @@ actualizar o editar campos              ok**
 
 
 
-traer asistentes
-if para que no permita agendar un dia si ya esta agendado

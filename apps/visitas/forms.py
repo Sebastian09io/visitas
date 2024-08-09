@@ -121,10 +121,13 @@ class VisitaFormulario(forms.ModelForm, BootstrapFormMixin):
         fecha_finalizacion = cleaned_data.get("fecha_finalizacion")
 
         # Validar que no se agende para un día anterior a hoy
-        if fecha_inicio and fecha_inicio < timezone.now():
+        now = timezone.now()
+        local_now = timezone.localtime(now)
+
+        if fecha_inicio and fecha_inicio < local_now:
             raise forms.ValidationError("No se puede agendar para una fecha anterior a hoy.")
 
-        if fecha_finalizacion and fecha_finalizacion < timezone.now():
+        if fecha_finalizacion and fecha_finalizacion < local_now:
             raise forms.ValidationError("No se puede agendar para una fecha anterior a hoy.")
 
         if fecha_inicio and fecha_finalizacion:
@@ -146,7 +149,8 @@ class VisitaFormulario(forms.ModelForm, BootstrapFormMixin):
             if not ((datetime.time(8, 0) <= fecha_finalizacion.time() <= datetime.time(12, 0)) or (datetime.time(14, 0) <= fecha_finalizacion.time() <= datetime.time(17, 0))):
                 raise forms.ValidationError("La hora de finalización debe estar entre las 08:00-12:00 o 14:00-17:00.")
 
-            # Validar que no se solape con otras reservas
+        # Validar que no se solape con otras reservas
+        if fecha_inicio and fecha_finalizacion:
             existing_visits = Visita.objects.filter(
                 fecha_inicio__lt=fecha_finalizacion,
                 fecha_finalizacion__gt=fecha_inicio
@@ -155,6 +159,7 @@ class VisitaFormulario(forms.ModelForm, BootstrapFormMixin):
             # Verificar si hay visitas existentes en el rango de tiempo
             if existing_visits.exists():
                 raise forms.ValidationError("Ya hay una visita agendada en este intervalo de tiempo.")
+
 
 
 

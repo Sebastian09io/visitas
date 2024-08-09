@@ -281,8 +281,14 @@
                 message.style.display = 'none';
             });
         }, 10000); //segundos del mensaje
+
+
 ///fechas
 document.addEventListener("DOMContentLoaded", function() {
+    // Obtener la fecha actual
+    let today = new Date();
+    today.setHours(0, 0, 0, 0); // Establecer la hora a 00:00 para bloquear todo el día
+
     let config = {
         enableTime: true,
         dateFormat: "Y-m-d H:i",
@@ -290,15 +296,16 @@ document.addEventListener("DOMContentLoaded", function() {
         minTime: "08:00",
         maxTime: "17:00",
         locale: "es",
+        minDate: today, // Bloquear días anteriores a hoy
         disable: [
             function(date) {
-                // Disable weekends
+                // Deshabilitar fines de semana
                 return (date.getDay() === 6 || date.getDay() === 0);
             }
         ],
         minuteIncrement: 30,
         onChange: function(selectedDates, dateStr, instance) {
-            // 
+            verificarFecha(dateStr, instance); // Verificar la fecha seleccionada
         },
         onClose: function(selectedDates, dateStr, instance) {
             let startDatePicker = document.getElementById("id_fecha_inicio")._flatpickr;
@@ -340,7 +347,24 @@ document.addEventListener("DOMContentLoaded", function() {
 
     flatpickr("#id_fecha_inicio", config);
     flatpickr("#id_fecha_finalizacion", config);
+
+    function verificarFecha(fecha, instance) {
+        fetch(`/verificar_fecha/?fecha=${encodeURIComponent(fecha)}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.reservada) {
+                    alert("La fecha ya fue reservada. Cambia a una hora distinta.");
+                    
+                    instance.open(); // Abrir el calendario nuevamente
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
 });
+
+
+
+
 
 
 // Script para manejar la grabación

@@ -10,8 +10,11 @@ urlpatterns = [
     path('buscar_visita/', views.buscar_visita, name='buscar_visita'),
     path('rechazar_visita/<int:visita_id>/', views.rechazar_visita, name='rechazar_visita'),
     path('aprobar_visita/<int:visita_id>/', views.aprobar_visita, name='aprobar_visita'),
-
-
-
-
+    path('verificar_fecha/', views.verificar_fecha, name='verificar_fecha'),
+    path('cargar_asistentes/<int:visita_id>/', views.cargar_asistentes, name='cargar_asistentes'),
 ]
+
+
+
+
+

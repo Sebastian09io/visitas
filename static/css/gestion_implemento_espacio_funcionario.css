@@ -1,7 +1,7 @@
 .contenedor{
     border-radius: 6px;
     width: 69%;
-    height: 70%;
+    height: auto;
     backdrop-filter: blur(3px);
     background: white;
     position: relative;
@@ -222,8 +222,8 @@ justify-content: center;
 .vertical-line_v22 {
     position: absolute;
     left: 50%; 
-    top:16%;
-    height: 25%; 
+    top:4%;
+    height: 51%; 
     width: 1px; 
     background-color: black; 
 }
@@ -241,3 +241,51 @@ button.btnt8 {
 
 }
 
+
+
+
+
+.contenedor_admin_vist{
+    border-radius: 6px;
+    width: 69%;
+    height: auto;
+    backdrop-filter: blur(3px);
+    background: white;
+    position: relative;
+    top: 10%;
+    left: 15%;
+    padding: 2% 5%;
+    text-align: center;
+}
+
+@media (max-width: 1200px) {
+    .contenedor_admin_vist {
+        width: 80%;
+        left: 10%;
+    }
+}
+
+@media (max-width: 992px) {
+    .contenedor_admin_vist {
+        width: 90%;
+        left: 5%;
+    }
+}
+
+@media (max-width: 768px) {
+    .contenedor_admin_vist {
+        width: 100%;
+        left: 0;
+        padding: 5%;
+    }
+
+
+}
+
+@media (max-width: 576px) {
+    .contenedor_admin_vist {
+        padding: 5%;
+    }
+
+
+}

@@ -3,7 +3,7 @@
 
 {% block content %}
 
-<div class="contenedor">
+<div class="contenedor_admin_vist">
     <h1 class="titulo">Administración de Visitas</h1>
 
     <div class="mt-4">
@@ -21,6 +21,7 @@
                                             <option value="habilitados" {% if estado == 'habilitados' %}selected{% endif %}>Visitas aprobadas</option>
                                             <option value="inhabilitados" {% if estado == 'inhabilitados' %}selected{% endif %}>Visitas por aprobar</option>
                                             <option value="finalizado" {% if estado == 'finalizado' %}selected{% endif %}>Visitas finalizadas</option>
+                                            <option value="rechazado" {% if estado == 'rechazado' %}selected{% endif %}>Visitas rechazadas</option>
                                         </select>
                                     </div>
                                 </div>
@@ -104,11 +105,11 @@
                                         <td>
                                             <input type="hidden" name="persona_id" value="{{ c.id }}">
                                             {% if c.estado_revision %}
-                                            <button type="submit" class="btn-accion" title="Habilitado">
+                                            <button type="submit" class="btn-accion" title="Aprobado">
                                                 <img class="btn-estado" src="/static/bootstrap/img/on.png">
                                             </button>
                                             {% else %}
-                                            <button type="submit" class="btn-accion" title="Inhabilitado">
+                                            <button type="submit" class="btn-accion" title="Desaprobado">
                                                 <img class="btn-estado" src="/static/bootstrap/img/off.png">
                                             </button>
                                             {% endif %}
@@ -257,7 +258,9 @@
                             <div class="form-row">
                                 <div class="form-group form_group_v col-md-6">
                                     <label for="rechazar" class="letrat">F</label>
+
                                     <input type="hidden" id="visita_id" value="{{ visita.id }}" >
+
                                     <button id="btn-rechazar-visita" class="btn btnt8 btn-danger" type="button">Rechazar visita</button>
                                 </div>
                                 
@@ -272,11 +275,11 @@
             
                         </div>
                     </div>
-                    
+                    <div class="vertical-line_v22"></div>
+
                     <div class="horizontal_line_"></div>
             
                 </form>
-                <div class="vertical-line_v22"></div>
 
                 <div class="modal-header ">
                     <h5 class="modal-title">Información del asistente</h5>
@@ -286,7 +289,7 @@
 
 
                 <div class="table-responsive">
-                    <table id="funcionarios-table" class="table table-striped table-bordered">
+                    <table id="asistentes-table" class="table table-striped table-bordered">
                         <thead class="table-dark">
                             <tr>
                                 <th scope="col">#</th>
@@ -301,32 +304,10 @@
                                 <th scope="col">Género</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            {% for visita in resultados %}
-                            <tr>
-                                <td colspan="10">Visita ID: {{ visita.id }}</td>
-                            </tr>
-                                {% for asistente in visita.visita_asistente.all %}
-                                    <tr class="draggable-row" data-id="{{ visita.id }}">
-                                        <th scope="row">{{ forloop.counter }}</th>
-                                        <td>{{ asistente.nombre_asistente }}</td>
-                                        <td>{{ asistente.apellidos_asistente }}</td>
-                                        <td>{{ asistente.correo_asistente }}</td>
-                                        <td>{{ asistente.telefono_asistente }}</td>
-                                        <td>{{ asistente.id_tipo_documento_asistente.nombre }}</td>
-                                        <td>{{ asistente.identificacion_asistente }}</td>
-                                        <td>{{ asistente.procedencia_asistente }}</td>
-                                        <td>{{ asistente.discapacidad_asistente }}</td>
-                                        <td>{{ asistente.id_genero_asistente.nombre }}</td>
-                                    </tr>
-                                {% empty %}
-                                    <tr>
-                                        <td colspan="10">No hay asistentes registrados para esta visita.</td>
-                                    </tr>
-                                {% endfor %}
-                            {% endfor %}
+                        <tbody id="asistentes-tbody">
+
+                            <!-- Los asistentes se llenarán aquí con JavaScript -->
                         </tbody>
-                        
                     </table>
                 </div>
                 
@@ -344,47 +325,87 @@
 </div>
 
 <script>
-
     function submitForm() {
         document.getElementById('search-form').submit();
     }
+
     document.addEventListener('DOMContentLoaded', function() {
         const ventanaEmergente = document.getElementById("ventanaEmergente_vista");
         const areaField = document.getElementById('area');
         const lineaField = document.getElementById('lineaField');
         const ambienteField = document.getElementById('ambienteField');
         const nopermiteField = document.getElementById('nopermiteField');
-    
+
         function updateFields() {
             const selectedValue = areaField.value.trim();
-    
-            lineaField.querySelector('input').removeAttribute('required');
-            ambienteField.querySelector('input').removeAttribute('required');
-            nopermiteField.querySelector('input').removeAttribute('required');
-    
-            lineaField.style.display = "none";
-            ambienteField.style.display = "none";
-            nopermiteField.style.display = "none";
-    
+
+            // Reiniciar campos
+            [lineaField, ambienteField, nopermiteField].forEach(field => {
+                field.querySelector('input').removeAttribute('required');
+                field.style.display = "none";
+            });
+
+            // Mostrar el campo correspondiente
             if (selectedValue === "Tecnoparque") {
                 lineaField.style.display = "block";
+                lineaField.querySelector('input').setAttribute('required', 'required');
             } else if (selectedValue === "Tecnoacademia") {
                 ambienteField.style.display = "block";
+                ambienteField.querySelector('input').setAttribute('required', 'required');
             } else if (selectedValue === "Sennova") {
                 nopermiteField.style.display = "block";
+                nopermiteField.querySelector('input').setAttribute('required', 'required');
             }
         }
-        
+
+        // Función para cargar asistentes
+        function cargarAsistentes(visitId) {
+            fetch(`/cargar_asistentes/${visitId}/`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Error en la respuesta del servidor');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const asistentesTbody = document.getElementById('asistentes-tbody');
+                    asistentesTbody.innerHTML = ''; // Limpiar la tabla
+
+                    if (data.asistentes.length > 0) {
+                        data.asistentes.forEach((asistente, index) => {
+                            const row = `<tr>
+                                <th scope="row">${index + 1}</th>
+                                <td>${asistente.nombre_asistente || 'N/A'}</td>
+                                <td>${asistente.apellidos_asistente || 'N/A'}</td>
+                                <td>${asistente.correo_asistente || 'N/A'}</td>
+                                <td>${asistente.telefono_asistente || 'N/A'}</td>
+                                <td>${asistente.id_tipo_documento_asistente_nombre || 'N/A'}</td>
+                                <td>${asistente.identificacion_asistente || 'N/A'}</td>
+                                <td>${asistente.procedencia_asistente || 'N/A'}</td>
+                                <td>${asistente.discapacidad_asistente || 'N/A'}</td>
+                                <td>${asistente.id_genero_asistente_nombre || 'N/A'}</td>
+                            </tr>`;
+                            asistentesTbody.innerHTML += row; // Agregar la fila
+                        });
+                    }
+                    
+                    else {
+                        asistentesTbody.innerHTML = '<tr><td colspan="10">No hay asistentes registrados para esta visita.</td></tr>';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error al cargar asistentes:', error);
+                    alert('Error al cargar asistentes. Inténtalo de nuevo más tarde.');
+                });
+        }
+
         document.querySelectorAll('.btn-ver-mas').forEach(button => {
             button.addEventListener('click', function() {
                 const row = this.closest('tr');
                 const visitId = row.getAttribute('data-id'); // Captura el ID de la visita
-    
-                
-                console.log("ID de la visita:", visitId);
-                document.getElementById('visita_id').value = visitId;
 
-                // Resto de la lógica para cargar los datos en el modal
+                // Asignar valores a los campos
+                document.getElementById('visita_id').value = visitId;
                 const nombres = row.querySelector('td:nth-child(2)').textContent;
                 const apellidos = row.querySelector('td:nth-child(3)').textContent;
                 const telefono = row.querySelector('td:nth-child(4)').textContent; 
@@ -401,7 +422,7 @@
                 const linea = row.querySelector('td:nth-child(15)').textContent; 
                 const ambiente = row.querySelector('td:nth-child(16)').textContent; 
 
-    
+                // Asignar valores a los campos
                 document.getElementById('nombres').value = nombres;
                 document.getElementById('apellidos').value = apellidos;
                 document.getElementById('correo').value = correo;
@@ -418,109 +439,108 @@
                 document.getElementById('linea').value = linea;
                 document.getElementById('ambiente').value = ambiente;
 
-    
                 // Update fields visibility based on area
                 updateFields();
-    
-                // Show the modal
+
+                // Cargar asistentes
+                cargarAsistentes(visitId);
+
+                // Mostrar el modal
                 ventanaEmergente.style.display = "flex";
             });
         });
-        
+
         const btnCerrar = document.querySelector("#formularioEmergente_visita .btn-cerrar");
-    
         btnCerrar.addEventListener("click", function() {
             ventanaEmergente.style.display = "none";
         });
 
+        // Obtiene id y proceso rechazar
+        document.getElementById('btn-rechazar-visita').addEventListener('click', function() {
+            const visitaId = document.getElementById('visita_id').value;
 
+            if (visitaId) {
+                // Mensaje de confirmación
+                const confirmacion = confirm('¿Estás seguro de que deseas rechazar esta visita?');
+
+                if (confirmacion) {
+                    fetch(`/rechazar_visita/${visitaId}/`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': getCookie('csrftoken')
+                        },
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert('Visita rechazada correctamente.');
+                            ventanaEmergente.style.display = "none"; // Cerrar modal
+                            location.reload(); // Recargar la página
+                        } else {
+                            alert('Error al rechazar la visita: ' + (data.error || ''));
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Hubo un problema con la solicitud.');
+                    });
+                }
+            }
+        });
+
+        // Obtiene id y proceso aprobar
+        document.getElementById('btn-aprobar-visita').addEventListener('click', function() {
+            const visitaId = document.getElementById('visita_id').value;
+
+            if (visitaId) {
+                // Mensaje de confirmación
+                const confirmacion = confirm('¿Estás seguro de que deseas aprobar esta visita?');
+
+                if (confirmacion) {
+                    fetch(`/aprobar_visita/${visitaId}/`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': getCookie('csrftoken')
+                        },
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert('Visita aprobada correctamente.');
+                            ventanaEmergente.style.display = "none"; // Cerrar modal
+                            location.reload(); // Recargar la página
+                        } else {
+                            alert('Error al aprobar la visita: ' + (data.error || ''));
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Hubo un problema con la solicitud.');
+                    });
+                }
+            }
+        });
     });
-    
-    //obtiene id y proceso  rechazar
-    document.getElementById('btn-rechazar-visita').addEventListener('click', function() {
-        const visitaId = document.getElementById('visita_id').value;
-    
-        if (visitaId) {
-            // Mensaje de confirmación
-            const confirmacion = confirm('¿Estás seguro de que deseas rechazar esta visita?');
-    
-            if (confirmacion) {
-                fetch(`/rechazar_visita/${visitaId}/`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': getCookie('csrftoken')
-                    },
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert('Visita rechazada correctamente.');
-                        ventanaEmergente_vista.style.display = "none"; // Close modal
-                        location.reload(); // Reload page
-                    } else {
-                        alert('Error al rechazar la visita: ' + (data.error || ''));
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Hubo un problema con la solicitud.');
-                });
+
+    // Función para obtener el token CSRF (si es necesario)
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                // Verifica si este es el cookie que buscamos
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
             }
         }
-    });
-
-    //obtiene id y proceso  aprobar
-    document.getElementById('btn-aprobar-visita').addEventListener('click', function() {
-        const visitaId = document.getElementById('visita_id').value;
-    
-        if (visitaId) {
-            // Mensaje de confirmación
-            const confirmacion = confirm('¿Estás seguro de que deseas aprobar esta visita?');
-    
-            if (confirmacion) {
-                fetch(`/aprobar_visita/${visitaId}/`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': getCookie('csrftoken')
-                    },
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert('Visita aprobada correctamente.');
-                        ventanaEmergente_vista.style.display = "none"; // Close modal
-                        location.reload(); // Reload page
-                    } else {
-                        alert('Error al Aprobar la visita: ' + (data.error || ''));
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Hubo un problema con la solicitud.');
-                });
-            }
-        }
-    });
-    
-
-// Función para obtener el token CSRF (si es necesario)
-function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
-        for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i].trim();
-            // Verifica si este es el cookie que buscamos
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-            }
-        }
+        return cookieValue;
     }
-    return cookieValue;
-}
 </script>
+
 
 {% endblock %}

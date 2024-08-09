@@ -6,6 +6,7 @@ from django.core.paginator import Paginator
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.core.mail import send_mail
+from django.utils import timezone
 from django.http import JsonResponse
 from django.conf import settings
 from apps.funcionarios.models import Persona, Visita, Asistente, VisitaAsistente, TipoDocumento,Genero
@@ -14,6 +15,7 @@ from .forms import PersonaForm, VisitaFormulario
 def home_visita(request):
     user = request.user
     
+    actualizar_estado_visitas()
     # Instanciar objetos
     try:
         persona = Persona.objects.get(id=user.id)
@@ -93,7 +95,13 @@ def descargar_excel(request):
     response['Content-Disposition'] = 'attachment; filename="Registro Asistentes.xlsx"'
     return response
 
+def actualizar_estado_visitas():
+    now = timezone.now()
+    visitas = Visita.objects.filter(fecha_finalizacion__lt=now, estado_finalizado=False)
 
+    for visita in visitas:
+        visita.estado_finalizado = True
+        visita.save()
 
 
 def administrador_visitas(request):
@@ -122,6 +130,31 @@ def administrador_visitas(request):
         'visita_form': visita_form,
     }
     return render(request, 'administracion/admin_visita.html', context)
+
+
+def cargar_asistentes(request, visita_id):
+    visita = get_object_or_404(Visita, id=visita_id)
+    asistentes = visita.visita_asistente.all()  # Obtén los asistentes relacionados con la visita
+    
+    # Obtener los IDs de tipo de documento y género
+    asistentes_data = []
+    for asistente in asistentes:
+        asistentes_data.append({
+            'id': asistente.id,
+            'nombre_asistente': asistente.nombre_asistente,
+            'apellidos_asistente': asistente.apellidos_asistente,
+            'telefono_asistente': asistente.telefono_asistente,
+            'correo_asistente': asistente.correo_asistente,
+            'identificacion_asistente': asistente.identificacion_asistente,
+            'discapacidad_asistente': asistente.discapacidad_asistente,
+            'procedencia_asistente': asistente.procedencia_asistente,
+            'id_tipo_documento_asistente_nombre': asistente.id_tipo_documento_asistente.nombre if asistente.id_tipo_documento_asistente else 'N/A',
+            'id_genero_asistente_nombre': asistente.id_genero_asistente.nombre if asistente.id_genero_asistente else 'N/A',
+        })
+    
+    # Devolver la información de los asistentes como JSON
+    return JsonResponse({'asistentes': asistentes_data})
+
 
 
 
@@ -158,6 +191,8 @@ def buscar_visita(request):
         resultados = resultados.filter(estado_revision=False)
     elif estado == 'finalizado':
         resultados = resultados.filter(estado_finalizado=True)
+    elif estado == 'rechazado':
+        resultados = resultados.filter(estado_rechazado=True)
     
 
     # Ordenar los resultados antes de paginar
@@ -213,3 +248,19 @@ def aprobar_visita(request, visita_id):
         except Exception as e:
             return JsonResponse({'success': False, 'error': str(e)})
     return JsonResponse({'success': False, 'error': 'Método no permitido'})
+
+def verificar_fecha(request):
+    fecha = request.GET.get('fecha')
+    
+    if fecha:
+        # Convertir la cadena de fecha en un objeto datetime
+        fecha_datetime = timezone.datetime.fromisoformat(fecha)
+        # Comprobar si ya hay una visita agendada en esa fecha
+        existe_visita = Visita.objects.filter(
+            fecha_inicio__lt=fecha_datetime + timezone.timedelta(days=1),
+            fecha_finalizacion__gt=fecha_datetime
+        ).exists()
+        
+        return JsonResponse({'reservada': existe_visita})
+    
+    return JsonResponse({'reservada': False})
