@@ -58,7 +58,7 @@ class AdministradorVisitasTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn('resultados', response.context)
 
-        # Verificar si la página actual es una instancia de Page
+        # Verificar si la pagina actual es una instancia de Page
         self.assertIsInstance(response.context['resultados'], Page)
 
         # Verificar si hay una página siguiente
@@ -87,7 +87,7 @@ class AdministradorVisitasTests(TestCase):
         response = self.client.post(url)
 
         self.assertEqual(response.status_code, 200)
-        visita.refresh_from_db()  # Refrescar desde la base de datos
+        visita.refresh_from_db()  # recarga los datos desde la base de datos para verificar el estado 
         self.assertTrue(visita.estado_revision)
 
         # Verificar que se envió un correo
