@@ -127,7 +127,13 @@ def administrador_visitas(request):
     try:
         persona = Persona.objects.get(id=user.id)
     except Persona.DoesNotExist:
-        persona = Persona(user=user)
+        persona = Persona(
+            nombres=user.nombres,
+            apellidos=user.apellidos,
+            telefono=user.telefono,
+            correo=user.correo,
+        )
+        
     
     # Obtener todas las visitas y la persona asociada
     visitas = Visita.objects.prefetch_related('visita_asistente').select_related('id_persona').all().order_by('id')
