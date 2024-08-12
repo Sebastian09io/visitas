@@ -1,103 +1,178 @@
+from django.utils import timezone
 from django.test import TestCase
 from django.urls import reverse
-from django.core.paginator import Page
-from apps.funcionarios.models import Espacio
+import json
+from django.contrib.auth.models import User
+from django.core import mail
+from django.contrib.messages import get_messages
+from apps.funcionarios.models import Persona, Visita, Asistente, TipoDocumento
+from apps.visitas.views import actualizar_estado_visitas
 
-class GestionEspacioTests(TestCase):
+class HomeVisitaTests(TestCase):
     def setUp(self):
-        """
-        Configura el entorno de prueba creando objetos de Espacio.
-        """
-        # Crear 12 espacios de prueba
-        for i in range(1, 13):
-            Espacio.objects.create(
-                nombre=f'Espacio {i}',
-                estado=i % 2 == 0  # Habilitado si i es par, inhabilitado si es impar
-            )
+    # Crear el usuario de prueba
+        self.user = Persona.objects.create(
+            nombres='Juan',
+            apellidos='Pérez',
+            telefono='123456789',
+            correo='juan@example.com'
+        )
+        
 
-    def test_listar_espacios(self):
+        self.user.set_password('testpass')
+        self.user.save()
+    
+
+        self.client.login(correo='juan@example.com', password='testpass')
+    
+        # Crear un asistente de prueba
+        self.asistente = Asistente.objects.create(
+            nombre_asistente='Ana',
+            apellidos_asistente='López',
+            telefono_asistente='987654321',
+            correo_asistente='ana@example.com',
+            id_tipo_documento_asistente=TipoDocumento.objects.create(nombre='Cédula'),
+            identificacion_asistente='12345'
+        )
+    
+        # Crear una visita de prueba
+        self.visita = Visita.objects.create(
+            id_persona=self.user, 
+            fecha_inicio=timezone.now() - timezone.timedelta(days=2),
+            fecha_finalizacion=timezone.now() - timezone.timedelta(days=1),
+            discapacidad='Ninguna',
+            procedencia='Local',
+            grabacion=False,
+            estado_finalizado=False
+        )
+
+
+    def test_registro_visita(self):
         """
-        Prueba para listar los espacios.
+        Prueba para registrar una visita.
         """
-        url = reverse('reservas:gestion_espacio')
+        self.client.login(username='juan@example.com', password='testpass')  
+        url = reverse('visitas:home_visita')
+        data = {
+            'nombres': 'Juan',
+            'apellidos': 'Pérez',
+            'telefono': '123456789',
+            'correo': 'juan@example.com',
+            'grabacion': 'True',
+            'asistentes': json.dumps([
+                {
+                    'identificacion': '12345',
+                    'nombres': 'Ana',
+                    'apellidos': 'López',
+                    'telefono': '987654321',
+                    'correo': 'ana@example.com',
+                    'idTipoDocumento': 1,
+                    'discapacidad_a': 'Ninguna',
+                    'procedencia_a': 'Local',
+                    'genero_a': 1
+                }
+            ])
+        }
+        
+        response = self.client.post(url, data)
+        
+        self.assertEqual(response.status_code, 200)
+        
+
+        # Verificar que la visita y el asistente se hayan creado
+        self.assertTrue(Visita.objects.filter(id_persona=self.user).exists())
+        self.assertTrue(Asistente.objects.filter(identificacion_asistente='12345').exists())
+
+    def test_formulario_invalido(self):
+        """
+        Prueba que un formulario inválido no cree una visita.
+        """
+        self.client.login(username='juan@example.com', password='testpass') 
+        url = reverse('visitas:home_visita')
+        data = {}  # vacio
+        
+        response = self.client.post(url, data)
+        
+        
+        self.assertEqual(response.status_code, 200)
+
+        # Verificar que se muestre un mensaje de error
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(len(messages), 1)
+        self.assertEqual(str(messages[0]), 'Formulario inválido. Por favor revise los datos ingresados.')
+
+class DescargarExcelTests(TestCase):
+    def test_descargar_excel(self):
+        """
+        Prueba para descargar el archivo Excel de registro de asistentes.
+        """
+        url = reverse('visitas:descargar_excel')
         response = self.client.get(url)
+        
+        # Verificar que el estado de respuesta sea 200
         self.assertEqual(response.status_code, 200)
-        self.assertIn('resultados', response.context)
+        self.assertEqual(response['Content-Disposition'], 'attachment; filename="Registro Asistentes.xlsx"')
 
-    def test_habilitar_deshabilitar_espacio(self):
-        """
-        Prueba para cambiar el estado de un espacio (habilitar/deshabilitar).
-        """
-        espacio = Espacio.objects.get(nombre='Espacio 1')
-        self.assertFalse(espacio.estado)
+class ActualizarEstadoVisitasTests(TestCase):
+    def setUp(self):
+        # Crear una persona de prueba
+        self.persona = Persona.objects.create(
+            nombres='Juan',
+            apellidos='Pérez',
+            telefono='123456789',
+            correo='juan@example.com'
+        )
+        
+        # Crear una visita 
+        self.visita = Visita.objects.create(
+            id_persona=self.persona,
+            fecha_inicio=timezone.now() - timezone.timedelta(days=2),
+            fecha_finalizacion=timezone.now() - timezone.timedelta(days=1),
+            discapacidad='Ninguna',
+            procedencia='Local',
+            grabacion=False,
+            estado_finalizado=False
+        )
 
-        espacio.estado = True
-        espacio.save()
-        self.assertTrue(espacio.estado)
-
-        espacio.estado = False
-        espacio.save()
-        self.assertFalse(espacio.estado)
-
-    def test_paginacion_espacios(self):
+    def test_actualizar_estado_visitas(self):
         """
-        Prueba para la paginación de espacios.
+        Prueba para actualizar el estado de las visitas.
         """
-        url = reverse('reservas:gestion_espacio')
-        response = self.client.get(url)
+        # Llama la función 
+        actualizar_estado_visitas()
+
+        
+        self.visita.refresh_from_db()
+        self.assertTrue(self.visita.estado_finalizado)
+
+class VerificarFechaTests(TestCase):
+    def test_verificar_fecha_reservada(self):
+        """
+        Prueba para verificar si una fecha está reservada.
+        """
+        fecha = timezone.now() + timezone.timedelta(days=1)
+        Visita.objects.create(
+            fecha_inicio=fecha,
+            fecha_finalizacion=fecha + timezone.timedelta(hours=1),
+            estado_finalizado=False
+        )
+
+        url = reverse('visitas:verificar_fecha')
+        response = self.client.get(url, {'fecha': fecha.isoformat()})
+
+        # Verificar que la respuesta sea 200 y la fecha esté reservada
         self.assertEqual(response.status_code, 200)
-        self.assertIn('resultados', response.context)
+        self.assertJSONEqual(response.content, {'reservada': True})
 
-        # Verificar si la página actual es una instancia de Page
-        self.assertIsInstance(response.context['resultados'], Page)
-
-        # Verificar si hay una página siguiente
-        self.assertTrue(response.context['resultados'].has_next())
-
-    def test_buscar_espacio(self):
+    def test_verificar_fecha_no_reservada(self):
         """
-        Prueba para buscar un espacio por nombre.
+        Prueba para verificar si una fecha no está reservada.
         """
-        url = reverse('reservas:buscar_espacio')
-        response = self.client.get(url, {'buscar': 'Espacio 1'})
+        fecha = timezone.now() + timezone.timedelta(days=1)
+        
+        url = reverse('visitas:verificar_fecha')
+        response = self.client.get(url, {'fecha': fecha.isoformat()})
+
+        # Verificar que la respuesta sea 200 y la fecha no esté reservada
         self.assertEqual(response.status_code, 200)
-        self.assertIn('resultados', response.context)
-        resultados = response.context['resultados']
-        # Verificar que solo hay un resultado con nombre 'Espacio 1'
-        self.assertEqual(len(resultados), 4)
-        self.assertEqual(resultados[0].nombre, 'Espacio 1')
-
-    def test_filtrar_espacios_habilitados(self):
-        """
-        Prueba para filtrar espacios habilitados.
-        """
-        url = reverse('reservas:buscar_espacio')
-        response = self.client.get(url, {'estado': 'habilitados'})
-        self.assertEqual(response.status_code, 200)
-        self.assertIn('resultados', response.context)
-        for espacio in response.context['resultados']:
-            self.assertTrue(espacio.estado)
-
-    def test_filtrar_espacios_inhabilitados(self):
-        """
-        Prueba para filtrar espacios inhabilitados.
-        """
-        url = reverse('reservas:buscar_espacio')
-        response = self.client.get(url, {'estado': 'inhabilitados'})
-        self.assertEqual(response.status_code, 200)
-        self.assertIn('resultados', response.context)
-        for espacio in response.context['resultados']:
-            self.assertFalse(espacio.estado)
-
-    def test_eliminar_espacio(self):
-        """
-        Prueba para eliminar un espacio.
-        """
-        espacio = Espacio.objects.get(nombre='Espacio 1')
-        espacio_id = espacio.id
-        url = reverse('reservas:eliminar_espacio', args=[espacio_id])
-        response = self.client.post(url)
-        self.assertEqual(response.status_code, 302)  # Redirección tras eliminar
-
-        with self.assertRaises(Espacio.DoesNotExist):
-            Espacio.objects.get(id=espacio_id)
+        self.assertJSONEqual(response.content, {'reservada': False})

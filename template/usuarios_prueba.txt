@@ -72,13 +72,11 @@ actualizar o editar campos              ok**
 VISITAS
 
 registro visita
-envio-guardado de formulario
-envio correo revision
-guardado- procesamiento de asistentes
-listar-agregar aistentes
+envio correo revision al realizar registro de visita
+listar-agregar aistentes-guardado
 descargar descargar_excel
 actualizar fecha finalizacion automatica
-verificacion de fecha ocupada
+verificacion de fecha ocupada 
 
 administracion visita
 listar visita con informacion de persona
