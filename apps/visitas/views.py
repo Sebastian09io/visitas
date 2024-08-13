@@ -15,7 +15,6 @@ from .forms import PersonaForm, VisitaFormulario
 def home_visita(request):
     user = request.user
     
-    actualizar_estado_visitas()
     # Instanciar objetos
     try:
         persona = Persona.objects.get(id=user.id)
@@ -134,7 +133,7 @@ def administrador_visitas(request):
             correo=user.correo,
         )
         
-    
+    actualizar_estado_visitas()
     # Obtener todas las visitas y la persona asociada
     visitas = Visita.objects.prefetch_related('visita_asistente').select_related('id_persona').all().order_by('id')
 

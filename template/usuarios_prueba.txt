@@ -1,6 +1,6 @@
 ADMINISTRADOR
-email: prueba@gmail.com
-contraseña: 12345678_Sa
+email: salvarado39@misena.edu.co
+contraseña: 1234567_Sa2
 
 FUNCIONARIO
 email: prueba2@gmail.com
@@ -8,7 +8,8 @@ contraseña: 12345678_Sa
 
 
 
-administracion de barra muestra el rol ifs para mostrar desplegables
+administracion de barra muestra el rol
+ifs para mostrar desplegables
 
 pruebas que se deben aplicar
 pruebas unitarias con testcase
@@ -79,16 +80,15 @@ actualizar fecha finalizacion automatica               ok**
 verificacion de fecha ocupada                          ok**
 
 administracion visita
-listar visita con informacion de persona
-filtro desplegable        
-buscador           
-paginacion                               
-envio correo rechazado
-envio correo aprobado
+listar visita con informacion de persona   ok**
+filtro desplegable                         ok**
+buscador                                   ok** 
+paginacion                                 ok**            
+envio correo rechazado                     ok**
+envio correo aprobado                      ok**
 
 
 
 
 manual tecnico 
 manual de usuario
-documentacion pruebas en word 
