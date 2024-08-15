@@ -90,5 +90,4 @@ envio correo aprobado                      ok**
 
 
 
-manual tecnico 
-manual de usuario
+
