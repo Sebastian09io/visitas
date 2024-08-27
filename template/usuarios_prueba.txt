@@ -10,9 +10,6 @@ Super user mezcla
 email: prueba@sena.edu.co
 contraseña: 12345678_Sa
 
-administracion de barra muestra el rol
-ifs para mostrar desplegables
-
 pruebas que se deben aplicar
 pruebas unitarias con testcase
 automatizada   con playwright
