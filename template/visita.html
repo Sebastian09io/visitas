@@ -293,14 +293,14 @@ document.addEventListener("DOMContentLoaded", function() {
         enableTime: true,
         dateFormat: "Y-m-d H:i",
         time_24hr: true,
-        minTime: "08:00",
-        maxTime: "17:00",
+        minTime: "08:00",  // Hora mínima permitida: 8:00 AM
+        maxTime: "12:00",  // Hora máxima permitida: 12:00 PM
         locale: "es",
         minDate: today, // Bloquear días anteriores a hoy
         disable: [
             function(date) {
-                // Deshabilitar fines de semana
-                return (date.getDay() === 6 || date.getDay() === 0);
+                // Deshabilitar todos los días menos jueves
+                return (date.getDay() !== 4); // 4 representa el día jueves
             }
         ],
         minuteIncrement: 30,
@@ -330,18 +330,6 @@ document.addEventListener("DOMContentLoaded", function() {
                     endDatePicker.open();
                 }
             }
-        },
-        onOpen: function(selectedDates, dateStr, instance) {
-            let date = instance.input._flatpickr.selectedDates[0];
-            if (date) {
-                let hours = date.getHours();
-                if (hours >= 12 && hours < 14) {
-                    instance.set("minTime", "14:00");
-                } else if (hours >= 8 && hours < 12) {
-                    instance.set("minTime", "08:00");
-                    instance.set("maxTime", "12:00");
-                }
-            }
         }
     };
 
@@ -361,6 +349,7 @@ document.addEventListener("DOMContentLoaded", function() {
             .catch(error => console.error('Error:', error));
     }
 });
+
 
 
 

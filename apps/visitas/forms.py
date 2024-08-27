@@ -143,11 +143,11 @@ class VisitaFormulario(forms.ModelForm, BootstrapFormMixin):
             if fecha_inicio.time() == datetime.time(12, 0):
                 raise forms.ValidationError("No es posible establecer la fecha de inicio a las 12:00.")
 
-            if not ((datetime.time(8, 0) <= fecha_inicio.time() <= datetime.time(12, 0)) or (datetime.time(14, 0) <= fecha_inicio.time() <= datetime.time(17, 0))):
-                raise forms.ValidationError("La hora de inicio debe estar entre las 08:00-12:00 o 14:00-17:00.")
+            if not ((datetime.time(8, 0) <= fecha_inicio.time() <= datetime.time(12, 0))):
+                raise forms.ValidationError("La hora de inicio debe estar entre las 08:00-12:00.")
             
-            if not ((datetime.time(8, 0) <= fecha_finalizacion.time() <= datetime.time(12, 0)) or (datetime.time(14, 0) <= fecha_finalizacion.time() <= datetime.time(17, 0))):
-                raise forms.ValidationError("La hora de finalización debe estar entre las 08:00-12:00 o 14:00-17:00.")
+            if not ((datetime.time(8, 0) <= fecha_finalizacion.time() <= datetime.time(12, 0))):
+                raise forms.ValidationError("La hora de finalización debe estar entre las 08:00-12:00.")
 
         # Validar que no se solape con otras reservas
         if fecha_inicio and fecha_finalizacion:
