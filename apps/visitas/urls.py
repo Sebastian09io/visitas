@@ -12,6 +12,7 @@ urlpatterns = [
     path('aprobar_visita/<int:visita_id>/', views.aprobar_visita, name='aprobar_visita'),
     path('verificar_fecha/', views.verificar_fecha, name='verificar_fecha'),
     path('cargar_asistentes/<int:visita_id>/', views.cargar_asistentes, name='cargar_asistentes'),
+    path('configuracion_visitas/', views.configuracion_visitas, name='configuracion_visitas'),
 ]
 
 

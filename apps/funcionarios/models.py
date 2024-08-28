@@ -143,3 +143,27 @@ class Visita(Base):
 class VisitaAsistente(Base):
     visita = models.ForeignKey(Visita, on_delete=models.CASCADE,null=True)
     asistente = models.ForeignKey(Asistente, on_delete=models.CASCADE,null=True)
+    
+
+
+class ConfiguracionVisita(models.Model):
+    DIA_SEMANA_CHOICES = [
+        (0, 'Lunes'),
+        (1, 'Martes'),
+        (2, 'Miércoles'),
+        (3, 'Jueves'),
+        (4, 'Viernes'),
+        (5, 'Sábado'),
+        (6, 'Domingo'),
+    ]
+
+    dia_semana = models.IntegerField(choices=DIA_SEMANA_CHOICES, unique=True)
+    hora_inicio = models.TimeField()
+    hora_finalizacion = models.TimeField()
+
+    class Meta:
+        verbose_name = "Configuración de Visita"
+        verbose_name_plural = "Configuraciones de Visitas"
+
+    def __str__(self):
+        return f"{self.get_dia_semana_display()} - {self.hora_inicio} a {self.hora_finalizacion}"

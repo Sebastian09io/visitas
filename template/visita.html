@@ -1,4 +1,4 @@
- {% extends "administracion/base_admin.html" %}
+{% extends "administracion/base_admin.html" %}
 
 
 {% block content %}
@@ -262,6 +262,8 @@
     </div>
 </div>
 
+
+
 </div>
 
 
@@ -285,69 +287,128 @@
 
 ///fechas
 document.addEventListener("DOMContentLoaded", function() {
-    // Obtener la fecha actual
     let today = new Date();
     today.setHours(0, 0, 0, 0); // Establecer la hora a 00:00 para bloquear todo el día
 
-    let config = {
-        enableTime: true,
-        dateFormat: "Y-m-d H:i",
-        time_24hr: true,
-        minTime: "08:00",  // Hora mínima permitida: 8:00 AM
-        maxTime: "12:00",  // Hora máxima permitida: 12:00 PM
-        locale: "es",
-        minDate: today, // Bloquear días anteriores a hoy
-        disable: [
-            function(date) {
-                // Deshabilitar todos los días menos jueves
-                return (date.getDay() !== 4); // 4 representa el día jueves
-            }
-        ],
-        minuteIncrement: 30,
-        onChange: function(selectedDates, dateStr, instance) {
-            verificarFecha(dateStr, instance); // Verificar la fecha seleccionada
-        },
-        onClose: function(selectedDates, dateStr, instance) {
-            let startDatePicker = document.getElementById("id_fecha_inicio")._flatpickr;
-            let endDatePicker = document.getElementById("id_fecha_finalizacion")._flatpickr;
+    fetch(`/configuracion_visitas/`)
+        .then(response => response.json())
+        .then(configuraciones => {
+            console.log('Configuraciones:', configuraciones);
 
-            if (startDatePicker.selectedDates.length) {
-                let startDate = startDatePicker.selectedDates[0];
-                let startHours = startDate.getHours();
-                if (startHours === 12) {
-                    alert("No es posible establecer la fecha de inicio a las 12:00.");
-                    startDatePicker.clear();
-                    startDatePicker.open();
+            function getNearestEnabledDate(configs) {
+                let nearestDate = new Date();
+                let maxDays = 365; // Máximo de días a buscar hacia adelante
+
+                for (let i = 0; i < maxDays; i++) {
+                    let tempDate = new Date();
+                    tempDate.setDate(nearestDate.getDate() + i);
+                    if (configs.some(conf => conf.dia_semana === tempDate.getDay())) {
+                        return tempDate;
+                    }
                 }
+                return nearestDate; // Si no encuentra, devuelve la fecha actual
             }
 
-            if (startDatePicker.selectedDates.length && endDatePicker.selectedDates.length) {
-                let startDate = startDatePicker.selectedDates[0];
-                let endDate = endDatePicker.selectedDates[0];
-                if (startDate.toDateString() !== endDate.toDateString()) {
-                    alert("La fecha de inicio y finalización deben ser el mismo día");
-                    endDatePicker.clear();
-                    endDatePicker.open();
+            function getDefaultTime(config, nearestDate) {
+                let dayConfig = config.find(conf => conf.dia_semana === nearestDate.getDay());
+                if (dayConfig) {
+                    return dayConfig.hora_inicio; // Devuelve la hora de inicio configurada para ese día
                 }
+                return "08:00"; // Valor por defecto si no se encuentra una configuración válida
             }
-        }
-    };
 
-    flatpickr("#id_fecha_inicio", config);
-    flatpickr("#id_fecha_finalizacion", config);
+            let nearestDate = getNearestEnabledDate(configuraciones);
+            let defaultTime = getDefaultTime(configuraciones, nearestDate);
 
-    function verificarFecha(fecha, instance) {
-        fetch(`/verificar_fecha/?fecha=${encodeURIComponent(fecha)}`)
-            .then(response => response.json())
-            .then(data => {
-                if (data.reservada) {
-                    alert("La fecha ya fue reservada. Cambia a una hora distinta.");
-                    
-                    instance.open(); // Abrir el calendario nuevamente
+            nearestDate.setHours(parseInt(defaultTime.split(':')[0]), parseInt(defaultTime.split(':')[1]));
+
+            let config = {
+                enableTime: true,
+                dateFormat: "Y-m-d H:i",
+                time_24hr: true,
+                minDate: today,
+                defaultDate: nearestDate, // Establecer la fecha y hora más cercana habilitada
+                disable: [
+                    function(date) {
+                        // Deshabilitar todos los días que no están en configuraciones
+                        return !configuraciones.some(conf => conf.dia_semana === date.getDay());
+                    }
+                ],
+                minuteIncrement: 30,
+                onChange: function(selectedDates, dateStr, instance) {
+                    verificarFecha(dateStr, instance);
+                },
+                onOpen: function(selectedDates, dateStr, instance) {
+                    // Configurar horas permitidas para el día seleccionado
+                    let selectedDate = selectedDates.length ? selectedDates[0] : nearestDate;
+                    let dayConfig = configuraciones.find(conf => conf.dia_semana === selectedDate.getDay());
+
+                    if (dayConfig) {
+                        // Deshabilitar horas fuera del rango permitido
+                        instance.config.enableTime = true;
+                        instance.config.minTime = dayConfig.hora_inicio;
+                        instance.config.maxTime = dayConfig.hora_finalizacion;
+                        instance.redraw(); // Redibujar el calendario para aplicar los cambios
+                    } else {
+                        alert("No hay configuraciones de horario disponibles para el día seleccionado.");
+                    }
+                },
+                onClose: function(selectedDates, dateStr, instance) {
+                    let startDatePicker = document.getElementById("id_fecha_inicio")._flatpickr;
+                    let endDatePicker = document.getElementById("id_fecha_finalizacion")._flatpickr;
+
+                    if (startDatePicker.selectedDates.length) {
+                        let startDate = startDatePicker.selectedDates[0];
+                        let startHours = startDate.getHours();
+                        let dayConfig = configuraciones.find(conf => conf.dia_semana === startDate.getDay());
+
+                        if (startHours === 12) {
+                            alert("No es posible establecer la fecha de inicio a las 12:00.");
+                            startDatePicker.clear();
+                            startDatePicker.open();
+                        } else if (dayConfig && (startDate < new Date(startDate.toDateString() + " " + dayConfig.hora_inicio) ||
+                                                startDate > new Date(startDate.toDateString() + " " + dayConfig.hora_finalizacion))) {
+                            alert(`La hora debe estar entre ${dayConfig.hora_inicio} y ${dayConfig.hora_finalizacion}.`);
+                            startDatePicker.clear();
+                            startDatePicker.open();
+                        }
+                    }
+
+                    if (startDatePicker.selectedDates.length && endDatePicker.selectedDates.length) {
+                        let startDate = startDatePicker.selectedDates[0];
+                        let endDate = endDatePicker.selectedDates[0];
+                        if (startDate.toDateString() !== endDate.toDateString()) {
+                            alert("La fecha de inicio y finalización deben ser el mismo día");
+                            endDatePicker.clear();
+                            endDatePicker.open();
+                        }
+                    }
                 }
-            })
-            .catch(error => console.error('Error:', error));
-    }
+            };
+
+            flatpickr("#id_fecha_inicio", config);
+            flatpickr("#id_fecha_finalizacion", config);
+
+            function verificarFecha(fecha, instance) {
+                fetch(`/verificar_fecha/?fecha=${encodeURIComponent(fecha)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.reservada) {
+                            alert("La fecha ya fue reservada. Cambia a una hora distinta.");
+                            instance.clear(); // Limpia la selección actual
+                            instance.open(); // Abrir el calendario nuevamente
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert("Ocurrió un error al verificar la fecha. Inténtalo de nuevo.");
+                    });
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert("Ocurrió un error al cargar las configuraciones. Inténtalo de nuevo.");
+        });
 });
 
 
@@ -615,6 +676,7 @@ document.addEventListener('DOMContentLoaded', function() {
         ventanaEmergente.style.display = "none";
     });
 });
+
 </script>
 
 {% endblock %}

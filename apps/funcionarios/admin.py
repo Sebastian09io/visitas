@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import TipoDocumento, Cargo, Dependencia, Persona,Genero,Area,Linea,Ambiente,Asistente,VisitaAsistente,Visita
+from .models import TipoDocumento, Cargo, Dependencia, Persona,Genero,Area,Linea,Ambiente,Asistente,VisitaAsistente,Visita,ConfiguracionVisita
 
 @admin.register(Visita)
 class VisitaAdmin(admin.ModelAdmin):
@@ -8,6 +8,10 @@ class VisitaAdmin(admin.ModelAdmin):
 @admin.register(VisitaAsistente)
 class VisitaAsistenteAdmin(admin.ModelAdmin):
     list_display = ('visita','asistente',)
+    
+@admin.register(ConfiguracionVisita)
+class ConfiguracionVisitaAdmin(admin.ModelAdmin):
+    list_display = ('dia_semana','hora_inicio','hora_finalizacion','DIA_SEMANA_CHOICES',)
 
 @admin.register(Asistente)
 class AsistenteAdmin(admin.ModelAdmin):

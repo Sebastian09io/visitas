@@ -12,6 +12,12 @@
                 <div class="card">
                     <div class="card-header">
                         <div class="container my-4">
+                            <div class="row mb-3">
+                            <div class="col-md-3">
+                                <button type="button" class="btn btn-primary w-100" id="mostrarFormulario_fecha">Editar horario</button>
+                            </div>
+
+                            <div class="col-md-9">
                             <form class="row" id="search-form" method="get" action="{% url 'visitas:buscar_visita' %}">
                                 <!-- Barra seleccionable -->
                                 <div class="col-sm-4">
@@ -36,6 +42,8 @@
                                     </div>
                                 </div>
                             </form>
+                            </div>
+                        </div>
                         </div>
                     </div>
 
@@ -152,7 +160,37 @@
         </div>
     </div>
 
-<!-- modal -->
+    <div id="ventanaEmergente_fecha">
+        <div id="formularioEmergente_fecha">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Editar horario de visita</h5>
+                    <button type="button" class="btn-cerrar" aria-label="Close">
+                        <img src="/static/bootstrap/img/cerrar.png" alt="Cerrar">
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="">
+                        {% csrf_token %}
+                        {{ config_form.as_p }}
+                        <button type="submit">Guardar Configuración</button>
+                    </form>
+                    
+                    <h2>Configuraciones Actuales</h2>
+                    <ul>
+                        {% for config in configuraciones %}
+                        <li>{{ config }}</li>
+                        {% endfor %}
+                    </ul>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+<!-- modal informacion usuario-->
 <div id="ventanaEmergente_vista">
     <div id="formularioEmergente_visita">
         <div class=" modal-content_v">
@@ -325,6 +363,24 @@
 </div>
 
 <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var botonMostrar = document.getElementById("mostrarFormulario_fecha");
+        var ventanaEmergente = document.getElementById("ventanaEmergente_fecha");
+    
+        botonMostrar.addEventListener("click", () => {
+            // Mostrar la ventana emergente
+            ventanaEmergente.style.display = "flex";
+            
+    
+        });
+    
+        const btnCerrar = document.querySelector("#formularioEmergente_fecha .btn-cerrar");
+    
+        btnCerrar.addEventListener("click", function() {
+            ventanaEmergente.style.display = "none";
+        });
+    });
+    
     function submitForm() {
         document.getElementById('search-form').submit();
     }

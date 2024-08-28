@@ -9,8 +9,8 @@ from django.core.mail import send_mail
 from django.utils import timezone
 from django.http import JsonResponse
 from django.conf import settings
-from apps.funcionarios.models import Persona, Visita, Asistente, VisitaAsistente, TipoDocumento,Genero
-from .forms import PersonaForm, VisitaFormulario
+from apps.funcionarios.models import ConfiguracionVisita, Persona, Visita, Asistente, VisitaAsistente, TipoDocumento,Genero
+from .forms import ConfiguracionVisitaForm, PersonaForm, VisitaFormulario
 
 def home_visita(request):
     user = request.user
@@ -86,7 +86,17 @@ def home_visita(request):
     }
     return render(request, 'visita.html', context)
 
-
+def configuracion_visitas(request):
+    configuraciones = ConfiguracionVisita.objects.all()
+    data = [
+        {
+            'dia_semana': config.dia_semana, 
+            'hora_inicio': config.hora_inicio.strftime('%H:%M'),
+            'hora_finalizacion': config.hora_finalizacion.strftime('%H:%M')
+        } 
+        for config in configuraciones
+    ]
+    return JsonResponse(data, safe=False)
 
 def descargar_excel(request):
     file_path = os.path.join('static', 'files', 'Registro Asistentes.xlsx')
@@ -134,6 +144,7 @@ def administrador_visitas(request):
         )
         
     actualizar_estado_visitas()
+    
     # Obtener todas las visitas y la persona asociada
     visitas = Visita.objects.prefetch_related('visita_asistente').select_related('id_persona').all().order_by('id')
 
@@ -144,6 +155,17 @@ def administrador_visitas(request):
     
     persona_form = PersonaForm(instance=persona)
     visita_form = VisitaFormulario()
+    
+    # Manejo de la configuración de visitas
+    if request.method == 'POST':
+        config_form = ConfiguracionVisitaForm(request.POST)
+        if config_form.is_valid():
+            config_form.save()
+            return redirect('visitas:administrador_visitas')
+    else:
+        config_form = ConfiguracionVisitaForm()
+
+    configuraciones = ConfiguracionVisita.objects.all()
 
     context = {
         'persona': persona,
@@ -151,6 +173,8 @@ def administrador_visitas(request):
         'resultados': resultados,
         'persona_form': persona_form,
         'visita_form': visita_form,
+        'config_form': config_form,
+        'configuraciones': configuraciones,
     }
     return render(request, 'administracion/admin_visita.html', context)
 
