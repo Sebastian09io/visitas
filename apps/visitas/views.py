@@ -98,6 +98,8 @@ def configuracion_visitas(request):
     ]
     return JsonResponse(data, safe=False)
 
+
+
 def descargar_excel(request):
     file_path = os.path.join('static', 'files', 'Registro Asistentes.xlsx')
     response = FileResponse(open(file_path, 'rb'))
@@ -203,7 +205,10 @@ def cargar_asistentes(request, visita_id):
     return JsonResponse({'asistentes': asistentes_data})
 
 
-
+def eliminar_horario(request, horario_id):
+    hora = get_object_or_404(ConfiguracionVisita, id=horario_id)
+    hora.delete()
+    return redirect('visitas:administrador_visitas')
 
 
 

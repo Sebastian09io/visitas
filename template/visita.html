@@ -293,7 +293,6 @@ document.addEventListener("DOMContentLoaded", function() {
     fetch(`/configuracion_visitas/`)
         .then(response => response.json())
         .then(configuraciones => {
-            console.log('Configuraciones:', configuraciones);
 
             function getNearestEnabledDate(configs) {
                 let nearestDate = new Date();
@@ -328,6 +327,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 time_24hr: true,
                 minDate: today,
                 defaultDate: nearestDate, // Establecer la fecha y hora más cercana habilitada
+                locale: "es", // Cambiar el idioma a español
                 disable: [
                     function(date) {
                         // Deshabilitar todos los días que no están en configuraciones
@@ -336,7 +336,30 @@ document.addEventListener("DOMContentLoaded", function() {
                 ],
                 minuteIncrement: 30,
                 onChange: function(selectedDates, dateStr, instance) {
-                    verificarFecha(dateStr, instance);
+                    if (selectedDates.length === 0) return; // Evitar llamadas innecesarias cuando no hay fecha seleccionada
+                    let selectedDate = selectedDates[0];
+                    let dayConfig = configuraciones.find(conf => conf.dia_semana === selectedDate.getDay());
+
+                    if (dayConfig) {
+                        // Establecer el rango de horas permitido para el día seleccionado
+                        instance.set('minTime', dayConfig.hora_inicio);
+                        instance.set('maxTime', dayConfig.hora_finalizacion);
+
+                        // Ajustar la hora si está fuera del rango permitido
+                        let selectedHours = selectedDate.getHours();
+                        let selectedMinutes = selectedDate.getMinutes();
+                        let configHours = parseInt(dayConfig.hora_inicio.split(':')[0]);
+                        let configMinutes = parseInt(dayConfig.hora_inicio.split(':')[1]);
+
+                        if (selectedHours < configHours || (selectedHours === configHours && selectedMinutes < configMinutes)) {
+                            selectedDate.setHours(configHours, configMinutes);
+                            instance.setDate(selectedDate, true);
+                        } else if (selectedHours > parseInt(dayConfig.hora_finalizacion.split(':')[0]) || 
+                                (selectedHours === parseInt(dayConfig.hora_finalizacion.split(':')[0]) && selectedMinutes > parseInt(dayConfig.hora_finalizacion.split(':')[1]))) {
+                            selectedDate.setHours(parseInt(dayConfig.hora_finalizacion.split(':')[0]), parseInt(dayConfig.hora_finalizacion.split(':')[1]));
+                            instance.setDate(selectedDate, true);
+                        }
+                    }
                 },
                 onOpen: function(selectedDates, dateStr, instance) {
                     // Configurar horas permitidas para el día seleccionado
@@ -345,9 +368,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
                     if (dayConfig) {
                         // Deshabilitar horas fuera del rango permitido
-                        instance.config.enableTime = true;
-                        instance.config.minTime = dayConfig.hora_inicio;
-                        instance.config.maxTime = dayConfig.hora_finalizacion;
+                        instance.set('minTime', dayConfig.hora_inicio);
+                        instance.set('maxTime', dayConfig.hora_finalizacion);
                         instance.redraw(); // Redibujar el calendario para aplicar los cambios
                     } else {
                         alert("No hay configuraciones de horario disponibles para el día seleccionado.");
@@ -388,28 +410,13 @@ document.addEventListener("DOMContentLoaded", function() {
 
             flatpickr("#id_fecha_inicio", config);
             flatpickr("#id_fecha_finalizacion", config);
-
-            function verificarFecha(fecha, instance) {
-                fetch(`/verificar_fecha/?fecha=${encodeURIComponent(fecha)}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.reservada) {
-                            alert("La fecha ya fue reservada. Cambia a una hora distinta.");
-                            instance.clear(); // Limpia la selección actual
-                            instance.open(); // Abrir el calendario nuevamente
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert("Ocurrió un error al verificar la fecha. Inténtalo de nuevo.");
-                    });
-            }
         })
         .catch(error => {
             console.error('Error:', error);
             alert("Ocurrió un error al cargar las configuraciones. Inténtalo de nuevo.");
         });
 });
+
 
 
 

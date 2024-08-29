@@ -148,13 +148,13 @@ class VisitaAsistente(Base):
 
 class ConfiguracionVisita(models.Model):
     DIA_SEMANA_CHOICES = [
-        (0, 'Lunes'),
-        (1, 'Martes'),
-        (2, 'Miércoles'),
-        (3, 'Jueves'),
-        (4, 'Viernes'),
-        (5, 'Sábado'),
-        (6, 'Domingo'),
+        (0, 'Domingo'),
+        (1, 'Lunes'),
+        (2, 'Martes'),
+        (3, 'Miércoles'),
+        (4, 'Jueves'),
+        (5, 'Viernes'),
+        (6, 'Sábado'),
     ]
 
     dia_semana = models.IntegerField(choices=DIA_SEMANA_CHOICES, unique=True)

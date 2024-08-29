@@ -11,18 +11,26 @@ class BootstrapFormMixin:
             if isinstance(widget, (forms.widgets.TextInput, forms.widgets.Select,
                                    forms.widgets.EmailInput, forms.widgets.PasswordInput,
                                    forms.widgets.FileInput, forms.widgets.DateInput,
-                                   forms.widgets.DateTimeInput)):
+                                   forms.widgets.DateTimeInput, forms.widgets.TimeInput)):
                 classes = widget.attrs.get('class', '')
                 widget.attrs.update({'class': f'{classes} form-control'.strip()})
 
-        # Añadir clases adicionales a campos específicos
+                # Estilos específicos para los campos de ConfiguracionVisitaForm
+        if 'dia_semana' in self.fields:
+            self.fields['dia_semana'].widget.attrs.update({'class': 'form-control', 'style': 'width: 100%;'})
+        if 'hora_inicio' in self.fields:
+            self.fields['hora_inicio'].widget.attrs.update({'class': 'form-control', 'style': 'width: 100%;'})
+        if 'hora_finalizacion' in self.fields:
+            self.fields['hora_finalizacion'].widget.attrs.update({'class': 'form-control', 'style': 'width: 100%;'})
+            # clases
         if 'fecha_inicio' in self.fields:
             self.fields['fecha_inicio'].widget.attrs.update({'class': 'datetime-picker form-control'})
         if 'fecha_finalizacion' in self.fields:
             self.fields['fecha_finalizacion'].widget.attrs.update({'class': 'datetime-picker form-control'})
-            
+
         if 'grabacion' in self.fields:
             self.fields['grabacion'].widget.attrs.update({'class': 'd-none'})
+
 
 
 
@@ -138,16 +146,7 @@ def clean(self):
         if not configuraciones.exists():
             raise forms.ValidationError("No hay configuraciones para el día seleccionado.")
         
-        # Validar horas permitidas para el día seleccionado
-        configuracion = configuraciones.first()  # Asumimos que solo hay una configuración por día
-        hora_inicio_permitida = datetime.combine(fecha_inicio.date(), configuracion.hora_inicio)
-        hora_finalizacion_permitida = datetime.combine(fecha_inicio.date(), configuracion.hora_finalizacion)
 
-        if not (hora_inicio_permitida <= fecha_inicio <= hora_finalizacion_permitida):
-            raise forms.ValidationError(f"La hora de inicio debe estar entre {configuracion.hora_inicio} y {configuracion.hora_finalizacion}.")
-
-        if not (hora_inicio_permitida <= fecha_finalizacion <= hora_finalizacion_permitida):
-            raise forms.ValidationError(f"La hora de finalización debe estar entre {configuracion.hora_inicio} y {configuracion.hora_finalizacion}.")
 
         # Validar que no existan 2 visitas a la vez
         existing_visits = Visita.objects.filter(
@@ -163,17 +162,51 @@ def clean(self):
 
 
 
-class ConfiguracionVisitaForm(forms.ModelForm):
+class ConfiguracionVisitaForm(forms.ModelForm, BootstrapFormMixin):
     class Meta:
         model = ConfiguracionVisita
         fields = ['dia_semana', 'hora_inicio', 'hora_finalizacion']
         widgets = {
-            'hora_inicio': forms.TimeInput(format='%H:%M', attrs={'type': 'time'}),
-            'hora_finalizacion': forms.TimeInput(format='%H:%M', attrs={'type': 'time'}),
+            'hora_inicio': forms.TimeInput(format='%H:%M', attrs={
+                'type': 'time',
+                'min': '08:00',
+                'max': '18:00'
+            }),
+            'hora_finalizacion': forms.TimeInput(format='%H:%M', attrs={
+                'type': 'time',
+                'min': '08:00',
+                'max': '18:00'
+            }),
+            'dia_semana': forms.Select(choices=[(None, 'Seleccione un día')] + ConfiguracionVisita.DIA_SEMANA_CHOICES),
         }
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._init_bootstrap()
 
 
+
+    def clean_hora_inicio(self):
+        hora_inicio = self.cleaned_data['hora_inicio']
+        if hora_inicio < datetime.time(8, 0) or hora_inicio > datetime.time(18, 0):
+            raise ValidationError('La hora de inicio debe estar entre 08:00 y 18:00.')
+        return hora_inicio
+
+    def clean_hora_finalizacion(self):
+        hora_finalizacion = self.cleaned_data['hora_finalizacion']
+        if hora_finalizacion < datetime.time(8, 0) or hora_finalizacion > datetime.time(18, 0):
+            raise ValidationError('La hora de finalización debe estar entre 08:00 y 18:00.')
+        return hora_finalizacion
+
+    def clean(self):
+        cleaned_data = super().clean()
+        hora_inicio = cleaned_data.get('hora_inicio')
+        hora_finalizacion = cleaned_data.get('hora_finalizacion')
+
+        if hora_inicio and hora_finalizacion and hora_finalizacion <= hora_inicio:
+            raise ValidationError('La hora de finalización debe ser después de la hora de inicio.')
+
+        return cleaned_data
 
 
 
