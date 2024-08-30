@@ -41,7 +41,7 @@ class PersonaForm(forms.ModelForm, BootstrapFormMixin):
     telefono_asistente = forms.CharField(max_length=10, label="Teléfono del Asistente",required=False)
     correo_asistente = forms.EmailField(label="Correo del Asistente",required=False)
     identificacion_asistente = forms.CharField(max_length=10, label="Identificación del Asistente",required=False)
-    id_linea = forms.ModelChoiceField(queryset=Linea.objects.all(), label="linea", empty_label="Seleccione la línea",required=False)
+
     
     discapacidad_asistente = forms.CharField(max_length=50,required=False)
     procedencia_asistente = forms.CharField(max_length=50,required=False)
@@ -50,7 +50,7 @@ class PersonaForm(forms.ModelForm, BootstrapFormMixin):
 
     class Meta:
         model = Persona
-        fields = ['id_genero', 'id_area', 'id_linea', 'id_ambiente', 'id_tipo_documento_asistente', 'nombre_asistente', 'apellidos_asistente', 'telefono_asistente', 'correo_asistente', 'identificacion_asistente', 'identificacion', 'nombres', 'apellidos', 'telefono', 'correo','id_tipo_documento']
+        fields = ['id_genero', 'id_area', 'id_tipo_documento_asistente', 'nombre_asistente', 'apellidos_asistente', 'telefono_asistente', 'correo_asistente', 'identificacion_asistente', 'identificacion', 'nombres', 'apellidos', 'telefono', 'correo','id_tipo_documento']
         
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -61,12 +61,6 @@ class PersonaForm(forms.ModelForm, BootstrapFormMixin):
         self.fields['id_area'].initial = None
         self.fields['id_area'].queryset = Area.objects.all()
         self.fields['id_area'].empty_label = "Seleccione una estrategia"
-        self.fields['id_ambiente'].initial = None        
-        self.fields['id_ambiente'].queryset = Ambiente.objects.all()
-        self.fields['id_ambiente'].empty_label = "Seleccione el ambiente"
-        self.fields['id_linea'].initial = None
-        self.fields['id_linea'].queryset = Linea.objects.all()
-        self.fields['id_linea'].empty_label = "Seleccione la linea"
         self.fields['procedencia_asistente'].widget.attrs.update({'placeholder': 'Ingrese la procedencia'})
         self.fields['discapacidad_asistente'].widget.attrs.update({'placeholder': 'Ingrese la discapacidad'})
         self.fields['nombre_asistente'].widget.attrs.update({'placeholder': 'Ingrese el nombre'})
@@ -112,15 +106,31 @@ class VisitaFormulario(forms.ModelForm, BootstrapFormMixin):
     fecha_inicio = forms.DateTimeField(label="Fecha de inicio", widget=forms.DateTimeInput(attrs={'type': 'datetime-local'}))
     fecha_finalizacion = forms.DateTimeField(label="Fecha de finalización", widget=forms.DateTimeInput(attrs={'type': 'datetime-local'}))
     grabacion = forms.BooleanField(required=False, initial=False)
+    id_linea = forms.ModelMultipleChoiceField(
+        queryset=Linea.objects.all(),
+        label="Línea",
+        widget=forms.CheckboxSelectMultiple,
+        required=False
+    )
+    id_ambiente = forms.ModelMultipleChoiceField(
+        queryset=Ambiente.objects.all(),
+        label="Ambiente",
+        widget=forms.CheckboxSelectMultiple,
+        required=False
+    )
 
     class Meta:
         model = Visita
-        fields = ['fecha_inicio', 'fecha_finalizacion', 'discapacidad', 'procedencia', 'grabacion']
+        fields = ['fecha_inicio', 'fecha_finalizacion', 'discapacidad', 'procedencia', 'grabacion', 'id_linea', 'id_ambiente']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['procedencia'].widget.attrs.update({'placeholder': 'Ingrese su procedencia'})
         self.fields['discapacidad'].widget.attrs.update({'placeholder': 'Ingrese su discapacidad'})
+        self.fields['id_linea'].queryset = Linea.objects.all()
+        self.fields['id_linea'].empty_label = None
+        self.fields['id_ambiente'].queryset = Ambiente.objects.all()
+        self.fields['id_ambiente'].empty_label = None
         self._init_bootstrap()
 
 def clean(self):

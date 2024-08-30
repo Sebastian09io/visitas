@@ -40,6 +40,14 @@ def home_visita(request):
             visita.save()
             persona.save()
             
+            # Asignar las líneas seleccionadas a la visita
+            lineas_seleccionadas = visita_form.cleaned_data.get('id_linea')
+            visita.id_linea.set(lineas_seleccionadas)
+            
+            # Asignar ambientes seleccionados a la visita
+            ambientes_seleccionados = visita_form.cleaned_data.get('id_ambiente')
+            visita.id_ambiente.set(ambientes_seleccionados)
+            
             #envio de correo 
             user_email = request.user.correo
             subject = 'Solicitud de Reserva en Revisión'

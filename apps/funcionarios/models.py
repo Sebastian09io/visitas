@@ -105,8 +105,6 @@ class Persona(AbstractBaseUser, Base):
     id_implemento = models.ForeignKey(Implemento, on_delete=models.CASCADE, null=True)
     id_genero = models.ForeignKey(Genero, on_delete=models.CASCADE, null=True)
     id_area = models.ForeignKey(Area, on_delete=models.CASCADE, null=True)
-    id_linea = models.ForeignKey(Linea, on_delete=models.CASCADE, null=True)
-    id_ambiente = models.ForeignKey(Ambiente, on_delete=models.CASCADE,null=True,blank=True)
     id_espacio = models.ForeignKey(Espacio, on_delete=models.CASCADE, null=True)
     imagen_perfil = models.ImageField(upload_to='profile_pics/', null=True, blank=True)
     is_active = models.BooleanField("Habilitado", default=True)
@@ -129,6 +127,8 @@ class Persona(AbstractBaseUser, Base):
 
 class Visita(Base):
     id_persona = models.ForeignKey(Persona, on_delete=models.CASCADE, null=True)
+    id_linea = models.ManyToManyField(Linea, blank=True)
+    id_ambiente = models.ManyToManyField(Ambiente,blank=True)
     fecha_inicio = models.DateTimeField()
     fecha_finalizacion = models.DateTimeField()
     discapacidad = models.CharField(max_length=50)

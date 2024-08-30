@@ -106,9 +106,16 @@
                                         <td class="d-none">{{ c.id_persona.id_tipo_documento }}</td>
                                         <td class="d-none">{{ c.id_persona.id_genero }}</td>
                                         <td class="d-none">{{ c.id_persona.id_area }}</td>
-                                        <td class="d-none">{{ c.id_persona.id_linea }}</td>
-                                        <td class="d-none">{{ c.id_persona.id_ambiente }}</td>
-
+                                        <td class="d-none">
+                                            {% for linea in c.id_linea.all %}
+                                                {{ linea.nombre }}{% if not forloop.last %}, {% endif %}
+                                            {% endfor %}
+                                        </td>
+                                        <td class="d-none">
+                                            {% for ambient in c.id_ambiente.all %}
+                                                {{ ambient.nombre }}{% if not forloop.last %}, {% endif %}
+                                            {% endfor %}
+                                        </td>
 
                                         <td>
                                             <input type="hidden" name="persona_id" value="{{ c.id }}">
@@ -602,7 +609,7 @@
                 const tipodocumento = row.querySelector('td:nth-child(12)').textContent; 
                 const genero = row.querySelector('td:nth-child(13)').textContent; 
                 const area = row.querySelector('td:nth-child(14)').textContent; 
-                const linea = row.querySelector('td:nth-child(15)').textContent; 
+                const linea = row.querySelector('td:nth-child(15)').innerHTML; 
                 const ambiente = row.querySelector('td:nth-child(16)').textContent; 
 
                 // Asignar valores a los campos
@@ -619,7 +626,7 @@
                 document.getElementById('tipodocumento').value = tipodocumento;
                 document.getElementById('genero').value = genero;
                 document.getElementById('area').value = area;
-                document.getElementById('linea').value = linea;
+                document.getElementById('linea').innerHTML = linea;
                 document.getElementById('ambiente').value = ambiente;
 
                 // Update fields visibility based on area

@@ -92,11 +92,11 @@
                     </div>
                     <div class="form-group form_group_v col-md-6" id="linea-field" style="display: none;">
                         <label for="{{ form.id_linea.id_for_label }}">Línea</label>
-                        {{ persona_form.id_linea }}
+                        {{ visita_form.id_linea }}
                     </div>
                     <div class="form-group form_group_v col-md-6" id="ambiente-field" style="display: none;">
                         <label for="{{ form.id_ambiente.id_for_label }}">Ambiente</label>
-                        {{ persona_form.id_ambiente }}
+                        {{ visita_form.id_ambiente }}
                     </div>
                     <div class="form-group form_group_v col-md-6" id="espacio-field" >
                         <label >Espacio</label>
@@ -471,10 +471,7 @@ document.addEventListener('DOMContentLoaded', function() {
         function updateFields() {
             var selectedValue = areaField.options[areaField.selectedIndex].text;
 
-            lineaField.querySelector('select').removeAttribute('required');
-            ambienteField.querySelector('select').removeAttribute('required');
-            espacioField.querySelector('input').removeAttribute('required');
-            nopermiteField.querySelector('input').removeAttribute('required');
+
         
             lineaField.style.display = "none";
             ambienteField.style.display = "none";
