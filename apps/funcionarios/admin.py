@@ -3,7 +3,7 @@ from .models import TipoDocumento, Cargo, Dependencia, Persona,Genero,Area,Linea
 
 @admin.register(Visita)
 class VisitaAdmin(admin.ModelAdmin):
-    list_display = ('id_persona','fecha_inicio','fecha_finalizacion','estado_revision','estado_finalizado','estado_rechazado','discapacidad','procedencia','grabacion')
+    list_display = ('id_persona','fecha_inicio','fecha_finalizacion','estado_revision','estado_finalizado','estado_rechazado','discapacidad','procedencia','grabacion','id_area',)
 
 @admin.register(VisitaAsistente)
 class VisitaAsistenteAdmin(admin.ModelAdmin):
@@ -46,6 +46,6 @@ class DependenciaAdmin(admin.ModelAdmin):
 
 @admin.register(Persona)
 class PersonaAdmin(admin.ModelAdmin):
-    list_display = ('nombres', 'apellidos', 'correo', 'id_tipo_documento', 'identificacion', 'telefono', 'id_cargo', 'id_dependencia','id_implemento','id_genero','id_area','id_espacio', 'is_active', 'is_staff', 'is_superuser', 'is_admin')
+    list_display = ('nombres', 'apellidos', 'correo', 'id_tipo_documento', 'identificacion', 'telefono', 'id_cargo', 'id_dependencia','id_implemento','id_genero','id_espacio', 'is_active', 'is_staff', 'is_superuser', 'is_admin')
     search_fields = ('nombres', 'apellidos', 'correo')
     list_filter = ('is_active', 'is_staff', 'is_superuser', 'is_admin')

@@ -105,17 +105,11 @@
                                         </td>
                                         <td class="d-none">{{ c.id_persona.id_tipo_documento }}</td>
                                         <td class="d-none">{{ c.id_persona.id_genero }}</td>
-                                        <td class="d-none">{{ c.id_persona.id_area }}</td>
-                                        <td class="d-none">
-                                            {% for linea in c.id_linea.all %}
-                                                {{ linea.nombre }}{% if not forloop.last %}, {% endif %}
-                                            {% endfor %}
-                                        </td>
-                                        <td class="d-none">
-                                            {% for ambient in c.id_ambiente.all %}
+                                        <td class="d-none">{{ c.id_area }}</td>
+                                        <td class="d-none" data-lineas="{% for linea in c.id_linea.all %}{{ linea.nombre }}{% if not forloop.last %}, {% endif %}{% endfor %}">
+                                        <td  class="d-none" data-ambien="{% for ambient in c.id_ambiente.all %}
                                                 {{ ambient.nombre }}{% if not forloop.last %}, {% endif %}
-                                            {% endfor %}
-                                        </td>
+                                            {% endfor %}">
 
                                         <td>
                                             <input type="hidden" name="persona_id" value="{{ c.id }}">
@@ -320,7 +314,7 @@
                                 </div>
                                 <div id="lineaField" class="form-group form_group_v col-md-6">
                                     <label for="linea">Línea</label>
-                                    <input type="text" id="linea" class="form-control" readonly>
+                                    <input type="text" id="linea" class="form-control" readonly >
                                 </div>
                                 <div id="ambienteField" class="form-group form_group_v col-md-6">
                                     <label for="ambiente">Ambiente</label>
@@ -328,7 +322,7 @@
                                 </div>
                                 <div id="nopermiteField" class="form-group form_group_v col-md-6">
                                     <label for="espacio">Espacio</label>
-                                    <input type="text" id="espacio" class="form-control" value="No aplica" readonly>
+                                    <input type="text" id="espacio" class="form-control" value="Tecnoparque y tecnoacademia" readonly >
                                 </div>
                             </div>
                             
@@ -415,7 +409,6 @@
 <script>
     ////fechas horarios
     document.addEventListener("DOMContentLoaded", function() {
-        console.log("Inicializando flatpickr...");
 
         const horaInicio = flatpickr("#id_hora_inicio", {
             enableTime: true,
@@ -436,11 +429,9 @@
                 }
             ],
             onChange: function(selectedDates, dateStr, instance) {
-                console.log("Hora de inicio cambiada:", dateStr);
                 validateTimes();
             },
             onReady: function(selectedDates, dateStr, instance) {
-                console.log("flatpickr inicializado para hora_inicio");
                 if (selectedDates.length === 0) {
                     instance.setDate("08:00");
                 }
@@ -466,11 +457,9 @@
                 }
             ],
             onChange: function(selectedDates, dateStr, instance) {
-                console.log("Hora de finalización cambiada:", dateStr);
                 validateTimes();
             },
             onReady: function(selectedDates, dateStr, instance) {
-                console.log("flatpickr inicializado para hora_finalizacion");
                 if (selectedDates.length === 0) {
                     instance.setDate("18:00");
                 }
@@ -609,8 +598,8 @@
                 const tipodocumento = row.querySelector('td:nth-child(12)').textContent; 
                 const genero = row.querySelector('td:nth-child(13)').textContent; 
                 const area = row.querySelector('td:nth-child(14)').textContent; 
-                const linea = row.querySelector('td:nth-child(15)').innerHTML; 
-                const ambiente = row.querySelector('td:nth-child(16)').textContent; 
+                const linea = row.querySelector('td:nth-child(15)').getAttribute('data-lineas');
+                const ambiente = row.querySelector('td:nth-child(16)').getAttribute('data-ambien');
 
                 // Asignar valores a los campos
                 document.getElementById('nombres').value = nombres;
@@ -626,9 +615,9 @@
                 document.getElementById('tipodocumento').value = tipodocumento;
                 document.getElementById('genero').value = genero;
                 document.getElementById('area').value = area;
-                document.getElementById('linea').innerHTML = linea;
+                document.getElementById('linea').value = linea;
                 document.getElementById('ambiente').value = ambiente;
-
+                console.log("cargando linea",linea)
                 // Update fields visibility based on area
                 updateFields();
 

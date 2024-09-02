@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #ffffff;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 100%;
+            padding: 20px;
+            background-color: #f4f4f4;
+            margin: 0 auto;
+            max-width: 600px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            text-align: center;
+            padding: 10px 0;
+            background-color: #ffffff;
+            color: #000000;
+            border-radius: 10px 10px 0 0;
+        }
+        .header img {
+            max-width: 100px;
+            min-width: 40%;
+        }
+        .content {
+            padding: 20px;
+        }
+        .content h1 {
+            color: #333333;
+        }
+        .content p {
+            color: #666666;
+        }
+        .content .details {
+            margin-top: 20px;
+        }
+        .content .details p {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src=" {{imagen_url}}" alt="Logo">
+            <h2>Solicitud de Reserva en Revisión</h2>
+        </div>
+        <div class="content">
+            <h1> Apreciado/a, {{ nombres }} {{ apellidos }}</h1>
+            <p>Tu solicitud de reserva de visita está en revisión.</p>
+            <div class="details">
+                <p><strong>Fecha de Inicio:</strong> {{ fecha_inicio }}</p>
+                <p><strong>Fecha de Finalización:</strong> {{ fecha_finalizacion }}</p>
+                <p><strong>Área:</strong> {{ area }}</p>
+                <p><strong>Procedencia:</strong> {{ procedencia }}</p>
+                <p><strong>Correo:</strong> {{ correo }}</p>
+            </div>
+            <p>Gracias por utilizar nuestro sistema de reserva de visitas.</p>
+        </div>
+    </div>
+</body>
+</html>

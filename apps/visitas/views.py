@@ -7,6 +7,9 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.core.mail import send_mail
 from django.utils import timezone
+from django.template.loader import render_to_string
+from django.core.mail import EmailMultiAlternatives
+from django.utils.html import strip_tags
 from django.http import JsonResponse
 from django.conf import settings
 from apps.funcionarios.models import ConfiguracionVisita, Persona, Visita, Asistente, VisitaAsistente, TipoDocumento,Genero
@@ -40,6 +43,9 @@ def home_visita(request):
             visita.save()
             persona.save()
             
+            # Asignar area o estrategia a visita
+            area_seleccionada = visita_form.cleaned_data.get('id_area')
+            visita.id_area = area_seleccionada
             # Asignar las líneas seleccionadas a la visita
             lineas_seleccionadas = visita_form.cleaned_data.get('id_linea')
             visita.id_linea.set(lineas_seleccionadas)
@@ -49,10 +55,24 @@ def home_visita(request):
             visita.id_ambiente.set(ambientes_seleccionados)
             
             #envio de correo 
-            user_email = request.user.correo
             subject = 'Solicitud de Reserva en Revisión'
-            message = 'Tu solicitud de reserva de visita está en revisión.'
-            send_mail(subject, message, settings.EMAIL_HOST_USER, [user_email])
+            context = {
+                'nombres': persona.nombres,
+                'apellidos': persona.apellidos,
+                'fecha_inicio': visita.fecha_inicio,
+                'fecha_finalizacion': visita.fecha_finalizacion,
+                'area': area_seleccionada.nombre,
+                'procedencia': visita.procedencia,
+                'correo': persona.correo,
+                'imagen_url': '/static/bootstrap/img/sennova.jpeg ' 
+            }
+            html_content = render_to_string('email_template.html', context)
+            text_content = strip_tags(html_content)
+
+            # Enviar correo  HTML
+            email = EmailMultiAlternatives(subject, text_content, settings.EMAIL_HOST_USER, [user.correo])
+            email.attach_alternative(html_content, "text/html")
+            email.send()
             
             # Procesar los asistentes
             asistentes_data = request.POST.get('asistentes')

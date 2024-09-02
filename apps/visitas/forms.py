@@ -50,7 +50,7 @@ class PersonaForm(forms.ModelForm, BootstrapFormMixin):
 
     class Meta:
         model = Persona
-        fields = ['id_genero', 'id_area', 'id_tipo_documento_asistente', 'nombre_asistente', 'apellidos_asistente', 'telefono_asistente', 'correo_asistente', 'identificacion_asistente', 'identificacion', 'nombres', 'apellidos', 'telefono', 'correo','id_tipo_documento']
+        fields = ['id_genero', 'id_tipo_documento_asistente', 'nombre_asistente', 'apellidos_asistente', 'telefono_asistente', 'correo_asistente', 'identificacion_asistente', 'identificacion', 'nombres', 'apellidos', 'telefono', 'correo','id_tipo_documento']
         
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -58,9 +58,6 @@ class PersonaForm(forms.ModelForm, BootstrapFormMixin):
         self.fields['id_tipo_documento'].empty_label = "Seleccione un tipo de documento"
         self.fields['id_genero'].queryset = Genero.objects.all()
         self.fields['id_genero'].empty_label = "Seleccione el género"
-        self.fields['id_area'].initial = None
-        self.fields['id_area'].queryset = Area.objects.all()
-        self.fields['id_area'].empty_label = "Seleccione una estrategia"
         self.fields['procedencia_asistente'].widget.attrs.update({'placeholder': 'Ingrese la procedencia'})
         self.fields['discapacidad_asistente'].widget.attrs.update({'placeholder': 'Ingrese la discapacidad'})
         self.fields['nombre_asistente'].widget.attrs.update({'placeholder': 'Ingrese el nombre'})
@@ -118,10 +115,11 @@ class VisitaFormulario(forms.ModelForm, BootstrapFormMixin):
         widget=forms.CheckboxSelectMultiple,
         required=False
     )
+    id_area = forms.ModelChoiceField(queryset=Area.objects.all(),required=False)
 
     class Meta:
         model = Visita
-        fields = ['fecha_inicio', 'fecha_finalizacion', 'discapacidad', 'procedencia', 'grabacion', 'id_linea', 'id_ambiente']
+        fields = ['fecha_inicio', 'fecha_finalizacion', 'discapacidad', 'procedencia', 'grabacion', 'id_linea', 'id_ambiente', 'id_area']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -131,6 +129,8 @@ class VisitaFormulario(forms.ModelForm, BootstrapFormMixin):
         self.fields['id_linea'].empty_label = None
         self.fields['id_ambiente'].queryset = Ambiente.objects.all()
         self.fields['id_ambiente'].empty_label = None
+        self.fields['id_area'].queryset = Area.objects.all()
+        self.fields['id_area'].empty_label = "Seleccione una estrategia"
         self._init_bootstrap()
 
 def clean(self):
