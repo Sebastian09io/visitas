@@ -89,7 +89,6 @@ envio correo aprobado                      ok**
 
 
 
-
 activar entorno
 principal
  cd Entornos\ virtuales/  

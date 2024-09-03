@@ -205,6 +205,23 @@
 
 </div>
 
+<div id="ventanaEmergente">
+    <div id="formularioEmergente">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Carga en excel</h5>
+                <button type="button" class="btn-cerrar" aria-label="Close">
+                    <img src="/static/bootstrap/img/cerrar.png" alt="Cerrar">
+                </button>
+            </div>
+            <div class="modal-body" id="modalBodyContent">
+                <a href="{% url 'visitas:descargar_excel' %}" class="btn btn-primary">Descargar Excel</a>
+                <input type="file" id="archivoExcel" class="btn btn-primary btn_select " accept=".xlsx, .xls">
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- listado asistentes -->
 <div class="contenedor_visita3">
     <h1 class="titulo_visita">Listado de asistentes</h1>
@@ -241,26 +258,11 @@
     </div>
 
 <!-- Botón guardar visita -->
-<button type="submit" form="mainForm" class="btn btnt3 btn-primary">Guardar visita</button>
+<button type="submit" form="mainForm" class="btn btnt3 btn-primary" id="enviavisita">Guardar visita</button>
 
 </div>
 
-<div id="ventanaEmergente">
-    <div id="formularioEmergente">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Carga en excel</h5>
-                <button type="button" class="btn-cerrar" aria-label="Close">
-                    <img src="/static/bootstrap/img/cerrar.png" alt="Cerrar">
-                </button>
-            </div>
-            <div class="modal-body" id="modalBodyContent">
-                <a href="{% url 'visitas:descargar_excel' %}" class="btn btn-primary">Descargar Excel</a>
-                <input type="file" id="archivoExcel" class="btn btn-primary btn_select" accept=".xlsx, .xls">
-            </div>
-        </div>
-    </div>
-</div>
+
 
 
 
@@ -660,7 +662,27 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
+/////restriccion 70 personas
+document.addEventListener("DOMContentLoaded", function() {
+    const MAX_ASISTENTES = 71;
+    const asistentesTableBody = document.getElementById('asistentesTableBody');
+    const agregarAsistenteBtn = document.getElementById('enviavisita');
+    
+    agregarAsistenteBtn.addEventListener('click', function() {
+        const numberOfAsistentes = asistentesTableBody.getElementsByTagName('tr').length;
+        
+        if (numberOfAsistentes >= MAX_ASISTENTES) {
+            alert('No se pueden agregar más de 70 asistentes.');
+            limpiarAsistentes();
+        } 
+    });
 
+    function limpiarAsistentes() {
+        // Limpiar todos los asistentes
+        asistentesTableBody.innerHTML = '';
+    }
+
+});
     ////modal
 document.addEventListener('DOMContentLoaded', function() {
     var botonMostrar = document.getElementById("mostrarFormulario");

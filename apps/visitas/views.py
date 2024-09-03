@@ -55,7 +55,7 @@ def home_visita(request):
             visita.id_ambiente.set(ambientes_seleccionados)
             
             #envio de correo 
-            subject = 'Solicitud de Reserva en Revisión'
+            subject = 'Estado solicitud de Reserva'
             context = {
                 'nombres': persona.nombres,
                 'apellidos': persona.apellidos,
@@ -63,8 +63,9 @@ def home_visita(request):
                 'fecha_finalizacion': visita.fecha_finalizacion,
                 'area': area_seleccionada.nombre,
                 'procedencia': visita.procedencia,
+                'texto': 'Su solicitud de reserva de visita está en revisión.',
                 'correo': persona.correo,
-                'imagen_url': '/static/bootstrap/img/sennova.jpeg ' 
+                'imagen_url': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRHfPSiMXl0hYquJSWZk7pGVu5y4nsz-QiiFA&s' 
             }
             html_content = render_to_string('email_template.html', context)
             text_content = strip_tags(html_content)
@@ -293,25 +294,63 @@ def buscar_visita(request):
 
 
 def rechazar_visita(request, visita_id):
+    user = request.user
+    try:
+        persona = Persona.objects.get(id=user.id)
+    except Persona.DoesNotExist:
+        persona = Persona(user=user)
+    
     if request.method == 'POST':
         visita = get_object_or_404(Visita, id=visita_id)
         visita.estado_rechazado = True
+        
         try:
             visita.save()
-            user_email = request.user.correo
             
-            if user_email: 
-                subject = 'Estado de solicitud de reserva'
-                message = 'Tu solicitud de reserva de visita ha sido rechazada.'
-                send_mail(subject, message, settings.EMAIL_HOST_USER, [user_email])
+            # Obtener el área seleccionada desde la instancia de la visita
+            area_seleccionada = visita.id_area
+
+            # Contexto para el correo electrónico
+            context = {
+                'nombres': persona.nombres,
+                'apellidos': persona.apellidos,
+                'fecha_inicio': visita.fecha_inicio,
+                'fecha_finalizacion': visita.fecha_finalizacion,
+                'area': area_seleccionada.nombre,
+                'procedencia': visita.procedencia,
+                'texto': 'Su solicitud de reserva de visita ha sido rechazada.',
+                'correo': persona.correo,
+                'imagen_url': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRHfPSiMXl0hYquJSWZk7pGVu5y4nsz-QiiFA&s' 
+            }
+            
+            # Renderizar el contenido HTML del correo
+            html_content = render_to_string('email_template.html', context)
+            text_content = strip_tags(html_content)
+
+            # Enviar correo HTML
+            email = EmailMultiAlternatives(
+                subject='Estado solicitud de Reserva',
+                body=text_content,
+                from_email=settings.EMAIL_HOST_USER,
+                to=[user.correo]
+            )
+            email.attach_alternative(html_content, "text/html")
+            email.send()
             
             return JsonResponse({'success': True})
         except Exception as e:
             return JsonResponse({'success': False, 'error': str(e)})
+    
     return JsonResponse({'success': False, 'error': 'Método no permitido'})
 
 
+
 def aprobar_visita(request, visita_id):
+    user = request.user
+    try:
+        persona = Persona.objects.get(id=user.id)
+    except Persona.DoesNotExist:
+        persona = Persona(user=user)
     if request.method == 'POST':
         visita = get_object_or_404(Visita, id=visita_id)
         visita.estado_revision = True
@@ -319,10 +358,35 @@ def aprobar_visita(request, visita_id):
             visita.save()
             user_email = request.user.correo
             
-            if user_email: 
-                subject = 'Estado de solicitud de reserva'
-                message = 'Tu solicitud de reserva de visita ha sido aprobada.'
-                send_mail(subject, message, settings.EMAIL_HOST_USER, [user_email])
+            # Obtener el área seleccionada desde la instancia de la visita
+            area_seleccionada = visita.id_area
+
+            # Contexto para el correo electrónico
+            context = {
+                'nombres': persona.nombres,
+                'apellidos': persona.apellidos,
+                'fecha_inicio': visita.fecha_inicio,
+                'fecha_finalizacion': visita.fecha_finalizacion,
+                'area': area_seleccionada.nombre,
+                'procedencia': visita.procedencia,
+                'texto': 'Su solicitud de reserva de visita ha sido aprobada.',
+                'correo': persona.correo,
+                'imagen_url': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRHfPSiMXl0hYquJSWZk7pGVu5y4nsz-QiiFA&s' 
+            }
+            
+            # Renderizar el contenido HTML del correo
+            html_content = render_to_string('email_template.html', context)
+            text_content = strip_tags(html_content)
+
+            # Enviar correo HTML
+            email = EmailMultiAlternatives(
+                subject='Estado solicitud de Reserva',
+                body=text_content,
+                from_email=settings.EMAIL_HOST_USER,
+                to=[user.correo]
+            )
+            email.attach_alternative(html_content, "text/html")
+            email.send()
             
             return JsonResponse({'success': True})
         except Exception as e:
