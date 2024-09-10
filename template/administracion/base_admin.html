@@ -30,6 +30,8 @@
                         Perfil
                     </a>
                 </li>
+                {% if user.is_superuser %}
+
                 <li class="sidebar-header">Reservas</li>
                 <li class="sidebar-item">
                     <li class="sidebar-item">
@@ -38,7 +40,6 @@
                             Realizar reserva
                         </a>
                     </li>
-                    {% if user.is_superuser %}
 
                     <a href="#" class="sidebar-link collapsed" data-bs-toggle="collapse" data-bs-target="#reservas-menu" aria-expanded="false" aria-controls="reservas-menu" style="color: white;text-decoration: none;">
                         <i class="fa-solid fa-sliders pe-2"></i>
