@@ -99,9 +99,8 @@ def login_view(request):
                     user_auth = authenticate(request, username=user.correo, password=password)
                     if user_auth is not None:
                         login(request, user_auth)
-                        if user.is_superuser:  # Verificar si el usuario es superusuario
-                            return redirect('reservas:gestion_perfil')  # Redirigir a la vista de administración
-                        return redirect('gestiones:calendario')  # Redirigir a la página principal después de iniciar sesión
+                        # Redirigir siempre a 'reservas:gestion_perfil' después de iniciar sesión
+                        return redirect('reservas:gestion_perfil')
                     else:
                         messages.error(request, "Correo o contraseña incorrectos.")
             except Persona.DoesNotExist:
@@ -114,6 +113,7 @@ def login_view(request):
         form = LoginForm()
 
     return render(request, 'registration/login.html', {'form': form})
+
 
 class CustomPasswordResetView(PasswordResetView):
     form_class = CustomPasswordResetForm

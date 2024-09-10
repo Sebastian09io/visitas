@@ -32,6 +32,14 @@
                 </li>
                 <li class="sidebar-header">Reservas</li>
                 <li class="sidebar-item">
+                    <li class="sidebar-item">
+                        <a href="" class="sidebar-link" style="color: white; text-decoration: none;">
+                            <i class="fa-regular fa-calendar pe-2"></i>
+                            Realizar reserva
+                        </a>
+                    </li>
+                    {% if user.is_superuser %}
+
                     <a href="#" class="sidebar-link collapsed" data-bs-toggle="collapse" data-bs-target="#reservas-menu" aria-expanded="false" aria-controls="reservas-menu" style="color: white;text-decoration: none;">
                         <i class="fa-solid fa-sliders pe-2"></i>
                         Gestión de servicios
@@ -59,6 +67,8 @@
                         </li>
                     </ul>
                 </li>
+                {% endif %}
+
                 <li class="sidebar-header">Visitas</li>
                 <li class="sidebar-item">
                     <a href="#" class="sidebar-link collapsed" data-bs-toggle="collapse" data-bs-target="#visitas-menu" aria-expanded="false" aria-controls="visitas-menu" style="color: white;text-decoration: none;">
@@ -69,9 +79,12 @@
                         <li class="sidebar-item">
                             <a href="{% url 'visitas:home_visita' %}" class="sidebar-link" style="color: white;text-decoration: none;"> Realizar visita</a>
                         </li>
+                        {% if user.is_superuser %}
                         <li class="sidebar-item">
                             <a href="{% url 'visitas:administrador_visitas' %}" class="sidebar-link" style="color: white;text-decoration: none;"> Administrar Visitas</a>
                         </li>
+                        {% endif %}
+
                     </ul>
                 </li>
             </ul>
