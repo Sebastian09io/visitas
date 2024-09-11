@@ -143,21 +143,32 @@ def actualizar_estado_visitas():
         visita.estado_finalizado = True
         visita.save()
         
-        
+import pytz # type: ignore
+from datetime import datetime
+
 def verificar_fecha(request):
-    fecha = request.GET.get('fecha')
-    
-    if fecha:
-        # Convertir la cadena de fecha en un objeto datetime
-        fecha_datetime = timezone.datetime.fromisoformat(fecha)
-        # Comprobar si ya hay una visita agendada en esa fecha
+    fecha_inicio = request.GET.get('fecha_inicio')
+    fecha_finalizacion = request.GET.get('fecha_finalizacion')
+
+    if fecha_inicio and fecha_finalizacion:
+        try:
+            # Convertir las cadenas de fecha en objetos datetime en UTC
+            fecha_inicio_datetime = datetime.fromisoformat(fecha_inicio).astimezone(pytz.utc)
+            fecha_finalizacion_datetime = datetime.fromisoformat(fecha_finalizacion).astimezone(pytz.utc)
+        except ValueError:
+            return JsonResponse({'error': 'Formato de fecha inválido'}, status=400)
+
+
+        # 1. Comprobar si ya hay una visita agendada en esas fechas y horas
         existe_visita = Visita.objects.filter(
-            fecha_inicio__lt=fecha_datetime + timezone.timedelta(days=1),
-            fecha_finalizacion__gt=fecha_datetime
+            fecha_inicio__lt=fecha_finalizacion_datetime,
+            fecha_finalizacion__gt=fecha_inicio_datetime
         ).exists()
-        
+
+
+        # Retornar el resultado de la comparación de visitas y reservas
         return JsonResponse({'reservada': existe_visita})
-    
+
     return JsonResponse({'reservada': False})
 
 #funciones administracion

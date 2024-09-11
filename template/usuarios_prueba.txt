@@ -92,4 +92,8 @@ envio correo aprobado                      ok**
 activar entorno
 principal
  cd Entornos\ virtuales/  
+
   source .venv-linux/bin/activate 
+
+
+  activar los correos

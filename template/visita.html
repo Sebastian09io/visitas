@@ -317,7 +317,24 @@ document.addEventListener("DOMContentLoaded", function() {
                 }
                 return "08:00"; // Valor por defecto si no se encuentra una configuración válida
             }
-
+            //verificcion de mandar fechas para solapamiento
+            function verificarFecha(fechaInicio, fechaFinalizacion, callback) {
+                // Convertir las fechas a objetos Date
+                let fechaInicioObj = new Date(fechaInicio);
+                let fechaFinalizacionObj = new Date(fechaFinalizacion);
+            
+                // Convertir las fechas a formato ISO en UTC
+                let fechaInicioUTC = fechaInicioObj.toISOString();
+                let fechaFinalizacionUTC = fechaFinalizacionObj.toISOString();
+            
+                // Construir la URL con las fechas en formato UTC
+                let url = `/verificar_fecha/?fecha_inicio=${encodeURIComponent(fechaInicioUTC)}&fecha_finalizacion=${encodeURIComponent(fechaFinalizacionUTC)}`;
+            
+                fetch(url)
+                    .then(response => response.json())
+                    .then(data => callback(data))
+                    .catch(error => console.error('Error:', error));
+            }
             let nearestDate = getNearestEnabledDate(configuraciones);
             let defaultTime = getDefaultTime(configuraciones, nearestDate);
 
