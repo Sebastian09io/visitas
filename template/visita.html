@@ -3,6 +3,18 @@
 
 {% block content %}
 
+<style>
+    .btnt244 {
+        font-size:90%;
+        border-radius: 4px;
+        color:rgb(0, 0, 0);
+        background-color: #17be4154;
+        max-width: 290px;
+        min-width: 80px;
+        width: 100%;
+    }
+</style>
+
 <div class="contenedor_visita">
     <h1 class="titulo_visita">Registro de visita</h1>
 
@@ -187,12 +199,19 @@
                     </div>
                     <div class="form-group form_group_v2 col-md-6">
                         <label class="letrat" for="mostrarFormulario">c</label>
-                        <button type="button" class="btn btnt btn-primary" id="mostrarFormulario">Asistentes en Excel</button>
+                        <div class="btnt244">
+                        <p>
+                            El botón inferior "Asistentes en Excel" permite descargar el formato para realizar la carga del documento diligenciado.
+                        </p>
+                        </div>
                     </div>
-                    <div class="form-group form_group_v2 col-md-6"></div>
+                    <div class="form-group form_group_v2 col-md-6">
+                        <label class="letrat" for="mostrarFormulario">c</label>
+                        <button type="button" class="btn btnt2332 btn-primary" id="agregarAsistente">Agregar</button>
+                    </div>
                     <div class="form-group form_group_v2 col-md-6">
                         <label class="letrat" for="agregarAsistente">c</label>
-                        <button type="button" class="btn btnt2 btn-primary" id="agregarAsistente">Agregar</button>
+                        <button type="button" class="btn btnt btn-primary" id="mostrarFormulario" style="margin-left:-20%;">Asistentes en Excel</button>
                     </div>
                 </div>
             </div>
@@ -262,7 +281,51 @@
 
 </div>
 
-
+<div id="ventanaEmergente232"></div>
+    <div id="formularioEmergente232">
+        <div class="modal-content" style="overflow-y: scroll; max-height: 500px;">
+            <div class="modal-header">
+                <h5 class="modal-title">Términos y condiciones para el uso de los espacios</h5>
+                <button type="button" class="btn-cerrar" aria-label="Close" id="cerrarModal">
+                    <img src="{% static 'bootstrap/img/cerrar.png' %}" alt="Cerrar">
+                </button>
+            </div>
+            <div class="modal-body" >
+                1. Propósito del uso de los espacios<br>
+                Los espacios del SENA son destinados exclusivamente para actividades académicas, formativas y administrativas relacionadas con el desarrollo de los programas de formación y servicios que ofrece la institución. Cualquier otro uso debe ser previamente autorizado por la administración del SENA. <br><br>
+                2. Reservación de espacios<br>
+                Las solicitudes para el uso de los espacios deben realizarse a través del sistema de registro de visitas y reservas. La aprobación de una reserva está sujeta a la disponibilidad del espacio y al cumplimiento de estos términos y condiciones.<br><br>
+                3. Responsabilidades del solicitante<br>
+                El solicitante, como representante de su grupo, es responsable de:<br>
+                Asegurarse de que el espacio sea utilizado únicamente para el propósito especificado en la solicitud de reserva.<br>
+                Mantener el espacio en buen estado, evitando daños o alteraciones en la infraestructura, equipos y mobiliario.<br>
+                Garantizar que todos los participantes cumplan con las normas de seguridad y comportamiento establecidas por el SENA.<br>
+                Devolver el espacio en las mismas condiciones en que fue recibido, incluyendo la limpieza y el orden.<br><br>
+                4. Prohibiciones<br>
+                Queda prohibido:<br>
+                El consumo de alimentos y bebidas en áreas no designadas para tal fin.<br>
+                La manipulación de equipos y recursos del SENA sin la autorización correspondiente.<br>
+                La realización de actividades que pongan en riesgo la seguridad de los participantes o que sean contrarias a la misión y valores del SENA.<br>
+                fumar, consumir alcohol o sustancias psicoactivas dentro de las instalaciones.<br><br>
+                5. Sanciones por incumplimiento<br>
+                El incumplimiento de estos términos y condiciones puede resultar en:<br>
+                La cancelación inmediata de la reserva.<br>
+                La restricción temporal o permanente para realizar futuras reservas.<br>
+                La obligación de cubrir los costos de reparación o limpieza en caso de daños o alteraciones al espacio.<br><br>
+                6. Protección de datos personales<br>
+                Los datos personales recogidos en el proceso de registro y reserva serán tratados conforme a la ley de protección de datos personales vigente en colombia. Estos serán utilizados exclusivamente para la gestión de las reservas y para fines administrativos internos.<br><br>
+                7. Modificación de los términos y condiciones<br>
+                El SENA se reserva el derecho de modificar estos términos y condiciones en cualquier momento. Las modificaciones serán publicadas en el sistema de registro de visitas y reservas y serán aplicables a todas las reservas futuras.<br><br>
+                8. Aceptación de los términos y condiciones<br>
+                El uso de los espacios del SENA implica la aceptación plena y sin reservas de estos términos y condiciones. Al realizar una reserva, el solicitante confirma que ha leído, entendido y aceptado todos los términos y condiciones aquí expuestos. <br>
+                <div style="margin-top:4%; padding-left:31%">
+                <button id="aceptarTerminos" class="btn btnt3 btn-primary" >Aceptar términos</button>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</div>
 
 
 
@@ -700,6 +763,34 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
 });
+
+/////restriccion para terminos antes de enviar visita
+document.addEventListener("DOMContentLoaded", function() {
+    const btnmodaltermino = document.getElementById('enviavisita');
+    const ventanaEmergente = document.getElementById('ventanaEmergente232');
+    const formVisita = document.getElementById('mainForm');
+    const aceptarTerminos = document.getElementById('aceptarTerminos');
+    const cerrarModal = document.getElementById('cerrarModal');
+
+    // Evitar envío del formulario al hacer clic en "Enviar Visita"
+    btnmodaltermino.addEventListener("click", function(event) {
+        event.preventDefault(); // Prevenir el envío del formulario
+        ventanaEmergente.style.display = "flex"; // Mostrar la ventana emergente
+    });
+
+    // Cuando se aceptan los términos, se cierra el modal y se envía el formulario
+    aceptarTerminos.addEventListener("click", function() {
+        ventanaEmergente.style.display = "none"; // Cerrar modal
+        formVisita.submit(); // Enviar el formulario
+    });
+
+    // Si el usuario cierra el modal sin aceptar, simplemente lo oculta
+    cerrarModal.addEventListener("click", function() {
+        ventanaEmergente.style.display = "none";
+    });
+});
+
+
     ////modal
 document.addEventListener('DOMContentLoaded', function() {
     var botonMostrar = document.getElementById("mostrarFormulario");

@@ -2,7 +2,7 @@
     border-radius: 6px;
     width: 69%;
     height: auto;
-    background: white;
+    background: rgb(255, 255, 255);
     position: relative;
     top: 5%;
     left: 15%;
@@ -87,16 +87,7 @@
     position: relative;
 }
 
-.contenedor_visita {
-    border-radius: 6px;
-    width: 69%;
-    background: white;
-    position: relative;
-    top: 5%;
-    left: 15%;
-    padding: 2% 5%;
-    text-align: center;
-}
+
 
 .formulario_visita {
     margin-top: 5%;
@@ -227,6 +218,15 @@ button.btnt2 {
     background-color: #0f3efa;
     border-color: #0f3efa;
 }
+button.btnt2332 {
+    border-radius: 4px;
+    margin-left:-20%;
+    max-width: 190px;
+    min-width: 80px;
+    width: 100%;
+    background-color: #0f3efa;
+    border-color: #0f3efa;
+}
 button.btnt3 {
     font-size: 16px;
     border-radius: 4px;
@@ -238,7 +238,9 @@ button.btnt3 {
 button.btnt {
     font-size: 16px;
     border-radius: 4px;
-    width: 190px; 
+    max-width: 190px;
+    min-width: 80px;
+    width: 100%;
     background-color: #16851b;
     border-color: #16851b;
 }
