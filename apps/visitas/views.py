@@ -45,7 +45,7 @@ def home_visita(request):
             
             # Asignar area o estrategia a visita
             area_seleccionada = visita_form.cleaned_data.get('id_area')
-            visita.id_area = area_seleccionada
+            visita.id_area.set(area_seleccionada)
             # Asignar las líneas seleccionadas a la visita
             lineas_seleccionadas = visita_form.cleaned_data.get('id_linea')
             visita.id_linea.set(lineas_seleccionadas)

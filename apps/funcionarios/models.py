@@ -128,7 +128,7 @@ class Visita(Base):
     id_persona = models.ForeignKey(Persona, on_delete=models.CASCADE, null=True)
     id_linea = models.ManyToManyField(Linea, blank=True)
     id_ambiente = models.ManyToManyField(Ambiente,blank=True)
-    id_area = models.ForeignKey(Area, on_delete=models.CASCADE, null=True)
+    id_area = models.ManyToManyField(Area, blank=True)
     fecha_inicio = models.DateTimeField()
     fecha_finalizacion = models.DateTimeField()
     discapacidad = models.CharField(max_length=50)

@@ -105,11 +105,10 @@
                                         </td>
                                         <td class="d-none">{{ c.id_persona.id_tipo_documento }}</td>
                                         <td class="d-none">{{ c.id_persona.id_genero }}</td>
-                                        <td class="d-none">{{ c.id_area }}</td>
+                                        <td class="d-none" data-area="{% for area in c.id_area.all %}{{ area.nombre }}{% if not forloop.last %}, {% endif %}{% endfor %}">
+
                                         <td class="d-none" data-lineas="{% for linea in c.id_linea.all %}{{ linea.nombre }}{% if not forloop.last %}, {% endif %}{% endfor %}">
-                                        <td  class="d-none" data-ambien="{% for ambient in c.id_ambiente.all %}
-                                                {{ ambient.nombre }}{% if not forloop.last %}, {% endif %}
-                                            {% endfor %}">
+                                        <td class="d-none" data-ambien="{% for ambient in c.id_ambiente.all %}{{ ambient.nombre }}{% if not forloop.last %}, {% endif %}{% endfor %}">
 
                                         <td>
                                             <input type="hidden" name="persona_id" value="{{ c.id }}">
@@ -324,6 +323,14 @@
                                     <label for="espacio">Espacio</label>
                                     <input type="text" id="espacio" class="form-control" value="Tecnoparque y tecnoacademia" readonly >
                                 </div>
+                                <div id="multiplearea" class="form-group form_group_v col-md-6">
+                                    <label for="espacio">Espacio</label>
+                                    <input type="text" id="espacio" class="form-control" value="Multiple estrategia seleccionada" readonly >
+                                </div>
+                                <div class="form-group form_group_v col-md-6" id="no-seleccion" style="display: none;">
+                                    <label>Espacio</label>
+                                    <input type="text" value="No aplica" class="form-control" readonly>
+                                </div>
                             </div>
                             
                             <div class="form-row">
@@ -514,12 +521,14 @@
         const lineaField = document.getElementById('lineaField');
         const ambienteField = document.getElementById('ambienteField');
         const nopermiteField = document.getElementById('nopermiteField');
+        const masseleccion = document.getElementById('multiplearea');
+        var noseleccion = document.getElementById('no-seleccion');
 
         function updateFields() {
             const selectedValue = areaField.value.trim();
 
             // Reiniciar campos
-            [lineaField, ambienteField, nopermiteField].forEach(field => {
+            [lineaField, ambienteField, nopermiteField,masseleccion,noseleccion].forEach(field => {
                 field.querySelector('input').removeAttribute('required');
                 field.style.display = "none";
             });
@@ -534,6 +543,12 @@
             } else if (selectedValue === "Sennova") {
                 nopermiteField.style.display = "block";
                 nopermiteField.querySelector('input').setAttribute('required', 'required');
+            } else if (selectedValue === "Grupos de investigación") {
+                noseleccion.style.display = "block";
+                noseleccion.querySelector('input').setAttribute('required', 'required');
+            }else {
+                masseleccion.style.display = "block";
+                
             }
         }
 
@@ -597,7 +612,7 @@
                 const grabacion = row.querySelector('td:nth-child(11)').innerHTML; 
                 const tipodocumento = row.querySelector('td:nth-child(12)').textContent; 
                 const genero = row.querySelector('td:nth-child(13)').textContent; 
-                const area = row.querySelector('td:nth-child(14)').textContent; 
+                const area = row.querySelector('td:nth-child(14)').getAttribute('data-area');
                 const linea = row.querySelector('td:nth-child(15)').getAttribute('data-lineas');
                 const ambiente = row.querySelector('td:nth-child(16)').getAttribute('data-ambien');
 
@@ -617,7 +632,6 @@
                 document.getElementById('area').value = area;
                 document.getElementById('linea').value = linea;
                 document.getElementById('ambiente').value = ambiente;
-                console.log("cargando linea",linea)
                 // Update fields visibility based on area
                 updateFields();
 

@@ -107,15 +107,19 @@ class VisitaFormulario(forms.ModelForm, BootstrapFormMixin):
         queryset=Linea.objects.all(),
         label="Línea",
         widget=forms.CheckboxSelectMultiple,
-        required=False
-    )
+        required=False)
+    
     id_ambiente = forms.ModelMultipleChoiceField(
         queryset=Ambiente.objects.all(),
         label="Ambiente",
         widget=forms.CheckboxSelectMultiple,
-        required=False
-    )
-    id_area = forms.ModelChoiceField(queryset=Area.objects.all(),required=False)
+        required=False)
+    
+    id_area = forms.ModelMultipleChoiceField(        
+        queryset=Area.objects.all(),
+        label="Estrategia",
+        widget=forms.CheckboxSelectMultiple,
+        required=False)
 
     class Meta:
         model = Visita
@@ -130,7 +134,7 @@ class VisitaFormulario(forms.ModelForm, BootstrapFormMixin):
         self.fields['id_ambiente'].queryset = Ambiente.objects.all()
         self.fields['id_ambiente'].empty_label = None
         self.fields['id_area'].queryset = Area.objects.all()
-        self.fields['id_area'].empty_label = "Seleccione una estrategia"
+        self.fields['id_area'].empty_label = None
         self._init_bootstrap()
 
 def clean(self):

@@ -110,15 +110,24 @@
                         <label for="{{ form.id_ambiente.id_for_label }}">Ambiente</label>
                         {{ visita_form.id_ambiente }}
                     </div>
-                    <div class="form-group form_group_v col-md-6" id="espacio-field" >
-                        <label >Espacio</label>
+                    <div class="form-group form_group_v col-md-6" id="espacio-field">
+                        <label>Espacio</label>
                         <input type="text" value="Seleccione primero la estrategia" class="form-control" readonly>
                     </div>
                     <div class="form-group form_group_v col-md-6" id="no-permitido-field" style="display: none;">
                         <label>Espacio</label>
                         <input type="text" value="Tecnoparque y Tecnoacademia" class="form-control" readonly>
                     </div>
+                    <div class="form-group form_group_v col-md-6" id="todas-estrategias-field" style="display: none;">
+                        <label>Estrategia seleccionada</label>
+                        <input type="text" value="Multiple estrategia seleccionada" class="form-control" readonly>
+                    </div>
+                    <div class="form-group form_group_v col-md-6" id="no-seleccion" style="display: none;">
+                        <label>Espacio</label>
+                        <input type="text" value="No aplica" class="form-control" readonly>
+                    </div>
                 </div>
+                
                 <div class="form-row">
                     <div class="form-group form_group_v col-md-6">
                         <label for="fecha_inicio">Fecha de inicio</label>
@@ -281,13 +290,13 @@
 
 </div>
 
-<div id="ventanaEmergente232"></div>
+<div id="ventanaEmergente232">
     <div id="formularioEmergente232">
         <div class="modal-content" style="overflow-y: scroll; max-height: 500px;">
             <div class="modal-header">
                 <h5 class="modal-title">Términos y condiciones para el uso de los espacios</h5>
                 <button type="button" class="btn-cerrar" aria-label="Close" id="cerrarModal">
-                    <img src="{% static 'bootstrap/img/cerrar.png' %}" alt="Cerrar">
+                    <img src="/static/bootstrap/img/cerrar.png" alt="Cerrar">
                 </button>
             </div>
             <div class="modal-body" >
@@ -318,7 +327,7 @@
                 El SENA se reserva el derecho de modificar estos términos y condiciones en cualquier momento. Las modificaciones serán publicadas en el sistema de registro de visitas y reservas y serán aplicables a todas las reservas futuras.<br><br>
                 8. Aceptación de los términos y condiciones<br>
                 El uso de los espacios del SENA implica la aceptación plena y sin reservas de estos términos y condiciones. Al realizar una reserva, el solicitante confirma que ha leído, entendido y aceptado todos los términos y condiciones aquí expuestos. <br>
-                <div style="margin-top:4%; padding-left:31%">
+                <div style="margin-top:4%; ">
                 <button id="aceptarTerminos" class="btn btnt3 btn-primary" >Aceptar términos</button>
                 </div>
                 
@@ -542,48 +551,63 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 ///maneja area dinamicamente
-    document.addEventListener("DOMContentLoaded", function() {
-        var areaField = document.getElementById('id_id_area'); // Asegúrate de que este id coincida
-        var lineaField = document.getElementById('linea-field');
-        var ambienteField = document.getElementById('ambiente-field');
-        var espacioField = document.getElementById('espacio-field');
-        var nopermiteField = document.getElementById('no-permitido-field');
+document.addEventListener("DOMContentLoaded", function() {
+    var areaField = document.querySelectorAll('input[name="id_area"]'); // Selección múltiple de checkboxes
+    var lineaField = document.getElementById('linea-field');
+    var ambienteField = document.getElementById('ambiente-field');
+    var espacioField = document.getElementById('espacio-field');
+    var nopermiteField = document.getElementById('no-permitido-field');
+    var todasEstrategiasField = document.getElementById('todas-estrategias-field');
+    var noseleccion = document.getElementById('no-seleccion');
 
-    
-        function updateFields() {
-            var selectedValue = areaField.options[areaField.selectedIndex].text;
-
-
+    function updateFields() {
+        var selectedOptions = [];
         
-            lineaField.style.display = "none";
-            ambienteField.style.display = "none";
-            espacioField.style.display = "none";
-            nopermiteField.style.display = "none";
+        // Recorre los checkboxes y añade los seleccionados
+        areaField.forEach(function(checkbox) {
+            if (checkbox.checked) {
+                selectedOptions.push(checkbox.nextSibling.textContent.trim());
+            }
+        });
         
-
+        lineaField.style.display = "none";
+        ambienteField.style.display = "none";
+        espacioField.style.display = "none";
+        nopermiteField.style.display = "none";
+        todasEstrategiasField.style.display = "none";
+        noseleccion.style.display = "none";
         
+        if (selectedOptions.length === 0) {
+            espacioField.style.display = "block"; // Muestra si no hay ninguna seleccionada
+        } else if (selectedOptions.length >= 2) {
+            todasEstrategiasField.style.display = "block"; // Muestra mensaje si se seleccionan más de dos
+        } else {
+            var selectedValue = selectedOptions[0]; // Solo tomamos la primera si hay una seleccionada
+            
             if (selectedValue === "Tecnoparque") {
                 lineaField.style.display = "block";
-                
             } else if (selectedValue === "Tecnoacademia") {
                 ambienteField.style.display = "block";
-
             } else if (selectedValue === "Sennova") {
                 nopermiteField.style.display = "block";
-
+            }else if (selectedValue === "Grupos de investigación") {
+                noseleccion.style.display = "block";
             } else {
                 espacioField.style.display = "block";
             }
         }
-        
-        
-    
-        // Inicializar campos al cargar la página
-        updateFields();
-    
-        // Actualizar campos cuando cambie el área
-        areaField.addEventListener("change", updateFields);
+    }
+
+    // Inicializar campos al cargar la página
+    updateFields();
+
+    // Actualizar campos cuando cambien las áreas seleccionadas
+    areaField.forEach(function(checkbox) {
+        checkbox.addEventListener("change", updateFields);
     });
+});
+
+
     
     
     ///asistentes 

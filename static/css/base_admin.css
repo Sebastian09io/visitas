@@ -178,8 +178,6 @@
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5); /* Fondo semi-transparente */
-    justify-content: center;
-    align-items: center;
     z-index: 1050; /* Ajustado para mayor prioridad */
 }
 
