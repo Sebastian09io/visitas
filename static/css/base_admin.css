@@ -10,7 +10,7 @@
             font-family: sans-serif;
             margin: 0;
             padding: 0;
-            background-image: url("/static/bootstrap/img/fondo_oscuro.jpg");
+            background-image: url("/static/bootstrap/img/frente cientifico.jpg");
             background-repeat: no-repeat;
             background-size: cover;
             background-position: center bottom;
@@ -46,6 +46,7 @@
             height: 100%; /* Ajuste para ocupar toda la altura de la ventana */
             transition: all 0.35s ease-in-out;
             box-shadow: 10px 0 35px 0 rgba(67, 67, 67, 0.5);
+            background: rgba(0, 0, 0, 0.508);
             z-index: 1111;
             position: relative;
             display: flex;

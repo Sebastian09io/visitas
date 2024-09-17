@@ -11,7 +11,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>   
     <style>
         .navbar-custom {
-            background-color:#272727; /* Color negro */
+            background-color:#000000c3; /* Color negro */
             padding-left:1.5%;
         }
         .navbar-custom > a{
@@ -29,11 +29,7 @@
 <nav class="navbar navbar-expand-lg navbar-dark navbar-custom">
     <a class="navbar-brand" href="{% url 'gestiones:home' %}">Reservas</a>
 
-    <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav">
-            <li class="nav-item"><a class="nav-link " href="#">Terminos y condiciones</a></li>
-        </ul>
-    </div>
+
 </nav>
 
     {% block body %}
