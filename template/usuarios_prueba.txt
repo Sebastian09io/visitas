@@ -10,6 +10,18 @@ Super user mezcla
 email: prueba@sena.edu.co
 contraseña: 12345678_Sa
 
+usuario normal
+prueba2323@sena.edu.co
+12345678_Sa
+///////////////////////////////////
+usuario funcionario 
+prueba9@sena.edu.co
+12345678_Sa
+
+experto
+alvaradosebastian359@gmail.com
+12345678_Sa
+
 pruebas que se deben aplicar
 pruebas unitarias con testcase
 automatizada   con playwright
